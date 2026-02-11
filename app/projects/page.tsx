@@ -162,6 +162,15 @@ export default function ProjectsPage() {
     }
   }, [businessId])
 
+  // Reload data when session is refreshed (e.g. after returning from idle tab)
+  useEffect(() => {
+    const onSessionRefreshed = () => {
+      if (businessId) loadProjects()
+    }
+    window.addEventListener("session-refreshed", onSessionRefreshed)
+    return () => window.removeEventListener("session-refreshed", onSessionRefreshed)
+  }, [businessId])
+
   const loadProjects = async () => {
     setIsLoading(true)
     setLoadError(null)

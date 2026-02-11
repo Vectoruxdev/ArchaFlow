@@ -28,12 +28,18 @@ import {
   GripVertical,
   Copy,
   Pencil,
+  Users,
+  Archive,
+  MoreVertical,
+  ExternalLink,
 } from "lucide-react"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
+import { AssignTeamModal } from "@/components/project/assign-team-modal"
 import { EmptyState } from "@/components/ui/empty-state"
 import { isSupabaseConfigured } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
+import { authFetch } from "@/lib/auth/auth-fetch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -56,6 +62,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { supabase } from "@/lib/supabase/client"
 import { ClientSelect } from "@/components/ui/client-select"
 
@@ -113,6 +127,9 @@ interface Project {
   priority: "low" | "medium" | "high"
   timeEntries: TimeEntry[]
   files: ProjectFile[]
+  businessId?: string
+  primaryOwnerId?: string | null
+  secondaryOwnerId?: string | null
 }
 
 interface Activity {
@@ -254,6 +271,7 @@ export default function DashboardPage() {
   // Project detail modal state
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
   const [isProjectDetailModalOpen, setIsProjectDetailModalOpen] = useState(false)
+  const [assignModalOpen, setAssignModalOpen] = useState(false)
 
   // Get workspace ID from auth context
   const businessId = currentWorkspace?.id
@@ -280,6 +298,18 @@ export default function DashboardPage() {
       setIsLoading(false)
     }
   }, [isAuthReady, businessId])
+
+  // Reload data when session is refreshed (e.g. after returning from idle tab)
+  useEffect(() => {
+    const onSessionRefreshed = () => {
+      if (businessId) {
+        loadProjectsAndColumns()
+        loadWorkspaceUsers()
+      }
+    }
+    window.addEventListener("session-refreshed", onSessionRefreshed)
+    return () => window.removeEventListener("session-refreshed", onSessionRefreshed)
+  }, [businessId])
 
   const loadProjectsAndColumns = async () => {
     try {
@@ -369,7 +399,7 @@ export default function DashboardPage() {
         // Resolve primary/secondary owners from workspace members
         let membersMap: Record<string, { name: string; avatar?: string }> = {}
         try {
-          const membersRes = await fetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
+          const membersRes = await authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
           if (membersRes.ok) {
             const membersList: Array<{ userId: string; firstName: string; lastName: string; avatarUrl?: string }> = await membersRes.json()
             const displayName = (m: { firstName: string; lastName: string; email?: string }) =>
@@ -409,6 +439,9 @@ export default function DashboardPage() {
           })),
           primaryOwner,
           secondaryOwner,
+          businessId: proj.business_id,
+          primaryOwnerId: proj.primary_owner_id ?? null,
+          secondaryOwnerId: proj.secondary_owner_id ?? null,
           paymentStatus: proj.payment_status,
           priority: proj.priority,
           timeEntries: (proj.project_time_entries || []).map((entry: any) => ({
@@ -692,6 +725,38 @@ export default function DashboardPage() {
     } catch (error: any) {
       console.error("Error deleting project:", error)
       throw error
+    }
+  }
+
+  const archiveProjectFromModal = async (projectId: string, projectBusinessId?: string) => {
+    const bid = projectBusinessId || currentWorkspace?.id
+    if (!bid) return
+
+    try {
+      const { error } = await supabase
+        .from("projects")
+        .update({ archived_at: new Date().toISOString() })
+        .eq("id", projectId)
+        .eq("business_id", bid)
+
+      if (error) throw error
+
+      window.dispatchEvent(new Event("projectsUpdated"))
+      setIsProjectDetailModalOpen(false)
+      setSelectedProject(null)
+      loadProjectsAndColumns()
+    } catch (error: any) {
+      console.error("Error archiving project:", error)
+      alert("Failed to archive project: " + error.message)
+    }
+  }
+
+  const handleModalStatusChange = async (projectId: string, newStatus: string) => {
+    try {
+      await updateProjectStatus(projectId, newStatus)
+      setSelectedProject((prev) => (prev ? { ...prev, status: newStatus } : null))
+    } catch {
+      // updateProjectStatus already logs
     }
   }
 
@@ -1336,6 +1401,16 @@ export default function DashboardPage() {
           </div>
         )}
 
+        {/* Selecting workspace - workspaces exist but none selected yet */}
+        {isAuthReady && !authLoading && !workspacesLoading && workspaces.length > 0 && !businessId && (
+          <div className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4"></div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Selecting workspace...</p>
+            </div>
+          </div>
+        )}
+
         {/* No Workspaces State - Only show after auth is fully ready */}
         {isAuthReady && !authLoading && !workspacesLoading && workspaces.length === 0 && (
           <div className="flex items-center justify-center py-12">
@@ -1356,8 +1431,8 @@ export default function DashboardPage() {
           </div>
         )}
 
-        {/* Content */}
-        {isAuthReady && !authLoading && !workspacesLoading && !isLoading && !loadError && (
+        {/* Content - only when we have a workspace selected */}
+        {isAuthReady && !authLoading && !workspacesLoading && !isLoading && !loadError && businessId && (
           <>
         {/* Stats Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -2688,44 +2763,88 @@ export default function DashboardPage() {
       </Dialog>
 
       {/* Project Detail Modal */}
-      <Dialog open={isProjectDetailModalOpen} onOpenChange={setIsProjectDetailModalOpen}>
+      <Dialog
+        open={isProjectDetailModalOpen}
+        onOpenChange={(open) => {
+          setIsProjectDetailModalOpen(open)
+          if (!open) {
+            setAssignModalOpen(false)
+          }
+        }}
+      >
         <DialogContent className="max-w-[95vw] w-[95vw] max-h-[90vh] h-[90vh] p-0 overflow-hidden flex flex-col">
           {selectedProject && (
             <>
               {/* Modal Header */}
               <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
                     <h2 className="text-xl font-semibold">{selectedProject.title}</h2>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                       {selectedProject.client}
                     </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {currentWorkspace && (
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {selectedProject.businessId && (
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => {
-                          router.push(`/projects/${selectedProject.id}`)
-                          setIsProjectDetailModalOpen(false)
-                        }}
+                        onClick={() => setAssignModalOpen(true)}
                         className="gap-1.5"
                       >
-                        <Pencil className="w-4 h-4" />
-                        Edit
+                        <Users className="w-4 h-4" />
+                        Assign Team
                       </Button>
                     )}
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => {
-                        router.push(`/projects/${selectedProject.id}`)
-                        setIsProjectDetailModalOpen(false)
-                      }}
+                    <Select
+                      value={
+                        columns.some((c) => c.id === selectedProject.status)
+                          ? selectedProject.status
+                          : columns[0]?.id ?? selectedProject.status
+                      }
+                      onValueChange={(v) => handleModalStatusChange(selectedProject.id, v)}
                     >
-                      Open Full Page
-                    </Button>
+                      <SelectTrigger className="w-[140px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {columns.map((col) => (
+                          <SelectItem key={col.id} value={col.id}>
+                            {col.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <MoreVertical className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          onClick={() =>
+                            window.open(`/projects/${selectedProject.id}`, "_blank")
+                          }
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Open Full Page
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-orange-600"
+                          onClick={() =>
+                            archiveProjectFromModal(
+                              selectedProject.id,
+                              selectedProject.businessId
+                            )
+                          }
+                        >
+                          <Archive className="w-4 h-4 mr-2" />
+                          Archive Project
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               </div>
@@ -2738,6 +2857,22 @@ export default function DashboardPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {selectedProject?.businessId && (
+        <AssignTeamModal
+          open={assignModalOpen}
+          projectId={selectedProject.id}
+          businessId={selectedProject.businessId}
+          currentPrimaryOwnerId={selectedProject.primaryOwnerId ?? null}
+          currentSecondaryOwnerId={selectedProject.secondaryOwnerId ?? null}
+          onClose={() => setAssignModalOpen(false)}
+          onSave={() => {
+            setAssignModalOpen(false)
+            window.dispatchEvent(new Event("projectAssignmentsUpdated"))
+            loadProjectsAndColumns()
+          }}
+        />
+      )}
       </>
         )}
       </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd"
 import { supabase } from "@/lib/supabase/client"
+import { authFetch } from "@/lib/auth/auth-fetch"
 import {
   Calendar,
   DollarSign,
@@ -314,6 +315,13 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     return () => window.removeEventListener("projectAssignmentsUpdated", handler)
   }, [projectId])
 
+  // Reload data when session is refreshed (e.g. after returning from idle tab)
+  useEffect(() => {
+    const onSessionRefreshed = () => loadProjectData()
+    window.addEventListener("session-refreshed", onSessionRefreshed)
+    return () => window.removeEventListener("session-refreshed", onSessionRefreshed)
+  }, [projectId])
+
   const loadProjectData = async () => {
     setIsLoading(true)
     setLoadError(null)
@@ -405,7 +413,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
         const secondaryId = projectData.secondary_owner_id
         if (businessId && (primaryId || secondaryId)) {
           try {
-            const res = await fetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
+            const res = await authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
             if (res.ok) {
               const membersList: Array<{ userId: string; firstName: string; lastName: string; email: string; avatarUrl?: string }> = await res.json()
               const byId = Object.fromEntries((membersList || []).map((m: any) => [m.userId, m]))

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase/client"
+import { authFetch } from "@/lib/auth/auth-fetch"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -67,7 +68,7 @@ export function AssignTeamModal({
     setError(null)
     let cancelled = false
     setLoadingMembers(true)
-    fetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
+    authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load team members")
         return res.json()

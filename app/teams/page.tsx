@@ -38,6 +38,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { authFetch } from "@/lib/auth/auth-fetch"
 import {
   Users,
   UserPlus,
@@ -158,6 +159,15 @@ export default function TeamsPage() {
     }
   }, [businessId])
 
+  // Reload data when session is refreshed (e.g. after returning from idle tab)
+  useEffect(() => {
+    const onSessionRefreshed = () => {
+      if (businessId) loadTeamData()
+    }
+    window.addEventListener("session-refreshed", onSessionRefreshed)
+    return () => window.removeEventListener("session-refreshed", onSessionRefreshed)
+  }, [businessId])
+
   const loadTeamData = async () => {
     if (!businessId) return
     setIsLoading(true)
@@ -181,7 +191,7 @@ export default function TeamsPage() {
       setRoles(workspaceRoles)
 
       // 2. Load members via API (includes emails and works with RLS)
-      const membersRes = await fetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
+      const membersRes = await authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
       if (!membersRes.ok) {
         const errData = await membersRes.json().catch(() => ({}))
         console.error("Error loading members:", membersRes.status, errData)
@@ -193,7 +203,7 @@ export default function TeamsPage() {
       }
 
       // 3. Load pending invitations via API (server-side so list is not blocked by RLS)
-      const invRes = await fetch(`/api/teams/invitations?businessId=${encodeURIComponent(businessId)}`)
+      const invRes = await authFetch(`/api/teams/invitations?businessId=${encodeURIComponent(businessId)}`)
       if (!invRes.ok) {
         console.error("Error loading pending invitations:", invRes.status)
         setPendingInvites([])
@@ -230,7 +240,7 @@ export default function TeamsPage() {
     setInviteSuccess(null)
 
     try {
-      const response = await fetch("/api/invite", {
+      const response = await authFetch("/api/invite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -277,7 +287,7 @@ export default function TeamsPage() {
   // Resend invitation
   const handleResendInvite = async (invitationId: string) => {
     try {
-      const response = await fetch("/api/invite/resend", {
+      const response = await authFetch("/api/invite/resend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ invitationId }),
@@ -357,7 +367,7 @@ export default function TeamsPage() {
     setEditError(null)
 
     try {
-      const res = await fetch("/api/teams/members/update", {
+      const res = await authFetch("/api/teams/members/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

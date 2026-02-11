@@ -262,6 +262,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // Proactive session refresh when user returns to tab (fixes stale token after idle)
+  useEffect(() => {
+    const onVisibilityChange = async () => {
+      if (document.visibilityState !== "visible" || !user) return
+      if (!isSupabaseConfigured()) return
+      try {
+        const { error } = await supabase.auth.refreshSession()
+        if (!error && typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("session-refreshed"))
+        }
+      } catch {
+        // ignore
+      }
+    }
+    document.addEventListener("visibilitychange", onVisibilityChange)
+    return () => document.removeEventListener("visibilitychange", onVisibilityChange)
+  }, [user])
+
   // Check for pending invitations for the current user
   const checkPendingInvitations = async () => {
     try {
@@ -385,8 +403,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (workspace) {
       setCurrentWorkspace(workspace)
       localStorage.setItem("currentWorkspaceId", workspaceId)
-      // Reload the page to refresh data for new workspace
-      window.location.reload()
+      // No reload - React state update triggers re-renders; pages listen for businessId change
     }
   }
 
