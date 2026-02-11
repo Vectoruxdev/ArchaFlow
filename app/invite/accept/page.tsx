@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { Suspense, useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, XCircle, Loader2, LogIn } from "lucide-react"
 
-export default function AcceptInvitePage() {
+function AcceptInviteContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, session, loading: authLoading } = useAuth()
@@ -219,5 +219,19 @@ export default function AcceptInvitePage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function AcceptInvitePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
+          <Loader2 className="w-10 h-10 text-gray-400 animate-spin" />
+        </div>
+      }
+    >
+      <AcceptInviteContent />
+    </Suspense>
   )
 }
