@@ -273,7 +273,7 @@ interface ProjectDetailContentProps {
 }
 
 export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
-  const [project, setProject] = useState(projectData)
+  const [project, setProject] = useState<Project>(projectData as Project)
   const [todos, setTodos] = useState<Todo[]>(initialTodos)
   const [projectNotes, setProjectNotes] = useState<Note[]>(notes)
   const [projectFiles, setProjectFiles] = useState<ProjectFile[]>(files)
