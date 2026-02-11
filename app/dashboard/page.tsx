@@ -32,6 +32,7 @@ import {
   Archive,
   MoreVertical,
   ExternalLink,
+  ChevronDown,
 } from "lucide-react"
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
@@ -64,6 +65,7 @@ import {
 } from "@/components/ui/dialog"
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -219,9 +221,14 @@ export default function DashboardPage() {
   const [newColumnLabel, setNewColumnLabel] = useState("")
   const boardScrollRef = useRef<HTMLDivElement | null>(null)
   
+  // Workspace members for team filter (loaded with projects)
+  const [workspaceMembersForFilter, setWorkspaceMembersForFilter] = useState<
+    Array<{ userId: string; firstName: string; lastName: string; email: string }>
+  >([])
+
   // Filter state
   const [filters, setFilters] = useState({
-    teamMember: "all",
+    teamMemberIds: [] as string[],
     dateRange: "all",
     paymentStatus: "all",
     priority: "all",
@@ -401,15 +408,25 @@ export default function DashboardPage() {
         try {
           const membersRes = await authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
           if (membersRes.ok) {
-            const membersList: Array<{ userId: string; firstName: string; lastName: string; avatarUrl?: string }> = await membersRes.json()
+            const membersList: Array<{ userId: string; firstName: string; lastName: string; email?: string; avatarUrl?: string }> = await membersRes.json()
             const displayName = (m: { firstName: string; lastName: string; email?: string }) =>
               [m.firstName, m.lastName].filter(Boolean).join(" ").trim() || (m.email || "").trim() || "?"
             for (const m of membersList || []) {
               membersMap[m.userId] = { name: displayName(m), avatar: m.avatarUrl }
             }
+            setWorkspaceMembersForFilter(
+              (membersList || []).map((m) => ({
+                userId: m.userId,
+                firstName: m.firstName || "",
+                lastName: m.lastName || "",
+                email: m.email || "",
+              }))
+            )
+          } else {
+            setWorkspaceMembersForFilter([])
           }
         } catch (_) {
-          // keep membersMap empty
+          setWorkspaceMembersForFilter([])
         }
 
         // Transform database projects to app format
@@ -760,17 +777,6 @@ export default function DashboardPage() {
     }
   }
 
-  // Get unique team members
-  const teamMembers = useMemo(() => {
-    const members = new Set<string>()
-    projects.forEach((project) => {
-      project.assignees.forEach((assignee) => {
-        members.add(assignee.name)
-      })
-    })
-    return Array.from(members).sort()
-  }, [projects])
-
   // Filter projects
   const filteredProjects = useMemo(() => {
     console.log("🔎 Starting project filtering:", {
@@ -781,10 +787,12 @@ export default function DashboardPage() {
     
     let filtered = projects
 
-    // Filter by team member
-    if (filters.teamMember !== "all") {
-      filtered = filtered.filter((project) =>
-        project.assignees.some((assignee) => assignee.name === filters.teamMember)
+    // Filter by primary/secondary owners
+    if (filters.teamMemberIds.length > 0) {
+      filtered = filtered.filter(
+        (project) =>
+          (project.primaryOwnerId && filters.teamMemberIds.includes(project.primaryOwnerId)) ||
+          (project.secondaryOwnerId && filters.teamMemberIds.includes(project.secondaryOwnerId))
       )
       console.log("   After team filter:", filtered.length)
     }
@@ -860,7 +868,7 @@ export default function DashboardPage() {
   // Count active filters
   const activeFilterCount = useMemo(() => {
     let count = 0
-    if (filters.teamMember !== "all") count++
+    if (filters.teamMemberIds.length > 0) count++
     if (filters.dateRange !== "all") count++
     if (filters.paymentStatus !== "all") count++
     if (filters.priority !== "all") count++
@@ -871,7 +879,7 @@ export default function DashboardPage() {
   // Clear all filters
   const clearFilters = () => {
     setFilters({
-      teamMember: "all",
+      teamMemberIds: [],
       dateRange: "all",
       paymentStatus: "all",
       priority: "all",
@@ -1505,24 +1513,62 @@ export default function DashboardPage() {
 
             <div className="flex flex-wrap gap-2 flex-1">
               {/* Team Member Filter */}
-              <Select
-                value={filters.teamMember}
-                onValueChange={(value) =>
-                  setFilters((prev) => ({ ...prev, teamMember: value }))
-                }
-              >
-                <SelectTrigger className="w-[160px] h-9 text-sm">
-                  <SelectValue placeholder="Team Member" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Members</SelectItem>
-                  {teamMembers.map((member) => (
-                    <SelectItem key={member} value={member}>
-                      {member}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-[160px] h-9 text-sm justify-between font-normal"
+                  >
+                    {filters.teamMemberIds.length === 0
+                      ? "All Members"
+                      : filters.teamMemberIds.length === 1
+                        ? workspaceMembersForFilter.find((m) => m.userId === filters.teamMemberIds[0])
+                          ? [workspaceMembersForFilter.find((m) => m.userId === filters.teamMemberIds[0])!.firstName, workspaceMembersForFilter.find((m) => m.userId === filters.teamMemberIds[0])!.lastName]
+                              .filter(Boolean)
+                              .join(" ")
+                              .trim() ||
+                            workspaceMembersForFilter.find((m) => m.userId === filters.teamMemberIds[0])!.email ||
+                            "1 member"
+                          : "1 member"
+                        : `${filters.teamMemberIds.length} members`}
+                    <ChevronDown className="w-4 h-4 ml-1 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-[200px] max-h-[280px] overflow-y-auto">
+                  <DropdownMenuItem
+                    onClick={() =>
+                      setFilters((prev) => ({ ...prev, teamMemberIds: [] }))
+                    }
+                  >
+                    All Members
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  {workspaceMembersForFilter.map((member) => {
+                    const displayName =
+                      [member.firstName, member.lastName].filter(Boolean).join(" ").trim() ||
+                      member.email ||
+                      member.userId
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={member.userId}
+                        checked={filters.teamMemberIds.includes(member.userId)}
+                        onCheckedChange={(checked) => {
+                          setFilters((prev) =>
+                            checked
+                              ? { ...prev, teamMemberIds: [...prev.teamMemberIds, member.userId] }
+                              : {
+                                  ...prev,
+                                  teamMemberIds: prev.teamMemberIds.filter((id) => id !== member.userId),
+                                }
+                          )
+                        }}
+                      >
+                        {displayName}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               {/* Date Range Filter */}
               <Select
