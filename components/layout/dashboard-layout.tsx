@@ -1,18 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import {
   LayoutDashboard,
-  FolderKanban,
-  Users,
-  FileText,
-  UsersRound,
-  Settings,
   Search,
   Bell,
-  Plug,
-  Target,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
@@ -40,18 +33,9 @@ import {
 import { useAuth } from "@/lib/auth/auth-context"
 import { CreateWorkspaceDialog } from "@/components/workspace/create-workspace-dialog"
 import { ChangelogDialog } from "@/components/ui/changelog-dialog"
+import { GlobalSearch, useGlobalSearchHotkeys } from "@/components/search/global-search"
+import { navigationItems } from "@/lib/navigation"
 import { APP_VERSION } from "@/lib/app-version"
-
-const navigationItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: Target, label: "Leads", href: "/leads" },
-  { icon: FolderKanban, label: "Projects", href: "/projects" },
-  { icon: Users, label: "Clients", href: "/clients" },
-  { icon: FileText, label: "Invoices", href: "/invoices" },
-  { icon: UsersRound, label: "Teams", href: "/teams" },
-  { icon: Plug, label: "Integrations", href: "/integrations" },
-  { icon: Settings, label: "Settings", href: "/settings" },
-]
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -62,7 +46,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false)
   const [showChangelog, setShowChangelog] = useState(false)
-  
+  const [searchOpen, setSearchOpen] = useState(false)
+
+  const openSearch = useCallback(() => setSearchOpen(true), [])
+  useGlobalSearchHotkeys(openSearch)
+
   // Show actual workspace data or a loading placeholder
   const displayWorkspace = currentWorkspace || { id: "", name: "Loading...", icon: "🏢", role: "viewer" as const }
 
@@ -134,14 +122,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
             {/* Search Bar */}
             <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-              <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search projects, clients..."
-                  className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
-                />
-              </div>
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="w-full flex items-center gap-3 pl-10 pr-4 py-2 text-sm text-left bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+              >
+                <Search className="w-4 h-4 text-gray-400 shrink-0" />
+                <span className="text-gray-500 dark:text-gray-400">Search pages, projects, clients...</span>
+                <kbd className="ml-auto hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                  ⌘K
+                </kbd>
+              </button>
             </div>
 
             {/* Right Actions */}
@@ -269,6 +259,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       </TooltipTrigger>
                       <TooltipContent side="right">
                         <p>{item.label}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{item.hotkey}</p>
                       </TooltipContent>
                     </Tooltip>
                   )
@@ -287,8 +278,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                         : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900"
                     }`}
                   >
-                    <item.icon className="w-5 h-5" />
-                    <span>{item.label}</span>
+                    <item.icon className="w-5 h-5 shrink-0" />
+                    <span className="flex-1 truncate">{item.label}</span>
+                    <span className="text-[10px] text-gray-400 dark:text-gray-500 shrink-0">{item.hotkey}</span>
                   </button>
                 )
               })}
@@ -394,6 +386,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         {/* Changelog Dialog */}
         <ChangelogDialog open={showChangelog} onOpenChange={setShowChangelog} />
+
+        {/* Global Search */}
+        <GlobalSearch open={searchOpen} onOpenChange={setSearchOpen} />
       </div>
     </TooltipProvider>
   )

@@ -112,7 +112,7 @@ const roleColors: Record<string, string> = {
 }
 
 export default function TeamsPage() {
-  const { currentWorkspace, user } = useAuth()
+  const { currentWorkspace, user, workspacesLoaded } = useAuth()
   const businessId = currentWorkspace?.id
   const currentUserRole = currentWorkspace?.role
 
@@ -157,8 +157,10 @@ export default function TeamsPage() {
   useEffect(() => {
     if (businessId) {
       loadTeamData()
+    } else if (workspacesLoaded) {
+      setIsLoading(false)
     }
-  }, [businessId])
+  }, [businessId, workspacesLoaded])
 
   // Reload data when session is refreshed (e.g. after returning from idle tab)
   useEffect(() => {

@@ -74,7 +74,7 @@ interface Client {
 
 export default function ClientsPage() {
   const router = useRouter()
-  const { currentWorkspace } = useAuth()
+  const { currentWorkspace, workspacesLoaded } = useAuth()
   const [clients, setClients] = useState<Client[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -93,8 +93,10 @@ export default function ClientsPage() {
   useEffect(() => {
     if (businessId) {
       loadClients()
+    } else if (workspacesLoaded) {
+      setIsLoading(false)
     }
-  }, [businessId])
+  }, [businessId, workspacesLoaded])
 
   const loadClients = async () => {
     if (!businessId) return

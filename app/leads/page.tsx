@@ -207,7 +207,7 @@ function StatusBadge({ status }: { status: string }) {
 
 export default function LeadsPage() {
   const router = useRouter()
-  const { currentWorkspace, user } = useAuth()
+  const { currentWorkspace, user, workspacesLoaded } = useAuth()
   const [leads, setLeads] = useState<Lead[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [temperatureFilter, setTemperatureFilter] = useState("all")
@@ -239,8 +239,10 @@ export default function LeadsPage() {
       loadLeads()
       loadWorkspaceUsers()
       loadLeadTypes()
+    } else if (workspacesLoaded) {
+      setIsLoading(false)
     }
-  }, [businessId])
+  }, [businessId, workspacesLoaded])
 
   const loadLeads = async () => {
     if (!businessId) return

@@ -97,7 +97,7 @@ const priorityColors = {
 
 export default function ProjectsPage() {
   const router = useRouter()
-  const { currentWorkspace } = useAuth()
+  const { currentWorkspace, workspacesLoaded } = useAuth()
   const [projects, setProjects] = useState(allProjects)
   const [searchQuery, setSearchQuery] = useState("")
   const [filterStatus, setFilterStatus] = useState<ProjectStatus | "all">("all")
@@ -143,8 +143,10 @@ export default function ProjectsPage() {
   useEffect(() => {
     if (businessId) {
       loadProjects()
+    } else if (workspacesLoaded) {
+      setIsLoading(false)
     }
-  }, [businessId])
+  }, [businessId, workspacesLoaded])
 
   // Listen for project updates from other pages (e.g., Dashboard)
   useEffect(() => {
@@ -410,6 +412,19 @@ export default function ProjectsPage() {
   // Use the appropriate list based on active tab
   const displayProjects = activeTab === "active" ? activeProjects : archivedProjects
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="p-6">
+          <div className="flex items-center justify-center py-20">
+            <div className="text-gray-500">Loading projects...</div>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
   // Calculate stats (only for active projects)
   const stats = {
     total: activeProjects.length,
@@ -457,7 +472,7 @@ export default function ProjectsPage() {
               <span className="text-sm text-gray-600 dark:text-gray-400">Total Budget</span>
               <DollarSign className="w-4 h-4 text-gray-400" />
             </div>
-            <div className="text-2xl font-semibold">${(stats.totalBudget / 1000000).toFixed(1)}M</div>
+            <div className="text-2xl font-semibold">${((stats.totalBudget || 0) / 1000000).toFixed(1)}M</div>
             <p className="text-xs text-gray-500 mt-1">Across all projects</p>
           </div>
 
@@ -466,9 +481,9 @@ export default function ProjectsPage() {
               <span className="text-sm text-gray-600 dark:text-gray-400">Total Spent</span>
               <DollarSign className="w-4 h-4 text-gray-400" />
             </div>
-            <div className="text-2xl font-semibold">${(stats.totalSpent / 1000000).toFixed(1)}M</div>
+            <div className="text-2xl font-semibold">${((stats.totalSpent || 0) / 1000000).toFixed(1)}M</div>
             <p className="text-xs text-gray-500 mt-1">
-              {Math.round((stats.totalSpent / stats.totalBudget) * 100)}% of budget
+              {stats.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : 0}% of budget
             </p>
           </div>
 
@@ -478,7 +493,7 @@ export default function ProjectsPage() {
               <Calendar className="w-4 h-4 text-gray-400" />
             </div>
             <div className="text-2xl font-semibold">
-              {Math.round(projects.reduce((sum, p) => sum + p.progress, 0) / projects.length)}%
+              {projects.length ? Math.round(projects.reduce((sum, p) => sum + p.progress, 0) / projects.length) : 0}%
             </div>
             <p className="text-xs text-gray-500 mt-1">Across all projects</p>
           </div>
