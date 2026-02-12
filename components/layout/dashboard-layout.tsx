@@ -39,6 +39,8 @@ import {
 } from "@/components/ui/tooltip"
 import { useAuth } from "@/lib/auth/auth-context"
 import { CreateWorkspaceDialog } from "@/components/workspace/create-workspace-dialog"
+import { ChangelogDialog } from "@/components/ui/changelog-dialog"
+import { APP_VERSION } from "@/lib/app-version"
 
 const navigationItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -59,6 +61,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false)
+  const [showChangelog, setShowChangelog] = useState(false)
   
   // Show actual workspace data or a loading placeholder
   const displayWorkspace = currentWorkspace || { id: "", name: "Loading...", icon: "🏢", role: "viewer" as const }
@@ -358,6 +361,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   <span>Logout</span>
                 </button>
               )}
+
+              {/* Version Number */}
+              <button
+                onClick={() => setShowChangelog(true)}
+                className={`w-full text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer transition-colors ${isCollapsed ? "flex justify-center py-1" : "px-3 py-1 text-left"}`}
+              >
+                {APP_VERSION}
+              </button>
             </div>
           </div>
         </aside>
@@ -380,6 +391,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           open={showCreateWorkspace}
           onOpenChange={setShowCreateWorkspace}
         />
+
+        {/* Changelog Dialog */}
+        <ChangelogDialog open={showChangelog} onOpenChange={setShowChangelog} />
       </div>
     </TooltipProvider>
   )
