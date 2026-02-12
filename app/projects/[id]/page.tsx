@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
 import { AssignTeamModal } from "@/components/project/assign-team-modal"
 import { supabase } from "@/lib/supabase/client"
@@ -143,17 +143,18 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
   }
 
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         {/* Sticky Header */}
         <div className="sticky top-0 z-10 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
           <div className="p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4 min-w-0 flex-1">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={handleBack}
+                  className="shrink-0"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
@@ -174,10 +175,10 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                   </div>
                 ) : projectData ? (
                   // Actual data
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <h1 className="text-2xl font-semibold">{projectData.title}</h1>
-                      <Badge className={`${statusColors[projectData.status as keyof typeof statusColors] || statusColors.lead} border`}>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h1 className="text-xl sm:text-2xl font-semibold truncate">{projectData.title}</h1>
+                      <Badge className={`${statusColors[projectData.status as keyof typeof statusColors] || statusColors.lead} border shrink-0`}>
                         {projectData.status}
                       </Badge>
                     </div>
@@ -186,7 +187,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                 ) : null}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto shrink-0">
                 <Button variant="outline">Change Status</Button>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -236,6 +237,6 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
           />
         )}
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 }

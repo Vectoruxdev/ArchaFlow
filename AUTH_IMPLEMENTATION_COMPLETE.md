@@ -43,7 +43,7 @@ All authentication features have been successfully implemented for ArchaFlow!
 2. **app/page.tsx**
    - Now redirects based on auth state
 
-3. **components/layout/dashboard-layout.tsx**
+3. **components/layout/app-layout.tsx**
    - Connected to real auth data
    - Real workspace management
    - Working logout
@@ -129,7 +129,7 @@ npm run dev
    - Email: your@email.com
    - Workspace: Your Company
    - Password: password123
-5. Should redirect to `/dashboard`
+5. Should redirect to `/workflow`
 6. Check sidebar - workspace should show
 
 #### Test Workspace
@@ -142,7 +142,7 @@ npm run dev
 #### Test Logout
 1. Click "Logout" in sidebar
 2. Should redirect to `/login`
-3. Try accessing `/dashboard` - should redirect back to login
+3. Try accessing `/workflow` - should redirect back to login
 
 #### Test Login
 1. Log back in with your credentials
@@ -160,7 +160,7 @@ Run through this checklist to verify everything works:
 - [ ] Visit homepage - redirects to login
 - [ ] Sign up creates account + workspace
 - [ ] Login works with created account
-- [ ] Dashboard shows workspace in sidebar
+- [ ] Workflow shows workspace in sidebar
 - [ ] Can create additional workspaces
 - [ ] Can switch between workspaces
 - [ ] Logout works and redirects to login
@@ -206,7 +206,7 @@ Check these tables in Supabase Table Editor:
    - Assigns user as Owner
    - Creates user profile
 4. AuthProvider loads workspaces
-5. User redirected to dashboard
+5. User redirected to Workflow
 6. Workspace shows in sidebar
 
 ## Architecture Overview
@@ -220,7 +220,7 @@ AuthProvider (manages session)
   ↓
 Middleware (refreshes tokens)
   ↓
-Dashboard + Protected Pages
+Workflow + Protected Pages
   ↓
 Supabase Client
   ↓
@@ -229,17 +229,17 @@ Database (RLS enforced)
 
 ## All Authentication Flows
 
-### Sign Up → Dashboard
-`/signup` → Create account → Create workspace → `/dashboard`
+### Sign Up → Workflow
+`/signup` → Create account → Create workspace → `/workflow`
 
-### Login → Dashboard
-`/login` → Validate credentials → Load workspaces → `/dashboard`
+### Login → Workflow
+`/login` → Validate credentials → Load workspaces → `/workflow`
 
 ### Forgot Password → Reset → Login
 `/forgot-password` → Email link → `/reset-password` → `/login`
 
 ### Protected Page → Login
-`/dashboard` (not logged in) → Middleware check → `/login`
+`/workflow` (not logged in) → Middleware check → `/login`
 
 ### Logout → Login
 Click Logout → Clear session → `/login`
@@ -267,7 +267,7 @@ Modified:
   - package.json (added @supabase/ssr)
   - app/layout.tsx (added AuthProvider)
   - app/page.tsx (auth redirect logic)
-  - components/layout/dashboard-layout.tsx (real auth integration)
+  - components/layout/app-layout.tsx (real auth integration)
 ```
 
 ## Ready to Use!

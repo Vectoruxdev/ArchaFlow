@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -441,20 +441,20 @@ export default function TeamsPage() {
   // Loading state
   if (isLoading) {
     return (
-      <DashboardLayout>
+      <AppLayout>
         <div className="p-6">
           <div className="flex items-center justify-center py-20">
             <div className="text-gray-500">Loading team...</div>
           </div>
         </div>
-      </DashboardLayout>
+      </AppLayout>
     )
   }
 
   // Empty state
   if (members.length === 0 && pendingInvites.length === 0 && !searchQuery) {
     return (
-      <DashboardLayout>
+      <AppLayout>
         <div className="p-6">
           {loadError && (
             <div className="mb-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-3 text-sm text-amber-800 dark:text-amber-200">
@@ -473,12 +473,12 @@ export default function TeamsPage() {
           />
           {renderInviteModal()}
         </div>
-      </DashboardLayout>
+      </AppLayout>
     )
   }
 
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -510,7 +510,8 @@ export default function TeamsPage() {
 
         {/* Table */}
         <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
-          <Table>
+          <div className="overflow-x-auto">
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Member</TableHead>
@@ -701,6 +702,7 @@ export default function TeamsPage() {
               )}
             </TableBody>
           </Table>
+          </div>
         </div>
 
         {/* Invite Modal */}
@@ -841,7 +843,7 @@ export default function TeamsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 
   function renderInviteModal() {

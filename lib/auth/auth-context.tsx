@@ -241,7 +241,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     )
 
-    // 2. Fallback: if INITIAL_SESSION hasn't fired after 3 seconds, manually get session
+    // 2. Fallback: if INITIAL_SESSION hasn't fired after 2s, manually get session
     const fallbackTimer = setTimeout(async () => {
       if (!initialSessionHandled) {
         console.log("⚠️ INITIAL_SESSION not received, fetching session manually...")
@@ -254,10 +254,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setWorkspacesLoaded(true)
         }
       }
-    }, 3000)
+    }, 2000)
+
+    // 3. Safety: force loading=false after 5s max (prevents infinite loading)
+    const safetyTimer = setTimeout(() => {
+      setLoading(false)
+      setWorkspacesLoaded(true)
+    }, 5000)
 
     return () => {
       clearTimeout(fallbackTimer)
+      clearTimeout(safetyTimer)
       subscription.unsubscribe()
     }
   }, [])

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -36,6 +36,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -60,6 +67,8 @@ import {
   Calendar,
   Activity,
   LayoutList,
+  Filter,
+  SlidersHorizontal,
 } from "lucide-react"
 
 // Types
@@ -605,20 +614,20 @@ export default function LeadsPage() {
   // Loading state
   if (isLoading) {
     return (
-      <DashboardLayout>
+      <AppLayout>
         <div className="p-6">
           <div className="flex items-center justify-center py-20">
             <div className="text-gray-500">Loading leads...</div>
           </div>
         </div>
-      </DashboardLayout>
+      </AppLayout>
     )
   }
 
   // Empty State
   if (leads.length === 0 && !searchQuery) {
     return (
-      <DashboardLayout>
+      <AppLayout>
         <div className="p-6">
           <EmptyState
             icon={Target}
@@ -641,33 +650,37 @@ export default function LeadsPage() {
             leadTypes={leadTypes}
           />
         </div>
-      </DashboardLayout>
+      </AppLayout>
     )
   }
 
   return (
-    <DashboardLayout>
-      <div className="p-6 space-y-6">
+    <AppLayout>
+      <div className="p-4 sm:p-6 space-y-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex-1">
             <h1 className="text-2xl font-semibold">Leads</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              {activeLeads.length} active, {convertedLeads.length} converted, {archivedLeads.length} archived
-            </p>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-500 mt-1">
+              <span>{activeLeads.length} active</span>
+              <span className="text-gray-300">•</span>
+              <span>{convertedLeads.length} converted</span>
+              <span className="text-gray-300">•</span>
+              <span>{archivedLeads.length} archived</span>
+            </div>
           </div>
-          <Button onClick={() => setIsFormOpen(true)}>
+          <Button onClick={() => setIsFormOpen(true)} className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             New Lead
           </Button>
         </div>
 
         {/* Date filter and stats */}
-        <div className="rounded-lg border bg-card p-4 space-y-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm font-medium text-muted-foreground">Date range:</span>
+        <div className="rounded-lg border bg-card p-3 sm:p-4 space-y-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <span className="text-xs sm:text-sm font-medium text-muted-foreground">Date range:</span>
             <Select value={datePreset} onValueChange={(v) => setDatePreset(v as DatePreset)}>
-              <SelectTrigger className="w-[140px]">
+              <SelectTrigger className="w-[120px] sm:w-[140px] h-8 sm:h-9 text-xs sm:text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -682,8 +695,8 @@ export default function LeadsPage() {
             {datePreset === "custom" && (
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Calendar className="w-4 h-4" />
+                  <Button variant="outline" size="sm" className="gap-2 h-8 text-xs sm:text-sm">
+                    <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                     {customStart && customEnd ? `${customStart} – ${customEnd}` : "Select dates"}
                   </Button>
                 </PopoverTrigger>
@@ -714,98 +727,225 @@ export default function LeadsPage() {
           </div>
 
           {statsLoading ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">Loading stats...</div>
+            <div className="py-4 text-center text-xs sm:text-sm text-muted-foreground">Loading stats...</div>
           ) : leadsStats ? (
-            <div className="grid gap-6 sm:grid-cols-3">
-              <div className="rounded-md border bg-muted/30 p-4">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <LayoutList className="w-4 h-4" />
-                  <span className="text-sm font-medium">Total leads</span>
+            <div className="space-y-2">
+              {/* Mobile: Inline stats */}
+              <div className="flex md:hidden items-center justify-between gap-2 px-2">
+                <div className="flex items-center gap-1.5">
+                  <LayoutList className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Total:</span>
+                  <span className="text-sm font-semibold">{leads.length}</span>
                 </div>
-                <p className="text-2xl font-semibold">{leads.length}</p>
+                <div className="flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">New:</span>
+                  <span className="text-sm font-semibold">{leadsStats.newLeadsCount}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Activity className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground">Follow-ups:</span>
+                  <span className="text-sm font-semibold">{leadsStats.followUpsCount}</span>
+                </div>
               </div>
-              <div className="rounded-md border bg-muted/30 p-4">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <Target className="w-4 h-4" />
-                  <span className="text-sm font-medium">New leads</span>
+              
+              {/* Desktop: Card stats */}
+              <div className="hidden md:grid gap-4 sm:grid-cols-3">
+                <div className="rounded-md border bg-muted/30 p-3">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                    <LayoutList className="w-4 h-4" />
+                    <span className="text-sm font-medium">Total leads</span>
+                  </div>
+                  <p className="text-2xl font-semibold">{leads.length}</p>
                 </div>
-                <p className="text-2xl font-semibold">{leadsStats.newLeadsCount}</p>
-              </div>
-              <div className="rounded-md border bg-muted/30 p-4">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <Activity className="w-4 h-4" />
-                  <span className="text-sm font-medium">Follow-ups</span>
+                <div className="rounded-md border bg-muted/30 p-3">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                    <Target className="w-4 h-4" />
+                    <span className="text-sm font-medium">New leads</span>
+                  </div>
+                  <p className="text-2xl font-semibold">{leadsStats.newLeadsCount}</p>
                 </div>
-                <p className="text-2xl font-semibold">{leadsStats.followUpsCount}</p>
+                <div className="rounded-md border bg-muted/30 p-3">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                    <Activity className="w-4 h-4" />
+                    <span className="text-sm font-medium">Follow-ups</span>
+                  </div>
+                  <p className="text-2xl font-semibold">{leadsStats.followUpsCount}</p>
+                </div>
               </div>
             </div>
           ) : datePreset === "custom" && (!customStart || !customEnd) ? (
-            <div className="py-6 text-center text-sm text-muted-foreground">Select a custom date range to view stats</div>
+            <div className="py-4 text-center text-xs sm:text-sm text-muted-foreground">Select a custom date range to view stats</div>
           ) : null}
         </div>
 
         {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
               placeholder="Search leads..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 h-9"
             />
           </div>
-          <Select value={temperatureFilter} onValueChange={setTemperatureFilter}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Temperature" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Temps</SelectItem>
-              <SelectItem value="cold">Cold</SelectItem>
-              <SelectItem value="warm">Warm</SelectItem>
-              <SelectItem value="hot">Hot</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="new">New</SelectItem>
-              <SelectItem value="contacted">Contacted</SelectItem>
-              <SelectItem value="qualified">Qualified</SelectItem>
-              <SelectItem value="proposal">Proposal</SelectItem>
-              <SelectItem value="negotiation">Negotiation</SelectItem>
-              <SelectItem value="won">Won</SelectItem>
-              <SelectItem value="lost">Lost</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={lifecycleFilter} onValueChange={(v) => setLifecycleFilter(v as "all" | "active" | "converted" | "archived")}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Lifecycle" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Lifecycle</SelectItem>
-              <SelectItem value="active">Active ({activeLeads.length})</SelectItem>
-              <SelectItem value="converted">Converted ({convertedLeads.length})</SelectItem>
-              <SelectItem value="archived">Archived ({archivedLeads.length})</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={assignedToFilter} onValueChange={setAssignedToFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sales Agent" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Agents</SelectItem>
-              <SelectItem value="unassigned">Unassigned</SelectItem>
-              {salesAgentsForFilter.map((agent) => (
-                <SelectItem key={agent.id} value={agent.id}>
-                  {agent.name || agent.email}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          
+          {/* Mobile: Filters Button */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="md:hidden gap-2 h-9">
+                <SlidersHorizontal className="w-4 h-4" />
+                Filters
+                {(temperatureFilter !== "all" || statusFilter !== "all" || lifecycleFilter !== "all" || assignedToFilter !== "all") && (
+                  <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-xs">
+                    Active
+                  </Badge>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="bottom" className="h-[85vh] overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Filter Leads</SheetTitle>
+              </SheetHeader>
+              <div className="mt-6 space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Temperature</label>
+                  <Select value={temperatureFilter} onValueChange={setTemperatureFilter}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Temperature" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Temps</SelectItem>
+                      <SelectItem value="cold">Cold</SelectItem>
+                      <SelectItem value="warm">Warm</SelectItem>
+                      <SelectItem value="hot">Hot</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Status</label>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="new">New</SelectItem>
+                      <SelectItem value="contacted">Contacted</SelectItem>
+                      <SelectItem value="qualified">Qualified</SelectItem>
+                      <SelectItem value="proposal">Proposal</SelectItem>
+                      <SelectItem value="negotiation">Negotiation</SelectItem>
+                      <SelectItem value="won">Won</SelectItem>
+                      <SelectItem value="lost">Lost</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Lifecycle</label>
+                  <Select value={lifecycleFilter} onValueChange={(v) => setLifecycleFilter(v as "all" | "active" | "converted" | "archived")}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Lifecycle" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Lifecycle</SelectItem>
+                      <SelectItem value="active">Active ({activeLeads.length})</SelectItem>
+                      <SelectItem value="converted">Converted ({convertedLeads.length})</SelectItem>
+                      <SelectItem value="archived">Archived ({archivedLeads.length})</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Sales Agent</label>
+                  <Select value={assignedToFilter} onValueChange={setAssignedToFilter}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Sales Agent" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Agents</SelectItem>
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
+                      {salesAgentsForFilter.map((agent) => (
+                        <SelectItem key={agent.id} value={agent.id}>
+                          {agent.name || agent.email}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => {
+                    setTemperatureFilter("all")
+                    setStatusFilter("all")
+                    setLifecycleFilter("all")
+                    setAssignedToFilter("all")
+                  }}
+                >
+                  Clear All Filters
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+          
+          {/* Desktop: Inline Filters */}
+          <div className="hidden md:flex gap-2">
+            <Select value={temperatureFilter} onValueChange={setTemperatureFilter}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Temperature" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Temps</SelectItem>
+                <SelectItem value="cold">Cold</SelectItem>
+                <SelectItem value="warm">Warm</SelectItem>
+                <SelectItem value="hot">Hot</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="new">New</SelectItem>
+                <SelectItem value="contacted">Contacted</SelectItem>
+                <SelectItem value="qualified">Qualified</SelectItem>
+                <SelectItem value="proposal">Proposal</SelectItem>
+                <SelectItem value="negotiation">Negotiation</SelectItem>
+                <SelectItem value="won">Won</SelectItem>
+                <SelectItem value="lost">Lost</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={lifecycleFilter} onValueChange={(v) => setLifecycleFilter(v as "all" | "active" | "converted" | "archived")}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="Lifecycle" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Lifecycle</SelectItem>
+                <SelectItem value="active">Active ({activeLeads.length})</SelectItem>
+                <SelectItem value="converted">Converted ({convertedLeads.length})</SelectItem>
+                <SelectItem value="archived">Archived ({archivedLeads.length})</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={assignedToFilter} onValueChange={setAssignedToFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sales Agent" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Agents</SelectItem>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
+                {salesAgentsForFilter.map((agent) => (
+                  <SelectItem key={agent.id} value={agent.id}>
+                    {agent.name || agent.email}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Leads Table */}
@@ -813,26 +953,31 @@ export default function LeadsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs sm:text-sm text-gray-500 order-2 sm:order-1">
               Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
               {Math.min(currentPage * itemsPerPage, displayLeads.length)} of{" "}
               {displayLeads.length} leads
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 order-1 sm:order-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
+                className="h-8 px-3 text-xs sm:text-sm"
               >
                 Previous
               </Button>
+              <div className="flex items-center px-3 text-xs sm:text-sm font-medium">
+                {currentPage} / {totalPages}
+              </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
+                className="h-8 px-3 text-xs sm:text-sm"
               >
                 Next
               </Button>
@@ -882,7 +1027,7 @@ export default function LeadsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 
   // Render table helper
@@ -901,17 +1046,18 @@ export default function LeadsPage() {
 
     return (
       <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
-        <Table>
+        <div className="overflow-x-auto">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Company</TableHead>
-              <TableHead>Source</TableHead>
+              <TableHead className="hidden sm:table-cell">Company</TableHead>
+              <TableHead className="hidden md:table-cell">Source</TableHead>
               <TableHead>Temperature</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-center">Score</TableHead>
-              <TableHead>Next Action</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead className="text-center hidden lg:table-cell">Score</TableHead>
+              <TableHead className="hidden lg:table-cell">Next Action</TableHead>
+              <TableHead className="hidden md:table-cell">Created</TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
@@ -924,16 +1070,17 @@ export default function LeadsPage() {
               >
                 <TableCell className="font-medium">
                   <div>
-                    {lead.firstName} {lead.lastName}
+                    <div className="text-sm">{lead.firstName} {lead.lastName}</div>
                     {lead.email && (
                       <p className="text-xs text-gray-500">{lead.email}</p>
                     )}
+                    <p className="text-xs text-gray-500 sm:hidden mt-0.5">{lead.companyName || "No company"}</p>
                   </div>
                 </TableCell>
-                <TableCell className="text-sm text-gray-600 dark:text-gray-400">
+                <TableCell className="hidden sm:table-cell text-sm text-gray-600 dark:text-gray-400">
                   {lead.companyName || "---"}
                 </TableCell>
-                <TableCell className="text-sm">
+                <TableCell className="hidden md:table-cell text-sm">
                   {sourceLabels[lead.source] || lead.source}
                 </TableCell>
                 <TableCell>
@@ -942,7 +1089,7 @@ export default function LeadsPage() {
                 <TableCell>
                   <StatusBadge status={lead.status} />
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="hidden lg:table-cell text-center">
                   <span className={`text-sm font-medium ${
                     lead.leadScore >= 70 ? "text-green-600" :
                     lead.leadScore >= 40 ? "text-yellow-600" :
@@ -951,7 +1098,7 @@ export default function LeadsPage() {
                     {lead.leadScore}
                   </span>
                 </TableCell>
-                <TableCell className="text-sm text-gray-600 dark:text-gray-400">
+                <TableCell className="hidden lg:table-cell text-sm text-gray-600 dark:text-gray-400">
                   {lead.nextAction || "---"}
                   {lead.nextActionDate && (
                     <p className="text-xs text-gray-400">
@@ -959,7 +1106,7 @@ export default function LeadsPage() {
                     </p>
                   )}
                 </TableCell>
-                <TableCell className="text-sm text-gray-500">
+                <TableCell className="hidden md:table-cell text-sm text-gray-500">
                   {new Date(lead.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
@@ -1047,6 +1194,7 @@ export default function LeadsPage() {
             ))}
           </TableBody>
         </Table>
+        </div>
       </div>
     )
   }

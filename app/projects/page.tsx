@@ -18,7 +18,7 @@ import {
   ArchiveRestore,
   Trash2,
 } from "lucide-react"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -148,7 +148,7 @@ export default function ProjectsPage() {
     }
   }, [businessId, workspacesLoaded])
 
-  // Listen for project updates from other pages (e.g., Dashboard)
+  // Listen for project updates from other pages (e.g., Workflow)
   useEffect(() => {
     const handleProjectsUpdated = () => {
       console.log("📢 Projects page received projectsUpdated event, reloading...")
@@ -291,7 +291,7 @@ export default function ProjectsPage() {
       // Reload projects list
       await loadProjects()
       
-      // Notify dashboard to refresh
+      // Notify workflow to refresh
       window.dispatchEvent(new Event('projectsUpdated'))
       console.log("📢 [Projects Page] Dispatched projectsUpdated event")
       
@@ -323,7 +323,7 @@ export default function ProjectsPage() {
       // Reload projects
       await loadProjects()
       
-      // Notify dashboard
+      // Notify workflow
       window.dispatchEvent(new Event('projectsUpdated'))
     } catch (error: any) {
       console.error("❌ [Projects Page] Error archiving project:", error)
@@ -348,7 +348,7 @@ export default function ProjectsPage() {
       // Reload projects
       await loadProjects()
       
-      // Notify dashboard
+      // Notify workflow
       window.dispatchEvent(new Event('projectsUpdated'))
     } catch (error: any) {
       console.error("❌ [Projects Page] Error unarchiving project:", error)
@@ -382,7 +382,7 @@ export default function ProjectsPage() {
       // Reload projects
       await loadProjects()
       
-      // Notify dashboard
+      // Notify workflow
       window.dispatchEvent(new Event('projectsUpdated'))
       
       // Close dialog
@@ -415,13 +415,13 @@ export default function ProjectsPage() {
   // Loading state
   if (isLoading) {
     return (
-      <DashboardLayout>
+      <AppLayout>
         <div className="p-6">
           <div className="flex items-center justify-center py-20">
             <div className="text-gray-500">Loading projects...</div>
           </div>
         </div>
-      </DashboardLayout>
+      </AppLayout>
     )
   }
 
@@ -434,7 +434,7 @@ export default function ProjectsPage() {
   }
 
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="p-4 lg:p-6 space-y-6">
         {/* Page Header */}
         <div className="flex items-center justify-between">
@@ -1105,6 +1105,6 @@ export default function ProjectsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 }

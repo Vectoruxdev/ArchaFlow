@@ -47,9 +47,9 @@ Check that all tables exist in your Supabase project:
 
 ## Step 5: Test the Integration
 
-### Dashboard Page
+### Workflow Page
 
-1. Navigate to http://localhost:3002/dashboard
+1. Navigate to http://localhost:3002/workflow
 2. You should see:
    - ✅ Loading indicator initially
    - ✅ 9 sample projects loaded from database
@@ -81,7 +81,7 @@ Check that all tables exist in your Supabase project:
 
 ### Create a Project
 
-1. Go to Dashboard
+1. Go to Workflow
 2. Click "+ New Project/Lead" button
 3. Fill in project details
 4. Click "Create"
@@ -174,14 +174,14 @@ Once everything is working:
 - `supabase-seed-data.sql` - Sample data for testing
 - `lib/supabase/storage.ts` - File upload/download helpers
 - `SUPABASE_STORAGE_SETUP.md` - Storage bucket setup guide
-- `app/dashboard/page.tsx` - Dashboard with Supabase integration
+- `app/workflow/page.tsx` - Workflow with Supabase integration
 - `app/projects/[id]/page.tsx` - Project detail with Supabase
 - `app/projects/page.tsx` - Projects list with Supabase
 
 ## Success Criteria
 
 ✅ All SQL scripts run without errors
-✅ 9 sample projects visible in dashboard
+✅ 9 sample projects visible in workflow
 ✅ Projects load from database (not mock data)
 ✅ Drag-and-drop updates database
 ✅ Tasks can be created and completed

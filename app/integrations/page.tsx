@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -124,7 +124,7 @@ export default function IntegrationsPage() {
   const connectedCount = integrations.filter((i) => i.connected).length
 
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="p-6 lg:p-8 space-y-8">
         {/* Header */}
         <div className="max-w-3xl">
@@ -306,6 +306,6 @@ export default function IntegrationsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 }

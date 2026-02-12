@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import {
-  LayoutDashboard,
+  Workflow,
   Search,
   Bell,
   ChevronDown,
@@ -31,18 +31,26 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useAuth } from "@/lib/auth/auth-context"
+import { isSupabaseConfigured } from "@/lib/supabase/client"
 import { CreateWorkspaceDialog } from "@/components/workspace/create-workspace-dialog"
 import { ChangelogDialog } from "@/components/ui/changelog-dialog"
 import { GlobalSearch, useGlobalSearchHotkeys } from "@/components/search/global-search"
 import { navigationItems } from "@/lib/navigation"
 import { APP_VERSION } from "@/lib/app-version"
 
-export function DashboardLayout({ children }: { children: React.ReactNode }) {
+export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const authContext = useAuth()
-  const { user, workspaces, currentWorkspace, switchWorkspace, signOut } = authContext || {}
+  const { user, workspaces, currentWorkspace, switchWorkspace, signOut, loading: authLoading } = authContext || {}
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Redirect unauthenticated users to login
+  useEffect(() => {
+    if (!authLoading && isSupabaseConfigured() && !user) {
+      router.push("/login")
+    }
+  }, [authLoading, user, router])
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false)
   const [showChangelog, setShowChangelog] = useState(false)
@@ -98,6 +106,20 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Get user initials for avatar
   const userInitials = user?.email?.slice(0, 2).toUpperCase() || "U"
 
+  // Show loading while checking auth or redirecting to login
+  if (authLoading || (isSupabaseConfigured() && !user)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 bg-black dark:bg-white rounded-lg flex items-center justify-center animate-pulse">
+            <div className="w-5 h-5 border-2 border-white dark:border-black rotate-45" />
+          </div>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <TooltipProvider delayDuration={0}>
       <div className="min-h-screen bg-white dark:bg-black">
@@ -110,7 +132,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg"
               >
-                <LayoutDashboard className="w-5 h-5" />
+                <Workflow className="w-5 h-5" />
               </button>
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
@@ -136,6 +158,15 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
             {/* Right Actions */}
             <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden shrink-0"
+                onClick={() => setSearchOpen(true)}
+                aria-label="Open search"
+              >
+                <Search className="w-5 h-5" />
+              </Button>
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
@@ -259,7 +290,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       </TooltipTrigger>
                       <TooltipContent side="right">
                         <p>{item.label}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{item.hotkey}</p>
                       </TooltipContent>
                     </Tooltip>
                   )
@@ -280,7 +310,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   >
                     <item.icon className="w-5 h-5 shrink-0" />
                     <span className="flex-1 truncate">{item.label}</span>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500 shrink-0">{item.hotkey}</span>
                   </button>
                 )
               })}
@@ -320,7 +349,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                       setIsMobileMenuOpen(false)
                     }
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900"
                 >
                   <ChevronLeft className="w-5 h-5 hidden lg:block" />
                   <X className="w-5 h-5 lg:hidden" />

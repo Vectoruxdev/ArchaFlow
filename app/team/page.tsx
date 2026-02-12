@@ -1,12 +1,12 @@
 "use client"
 
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { UsersRound, Plus } from "lucide-react"
 
 export default function TeamPage() {
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-6">
         <div className="text-center max-w-md">
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -22,6 +22,6 @@ export default function TeamPage() {
           </Button>
         </div>
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 }

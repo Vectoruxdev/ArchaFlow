@@ -108,7 +108,7 @@ function AcceptInviteContent() {
         if (detailsData.businessId) {
           localStorage.setItem("currentWorkspaceId", detailsData.businessId)
         }
-        setTimeout(() => router.push("/dashboard"), 2000)
+        setTimeout(() => router.push("/workflow"), 2000)
         return
       }
 
@@ -136,7 +136,7 @@ function AcceptInviteContent() {
         if (result.business_id) {
           localStorage.setItem("currentWorkspaceId", result.business_id)
         }
-        router.push("/dashboard")
+        router.push("/workflow")
       }, 2000)
     } catch (error: any) {
       setStatus("error")
@@ -205,15 +205,15 @@ function AcceptInviteContent() {
             <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
             <h1 className="text-xl font-semibold">Invitation Accepted!</h1>
             <p className="text-sm text-gray-500">{message}</p>
-            <p className="text-xs text-gray-400">Redirecting to dashboard...</p>
+            <p className="text-xs text-gray-400">Redirecting to Workflow...</p>
           </div>
         ) : (
           <div className="space-y-4">
             <XCircle className="w-12 h-12 text-red-500 mx-auto" />
             <h1 className="text-xl font-semibold">Something went wrong</h1>
             <p className="text-sm text-gray-500">{message}</p>
-            <Button variant="outline" onClick={() => router.push("/dashboard")}>
-              Go to Dashboard
+            <Button variant="outline" onClick={() => router.push("/workflow")}>
+              Go to Workflow
             </Button>
           </div>
         )}

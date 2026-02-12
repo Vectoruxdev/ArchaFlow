@@ -53,7 +53,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { LeadFormModal, type LeadFormData } from "@/components/leads/lead-form-modal"
 import { LogActivityModal, type ActivityFormData } from "@/components/leads/log-activity-modal"
 import { authFetch } from "@/lib/auth/auth-fetch"
@@ -806,14 +806,14 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   const isConverted = !!lead?.convertedAt
 
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
         {/* Sticky Header */}
         <div className="sticky top-0 z-10 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
           <div className="p-4 lg:p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" onClick={handleBack}>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4 min-w-0 flex-1">
+                <Button variant="ghost" size="icon" onClick={handleBack} className="shrink-0">
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
                 {isLoading ? (
@@ -827,9 +827,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                     <p className="text-sm text-gray-500 mt-1">{loadError}</p>
                   </div>
                 ) : lead ? (
-                  <div>
-                    <div className="flex items-center gap-3">
-                      <h1 className="text-2xl font-semibold">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h1 className="text-xl sm:text-2xl font-semibold truncate">
                         {lead.firstName} {lead.lastName}
                       </h1>
                       <TemperatureBadge temperature={lead.temperature} />
@@ -853,17 +853,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                 ) : null}
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap gap-2 w-full sm:w-auto shrink-0">
                 {!isConverted && (
                   <>
-                    <Button
-                      variant="outline"
-                      onClick={() => setIsEditOpen(true)}
-                      disabled={!lead}
-                    >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit
-                    </Button>
                     <Button
                       onClick={() => setIsConvertDialogOpen(true)}
                       disabled={!lead}
@@ -1766,6 +1758,6 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 }

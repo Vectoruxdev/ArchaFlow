@@ -14,7 +14,7 @@ A professional architecture project management platform built with Next.js, Type
 - **Semantic colors**: Blue for leads, yellow for active stages, green for completed
 - **Dark mode**: Full dark mode support (enabled by default)
 
-### 📊 Dashboard
+### 📊 Workflow
 - **Quick Stats**: Active projects, pending invoices, overdue tasks, team workload
 - **Kanban Board**: Drag-and-drop project cards across 4 stages (Lead, Sale, Design, Completed)
 - **Activity Feed**: Real-time updates on project activities
@@ -23,7 +23,7 @@ A professional architecture project management platform built with Next.js, Type
 ### 🔐 Authentication
 - Clean login page with email/password
 - Google OAuth integration (UI ready)
-- Automatic redirect to dashboard after login
+- Automatic redirect to Workflow after login
 
 ### 🎯 Project Management
 - Visual project cards with client info, due dates, assignees
@@ -69,8 +69,8 @@ npm start
 ```
 ArchaFlow/
 ├── app/
-│   ├── dashboard/
-│   │   └── page.tsx          # Main dashboard with Kanban board
+│   ├── workflow/
+│   │   └── page.tsx          # Main workflow with Kanban board
 │   ├── globals.css            # Global styles and Tailwind config
 │   ├── layout.tsx             # Root layout with Inter font
 │   └── page.tsx               # Login page
@@ -109,13 +109,13 @@ ArchaFlow/
 - [ ] Advanced reporting and analytics
 
 ### Current Mock Data
-The dashboard currently uses mock data for:
+The workflow page currently uses mock data for:
 - 9 sample projects across all stages
 - 6 recent activity items
 - 4 quick stat cards
 - Team member avatars
 
-Replace the mock data in `app/dashboard/page.tsx` with real API calls when ready.
+Replace the mock data in `app/workflow/page.tsx` with real API calls when ready.
 
 ## Customization
 
@@ -126,7 +126,7 @@ Edit `app/globals.css` to customize the color scheme. The current palette follow
 All UI components are in `components/ui/` and can be customized or extended.
 
 ### Layout
-Modify `app/dashboard/page.tsx` to adjust the dashboard layout, add new sections, or change the Kanban columns.
+Modify `app/workflow/page.tsx` to adjust the workflow layout, add new sections, or change the Kanban columns.
 
 ## License
 

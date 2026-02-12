@@ -24,7 +24,7 @@ Created comprehensive schema with 9 tables:
 - Auto-updating timestamps (updated_at triggers)
 - Multi-tenancy support (business_id isolation)
 
-### 2. ✅ Dashboard Integration (`app/dashboard/page.tsx`)
+### 2. ✅ Workflow Integration (`app/workflow/page.tsx`)
 
 - Load projects from Supabase with related data
 - Load dynamic Kanban columns from database
@@ -98,7 +98,7 @@ project-files/
 6. `SUPABASE_INTEGRATION_COMPLETE.md` - This file
 
 ### Modified Files
-1. `app/dashboard/page.tsx` - Added Supabase integration
+1. `app/workflow/page.tsx` - Added Supabase integration
 2. `app/projects/[id]/page.tsx` - Connected to database
 3. `app/projects/page.tsx` - Fetch from Supabase
 
@@ -127,7 +127,7 @@ project-files/
    ```
 
 5. **Test the App:**
-   - Visit http://localhost:3002/dashboard
+   - Visit http://localhost:3002/workflow
    - See 9 projects loaded from database
    - Drag projects between columns
    - Click on "Kanab Custom Home" to see full integration
@@ -150,7 +150,7 @@ project-files/
 
 ### Immediate Next Steps:
 1. Run the SQL scripts in Supabase
-2. Test the dashboard and project pages
+2. Test the workflow and project pages
 3. Verify data persists after refresh
 4. Set up storage bucket for file uploads
 
@@ -176,7 +176,7 @@ project-files/
    - Export to PDF/CSV
    - Email notifications
    - Activity timeline
-   - Dashboard analytics
+   - Workflow analytics
 
 5. **Production Ready**
    - Stricter RLS policies
@@ -188,7 +188,7 @@ project-files/
 ## Testing Checklist
 
 - [ ] All SQL scripts run without errors
-- [ ] 9 projects visible in dashboard
+- [ ] 9 projects visible in workflow
 - [ ] Drag-and-drop updates database
 - [ ] Project detail page loads correctly
 - [ ] Tasks can be created and marked complete

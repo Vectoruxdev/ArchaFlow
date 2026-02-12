@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -531,8 +531,8 @@ export default function SettingsPage() {
       await deleteWorkspace(currentWorkspace.id)
       setIsDeleteWorkspaceOpen(false)
       setDeleteConfirmName("")
-      // Navigate to dashboard -- it will auto-select another workspace or show empty state
-      router.push("/dashboard")
+      // Navigate to workflow -- it will auto-select another workspace or show empty state
+      router.push("/workflow")
     } catch (error: any) {
       console.error("Error deleting workspace:", error)
       setWorkspaceActionError(error.message || "Failed to delete workspace")
@@ -570,8 +570,8 @@ export default function SettingsPage() {
     try {
       await leaveWorkspace(currentWorkspace.id)
       setIsLeaveWorkspaceOpen(false)
-      // Navigate to dashboard -- it will auto-select another workspace or show empty state
-      router.push("/dashboard")
+      // Navigate to workflow -- it will auto-select another workspace or show empty state
+      router.push("/workflow")
     } catch (error: any) {
       console.error("Error leaving workspace:", error)
       setWorkspaceActionError(error.message || "Failed to leave workspace")
@@ -581,7 +581,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="p-6 max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -1648,6 +1648,6 @@ export default function SettingsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </DashboardLayout>
+    </AppLayout>
   )
 }

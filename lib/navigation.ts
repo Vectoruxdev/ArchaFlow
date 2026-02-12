@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react"
 import {
-  LayoutDashboard,
+  Workflow,
   FolderKanban,
   Users,
   FileText,
@@ -18,7 +18,7 @@ export interface NavItem {
 }
 
 export const navigationItems: NavItem[] = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard", hotkey: "⌘⇧D" },
+  { icon: Workflow, label: "Workflow", href: "/workflow", hotkey: "⌘⇧W" },
   { icon: Target, label: "Leads", href: "/leads", hotkey: "⌘⇧L" },
   { icon: FolderKanban, label: "Projects", href: "/projects", hotkey: "⌘⇧P" },
   { icon: Users, label: "Clients", href: "/clients", hotkey: "⌘⇧C" },
@@ -30,7 +30,7 @@ export const navigationItems: NavItem[] = [
 
 // Map hotkey display string to key combo for matching
 const hotkeyToCombo: Record<string, { meta: boolean; shift: boolean; key: string }> = {
-  "⌘⇧D": { meta: true, shift: true, key: "d" },
+  "⌘⇧W": { meta: true, shift: true, key: "w" },
   "⌘⇧L": { meta: true, shift: true, key: "l" },
   "⌘⇧P": { meta: true, shift: true, key: "p" },
   "⌘⇧C": { meta: true, shift: true, key: "c" },

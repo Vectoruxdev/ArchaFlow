@@ -33,9 +33,24 @@ interface GlobalSearchProps {
   onOpenChange: (open: boolean) => void
 }
 
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(true)
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)")
+    setIsDesktop(mq.matches)
+    const handler = () => setIsDesktop(mq.matches)
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
+  }, [])
+
+  return isDesktop
+}
+
 export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
   const router = useRouter()
   const { currentWorkspace } = useAuth()
+  const isDesktop = useIsDesktop()
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResult | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -259,7 +274,9 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
       </CommandList>
 
       <div className="border-t px-3 py-2 text-xs text-muted-foreground">
-        Press ↑↓ to navigate, Enter to select • {COMMAND_PALETTE_HOTKEY} to open
+        {isDesktop
+          ? `Press ↑↓ to navigate, Enter to select • ${COMMAND_PALETTE_HOTKEY} to open`
+          : "Tap to select"}
       </div>
     </CommandDialog>
   )
@@ -267,8 +284,19 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
 
 export function useGlobalSearchHotkeys(onOpen: () => void) {
   const router = useRouter()
+  const [isDesktop, setIsDesktop] = useState(true)
 
   useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)")
+    setIsDesktop(mq.matches)
+    const handler = () => setIsDesktop(mq.matches)
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
+  }, [])
+
+  useEffect(() => {
+    if (!isDesktop) return
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const isMac = typeof navigator !== "undefined" && navigator.platform?.toLowerCase().includes("mac")
       const meta = isMac ? e.metaKey : e.ctrlKey
@@ -288,5 +316,5 @@ export function useGlobalSearchHotkeys(onOpen: () => void) {
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [onOpen, router])
+  }, [onOpen, router, isDesktop])
 }

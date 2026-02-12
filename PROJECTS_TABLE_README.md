@@ -99,20 +99,20 @@ interface Project {
 
 ## Navigation
 
-### From Dashboard
+### From Workflow
 Click "Projects" in the left sidebar navigation
 
 ### To Project Detail
 - Click any table row
 - Click "View Details" in actions dropdown
-- Click eye icon on project card (from dashboard)
+- Click eye icon on project card (from workflow)
 
-### Back to Dashboard
+### Back to Workflow
 Click the back arrow in the header
 
 ## Sample Data
 
-All 9 projects from the dashboard are displayed:
+All 9 projects from the workflow are displayed:
 1. Modern Villa Design (Lead) - $350k
 2. Office Complex Renovation (Lead) - $850k
 3. Residential Tower (Sale) - $2.5M

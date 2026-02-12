@@ -4,7 +4,7 @@ import { updateSession } from '@/lib/supabase/middleware'
 // Define public routes that don't require authentication
 const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password']
 
-// Define auth routes that should redirect to dashboard if already authenticated
+// Define auth routes that should redirect to workflow if already authenticated
 const authRoutes = ['/login', '/signup', '/forgot-password', '/reset-password']
 
 export async function middleware(request: NextRequest) {

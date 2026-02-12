@@ -85,7 +85,7 @@ Dependencies have been installed:
 - **Multi-tenancy** - Users only see their workspace data
 - **Password Requirements** - Minimum 8 characters
 - **Session Management** - Automatic refresh via middleware
-- **Protected Routes** - Auth required for dashboard pages
+- **Protected Routes** - Auth required for workflow and other pages
 
 ## User Flows
 
@@ -99,7 +99,7 @@ Dependencies have been installed:
    - Creates 4 default roles (Owner, Admin, Editor, Viewer)
    - Assigns user as Owner
    - Creates user profile
-5. User redirected to `/dashboard`
+5. User redirected to `/workflow`
 6. AuthProvider loads user's workspaces
 
 ### Login Flow
@@ -109,7 +109,7 @@ Dependencies have been installed:
 3. Supabase validates credentials
 4. AuthProvider loads user's workspaces
 5. Sets current workspace (last used or first available)
-6. User redirected to `/dashboard`
+6. User redirected to `/workflow`
 
 ### Workspace Switching
 
@@ -146,7 +146,7 @@ Dependencies have been installed:
    - Confirm Password: "password123"
    - Accept terms
 6. Click "Create account"
-7. Should redirect to `/dashboard`
+7. Should redirect to `/workflow`
 8. Check Supabase dashboard:
    - **Authentication** → **Users**: New user should appear
    - **Table Editor** → **businesses**: New workspace created
@@ -158,7 +158,7 @@ Dependencies have been installed:
 1. Visit `/login`
 2. Enter credentials from signup
 3. Click "Sign in"
-4. Should redirect to `/dashboard`
+4. Should redirect to `/workflow`
 5. Workspace selector should show your workspace
 
 ### Test Logout
@@ -169,7 +169,7 @@ Dependencies have been installed:
 
 ### Test Workspace Creation
 
-1. Login to dashboard
+1. Login to Workflow
 2. Click workspace dropdown in sidebar
 3. Click "Create Workspace"
 4. Enter:
@@ -185,7 +185,7 @@ Dependencies have been installed:
 ### Test Protected Routes
 
 1. Logout (if logged in)
-2. Try to visit `/dashboard` directly
+2. Try to visit `/workflow` directly
 3. Middleware refreshes session (finds none)
 4. AuthProvider redirects to `/login`
 5. Try `/settings`, `/projects`, etc. - all should redirect to login
@@ -201,7 +201,7 @@ Middleware (middleware.ts)
     ↓ (refreshes session)
 AuthProvider (auth-context.tsx)
     ↓ (manages state)
-Dashboard/Pages
+Workflow/Pages
     ↓
 Protected Content
 ```

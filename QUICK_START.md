@@ -9,9 +9,9 @@ Visit: **http://localhost:3001**
 ### 1. Login Page (`/`)
 - Enter any email and password
 - Click "Sign in"
-- Redirects to dashboard
+- Redirects to Workflow
 
-### 2. Dashboard (`/dashboard`)
+### 2. Workflow (`/workflow`)
 - View 4 quick stat cards
 - See Kanban board with 9 sample projects
 - Drag projects between columns
@@ -27,7 +27,7 @@ Visit: **http://localhost:3001**
 
 ## 🎯 Try These Features
 
-### Dashboard
+### Workflow
 1. **Drag & Drop**: Move "Modern Villa Design" from Lead to Sale
 2. **Search**: Use the search bar in the header
 3. **Profile Menu**: Click your avatar (top-right)
@@ -41,7 +41,7 @@ Visit: **http://localhost:3001**
 4. **Toggle Task**: Check/uncheck tasks in Tasks tab
 5. **Generate Invoice**: Click "Generate Invoice" in Invoices tab
 6. **View Files**: See file grid in Attachments tab
-7. **Back to Dashboard**: Click back arrow (top-left)
+7. **Back to Workflow**: Click back arrow (top-left)
 
 ## 📱 Responsive Testing
 
@@ -84,7 +84,7 @@ Visit: **http://localhost:3001**
 ```
 app/
 ├── page.tsx                    # Login page
-├── dashboard/page.tsx          # Main dashboard
+├── workflow/page.tsx          # Main workflow
 └── projects/[id]/page.tsx      # Project detail
 
 components/
@@ -97,7 +97,7 @@ components/
 ```
 
 ### Mock Data Locations
-- **Dashboard**: `app/dashboard/page.tsx` (lines 42-100)
+- **Workflow**: `app/workflow/page.tsx` (lines 42-100)
 - **Project Detail**: `app/projects/[id]/page.tsx` (lines 30-200)
 
 ### Adding Real Data
@@ -163,7 +163,7 @@ Save the file again or restart the server with Ctrl+C then `npm run dev`.
 
 ## 🚀 Next Steps
 
-1. ✅ Explore the dashboard
+1. ✅ Explore the workflow
 2. ✅ View project details
 3. ✅ Test responsive design
 4. ✅ Try all interactive features

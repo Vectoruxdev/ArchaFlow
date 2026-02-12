@@ -1,12 +1,12 @@
 "use client"
 
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { EmptyState } from "@/components/ui/empty-state"
 import { FileText } from "lucide-react"
 
 export default function InvoicesPage() {
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="p-6">
         <EmptyState
           icon={FileText}
@@ -21,6 +21,6 @@ export default function InvoicesPage() {
           }}
         />
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 }

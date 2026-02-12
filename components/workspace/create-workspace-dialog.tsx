@@ -83,7 +83,7 @@ export function CreateWorkspaceDialog({ open, onOpenChange }: CreateWorkspaceDia
             <label className="block text-sm font-medium mb-2">
               Choose an Icon
             </label>
-            <div className="grid grid-cols-8 gap-2">
+            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
               {iconOptions.map((icon) => (
                 <button
                   key={icon}

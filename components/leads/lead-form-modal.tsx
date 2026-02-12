@@ -173,7 +173,7 @@ export function LeadFormModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-2xl max-h-[90vh] overflow-y-auto sm:max-h-[90vh] p-4 sm:p-6">
         <DialogHeader>
           <DialogTitle>{lead?.id ? "Edit Lead" : "New Lead"}</DialogTitle>
           <DialogDescription>
@@ -182,7 +182,7 @@ export function LeadFormModal({
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid grid-cols-4 w-full">
+            <TabsList className="flex overflow-x-auto gap-1 p-1 sm:grid sm:grid-cols-4 sm:overflow-visible w-full [&>button]:shrink-0">
               <TabsTrigger value="contact">Contact</TabsTrigger>
               <TabsTrigger value="details">Details</TabsTrigger>
               <TabsTrigger value="status">Status</TabsTrigger>
@@ -191,7 +191,7 @@ export function LeadFormModal({
 
             {/* Contact Tab */}
             <TabsContent value="contact" className="space-y-4 mt-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Unique Customer ID</label>
                   <Input
@@ -216,7 +216,7 @@ export function LeadFormModal({
                   </Select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">First Name *</label>
                   <Input
@@ -236,7 +236,7 @@ export function LeadFormModal({
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Email</label>
                   <Input
@@ -331,7 +331,7 @@ export function LeadFormModal({
                   onChange={(e) => update("budget", e.target.value)}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Square Footage</label>
                   <Input
@@ -365,7 +365,7 @@ export function LeadFormModal({
                 const finalTotal = total != null ? total - discount : null
                 const hasDiscount = discount > 0
                 return (
-                  <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-3 px-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 py-3 px-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-500">Total Price</span>
                       <span className="text-sm font-medium tabular-nums">
@@ -377,23 +377,25 @@ export function LeadFormModal({
                         )}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                       <span className="text-sm text-gray-500">Discount</span>
-                      <Select value={formData.discountType || "_none"} onValueChange={(v) => update("discountType", v === "_none" ? "" : v)}>
-                        <SelectTrigger className="w-[120px] h-9"><SelectValue placeholder="Type" /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="_none">None</SelectItem>
-                          <SelectItem value="percent">Percent</SelectItem>
-                          <SelectItem value="fixed">Fixed</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        type="number"
-                        className="w-20 h-9"
-                        placeholder={formData.discountType === "percent" ? "10" : "5000"}
-                        value={formData.discountValue}
-                        onChange={(e) => update("discountValue", e.target.value)}
-                      />
+                      <div className="flex gap-2">
+                        <Select value={formData.discountType || "_none"} onValueChange={(v) => update("discountType", v === "_none" ? "" : v)}>
+                          <SelectTrigger className="w-[120px] h-9 shrink-0"><SelectValue placeholder="Type" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="_none">None</SelectItem>
+                            <SelectItem value="percent">Percent</SelectItem>
+                            <SelectItem value="fixed">Fixed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Input
+                          type="number"
+                          className="w-24 sm:w-20 h-9 shrink-0"
+                          placeholder={formData.discountType === "percent" ? "10" : "5000"}
+                          value={formData.discountValue}
+                          onChange={(e) => update("discountValue", e.target.value)}
+                        />
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-500">Final Total</span>
@@ -408,7 +410,7 @@ export function LeadFormModal({
             <TabsContent value="status" className="space-y-4 mt-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Temperature</label>
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   {(["cold", "warm", "hot"] as const).map((temp) => (
                     <button
                       key={temp}
@@ -450,7 +452,7 @@ export function LeadFormModal({
                   onChange={(e) => update("leadScore", e.target.value)}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Next Action</label>
                   <Input
@@ -501,12 +503,12 @@ export function LeadFormModal({
             </TabsContent>
           </Tabs>
 
-          <DialogFooter className="mt-6">
-            {saveError && <p className="text-sm text-red-600 flex-1">{saveError}</p>}
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
+          <DialogFooter className="mt-6 flex-col sm:flex-row gap-2">
+            {saveError && <p className="text-sm text-red-600 w-full order-first">{saveError}</p>}
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving} className="w-full sm:w-auto">
               Cancel
             </Button>
-            <Button type="submit" disabled={isSaving}>
+            <Button type="submit" disabled={isSaving} className="w-full sm:w-auto">
               {isSaving ? "Saving..." : lead?.id ? "Save Changes" : "Add Lead"}
             </Button>
           </DialogFooter>

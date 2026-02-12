@@ -113,7 +113,7 @@ const handleFileDelete = async (fileId: string, filePath: string) => {
 ## Step 5: Testing
 
 1. Make sure your `.env.local` has the correct Supabase credentials
-2. Try uploading a file through the dashboard or project detail page
+2. Try uploading a file through the workflow or project detail page
 3. Check that the file appears in the Storage bucket
 4. Verify that the file URL is accessible
 

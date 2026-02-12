@@ -211,17 +211,17 @@ const invoice = await stripe.invoices.create({
 ## Usage
 
 ### Navigating to Project Detail
-From the dashboard, click the eye icon on any project card:
+From the workflow, click the eye icon on any project card:
 
 ```typescript
 router.push(`/projects/${project.id}`)
 ```
 
 ### Back Navigation
-Click the back arrow in the header to return to dashboard:
+Click the back arrow in the header to return to workflow:
 
 ```typescript
-router.push("/dashboard")
+router.push("/workflow")
 ```
 
 ## Customization
@@ -268,7 +268,7 @@ The page includes a fully populated sample project:
 - **3 Invoices** with various statuses
 
 ## Testing Checklist
-- [ ] Navigate from dashboard to project detail
+- [ ] Navigate from workflow to project detail
 - [ ] Switch between all tabs
 - [ ] Add a comment
 - [ ] Toggle task completion

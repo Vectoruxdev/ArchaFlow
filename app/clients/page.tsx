@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -380,20 +380,20 @@ export default function ClientsPage() {
   // Loading state
   if (isLoading) {
     return (
-      <DashboardLayout>
+      <AppLayout>
         <div className="p-6">
           <div className="flex items-center justify-center py-20">
             <div className="text-gray-500">Loading clients...</div>
           </div>
         </div>
-      </DashboardLayout>
+      </AppLayout>
     )
   }
 
   // Empty State (no clients at all)
   if (clients.length === 0 && !searchQuery) {
     return (
-      <DashboardLayout>
+      <AppLayout>
         <div className="p-6">
           <EmptyState
             icon={Users}
@@ -414,12 +414,12 @@ export default function ClientsPage() {
             onSave={handleSave}
           />
         </div>
-      </DashboardLayout>
+      </AppLayout>
     )
   }
 
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -543,7 +543,7 @@ export default function ClientsPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 
   // Render table helper
@@ -564,7 +564,8 @@ export default function ClientsPage() {
 
     return (
       <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
-        <Table>
+        <div className="overflow-x-auto">
+          <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -690,6 +691,7 @@ export default function ClientsPage() {
             ))}
           </TableBody>
         </Table>
+        </div>
       </div>
     )
   }

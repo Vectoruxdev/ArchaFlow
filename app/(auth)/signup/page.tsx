@@ -53,7 +53,7 @@ function SignupContent() {
 
     try {
       await signUp(email, password, fullName, workspaceName || `${fullName}'s Workspace`)
-      router.push(redirect ?? "/dashboard")
+      router.push(redirect ?? "/workflow")
     } catch (err: any) {
       setError(err.message || "Failed to create account")
     } finally {

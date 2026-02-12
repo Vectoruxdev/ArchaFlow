@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useState } from "react"
+import { Suspense, useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth/auth-context"
@@ -11,8 +11,15 @@ function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get("redirect")
-  const { signIn } = useAuth()
+  const { signIn, user, loading: authLoading } = useAuth()
   const [email, setEmail] = useState("")
+
+  // Redirect authenticated users to workflow
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.push(redirect ?? "/workflow")
+    }
+  }, [authLoading, user, router, redirect])
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -24,7 +31,7 @@ function LoginContent() {
 
     try {
       await signIn(email, password)
-      router.push(redirect ?? "/dashboard")
+      router.push(redirect ?? "/workflow")
     } catch (err: any) {
       setError(err.message || "Failed to sign in")
     } finally {

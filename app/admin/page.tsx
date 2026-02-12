@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { DashboardLayout } from "@/components/layout/dashboard-layout"
+import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -76,7 +76,7 @@ export default function AdminPage() {
 
   if (currentUserRole !== "admin") {
     return (
-      <DashboardLayout>
+      <AppLayout>
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-6">
           <div className="text-center max-w-md">
             <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -88,7 +88,7 @@ export default function AdminPage() {
             </p>
           </div>
         </div>
-      </DashboardLayout>
+      </AppLayout>
     )
   }
 
@@ -121,12 +121,12 @@ export default function AdminPage() {
   }
 
   return (
-    <DashboardLayout>
+    <AppLayout>
       <div className="p-6 space-y-6">
         {/* Header */}
         <div>
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <span>Dashboard</span>
+            <span>Workflow</span>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gray-900 dark:text-gray-100">Team Management</span>
           </div>
@@ -509,6 +509,6 @@ export default function AdminPage() {
           </DialogContent>
         </Dialog>
       </div>
-    </DashboardLayout>
+    </AppLayout>
   )
 }
