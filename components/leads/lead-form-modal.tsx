@@ -25,6 +25,8 @@ import { CityCombobox } from "@/components/ui/city-combobox"
 
 export interface LeadFormData {
   id?: string
+  uniqueCustomerIdentifier: string
+  leadTypeId: string
   firstName: string
   lastName: string
   email: string
@@ -51,6 +53,8 @@ export interface LeadFormData {
 }
 
 const emptyForm = (): LeadFormData => ({
+  uniqueCustomerIdentifier: "",
+  leadTypeId: "",
   firstName: "",
   lastName: "",
   email: "",
@@ -117,12 +121,15 @@ const statusOptions = [
   { value: "lost", label: "Lost" },
 ]
 
+type LeadTypeOption = { id: string; label: string }
+
 interface LeadFormModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   lead?: LeadFormData | null
   onSave: (data: LeadFormData) => Promise<void> | void
   workspaceUsers?: { id: string; email: string; name?: string }[]
+  leadTypes?: LeadTypeOption[]
 }
 
 export function LeadFormModal({
@@ -131,6 +138,7 @@ export function LeadFormModal({
   lead,
   onSave,
   workspaceUsers = [],
+  leadTypes = [],
 }: LeadFormModalProps) {
   const [formData, setFormData] = useState<LeadFormData>(emptyForm())
   const [isSaving, setIsSaving] = useState(false)
@@ -183,6 +191,31 @@ export function LeadFormModal({
 
             {/* Contact Tab */}
             <TabsContent value="contact" className="space-y-4 mt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Unique Customer ID</label>
+                  <Input
+                    placeholder="e.g., CUST-001"
+                    value={formData.uniqueCustomerIdentifier}
+                    onChange={(e) => update("uniqueCustomerIdentifier", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Lead Type</label>
+                  <Select
+                    value={formData.leadTypeId || "_none"}
+                    onValueChange={(v) => update("leadTypeId", v === "_none" ? "" : v)}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Select lead type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="_none">Select lead type</SelectItem>
+                      {leadTypes.map((lt) => (
+                        <SelectItem key={lt.id} value={lt.id}>{lt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">First Name *</label>

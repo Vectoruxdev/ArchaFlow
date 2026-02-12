@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
   Table,
   TableBody,
   TableCell,
@@ -52,11 +57,17 @@ import {
   Archive,
   ArchiveRestore,
   ArrowRightCircle,
+  Calendar,
+  Activity,
+  LayoutList,
 } from "lucide-react"
 
 // Types
 interface Lead {
   id: string
+  uniqueCustomerIdentifier: string
+  leadTypeId: string | null
+  leadTypeName: string | null
   firstName: string
   lastName: string
   email: string
@@ -87,6 +98,60 @@ interface Lead {
   archivedAt: string | null
   createdAt: string
   updatedAt: string
+}
+
+type DatePreset = "today" | "7d" | "14d" | "30d" | "365d" | "custom"
+
+interface LeadsStats {
+  newLeadsCount: number
+  followUpsCount: number
+}
+
+function getDateRange(
+  preset: DatePreset,
+  customStart?: string,
+  customEnd?: string
+): { start: string; end: string } {
+  const now = new Date()
+  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999)
+
+  if (preset === "custom" && customStart && customEnd) {
+    const start = new Date(customStart)
+    const end = new Date(customEnd)
+    start.setHours(0, 0, 0, 0)
+    end.setHours(23, 59, 59, 999)
+    return { start: start.toISOString(), end: end.toISOString() }
+  }
+
+  let start: Date
+  switch (preset) {
+    case "today":
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+      break
+    case "7d":
+      start = new Date(now)
+      start.setDate(start.getDate() - 6)
+      start.setHours(0, 0, 0, 0)
+      break
+    case "14d":
+      start = new Date(now)
+      start.setDate(start.getDate() - 13)
+      start.setHours(0, 0, 0, 0)
+      break
+    case "30d":
+      start = new Date(now)
+      start.setDate(start.getDate() - 29)
+      start.setHours(0, 0, 0, 0)
+      break
+    case "365d":
+      start = new Date(now)
+      start.setDate(start.getDate() - 364)
+      start.setHours(0, 0, 0, 0)
+      break
+    default:
+      start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+  }
+  return { start: start.toISOString(), end: endOfToday.toISOString() }
 }
 
 const sourceLabels: Record<string, string> = {
@@ -157,7 +222,13 @@ export default function LeadsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [workspaceUsers, setWorkspaceUsers] = useState<{ id: string; email: string; name?: string }[]>([])
+  const [leadTypes, setLeadTypes] = useState<{ id: string; label: string }[]>([])
   const [salesAgentsForFilter, setSalesAgentsForFilter] = useState<{ id: string; email: string; name?: string }[]>([])
+  const [datePreset, setDatePreset] = useState<DatePreset>("7d")
+  const [customStart, setCustomStart] = useState("")
+  const [customEnd, setCustomEnd] = useState("")
+  const [leadsStats, setLeadsStats] = useState<LeadsStats | null>(null)
+  const [statsLoading, setStatsLoading] = useState(false)
   const itemsPerPage = 10
 
   const businessId = currentWorkspace?.id
@@ -167,6 +238,7 @@ export default function LeadsPage() {
     if (businessId) {
       loadLeads()
       loadWorkspaceUsers()
+      loadLeadTypes()
     }
   }, [businessId])
 
@@ -176,16 +248,20 @@ export default function LeadsPage() {
     setLoadError(null)
 
     try {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .eq("business_id", businessId)
-        .order("created_at", { ascending: false })
+      const [{ data: leadsData, error: leadsError }, { data: typesData }] = await Promise.all([
+        supabase.from("leads").select("*").eq("business_id", businessId).order("created_at", { ascending: false }),
+        supabase.from("lead_types").select("id, label").eq("business_id", businessId).order("order_index", { ascending: true }),
+      ])
 
-      if (error) throw error
+      if (leadsError) throw leadsError
 
-      const transformed: Lead[] = (data || []).map((l: any) => ({
+      const leadTypeMap = Object.fromEntries((typesData || []).map((lt: any) => [lt.id, lt.label]))
+
+      const transformed: Lead[] = (leadsData || []).map((l: any) => ({
         id: l.id,
+        uniqueCustomerIdentifier: l.unique_customer_identifier || "",
+        leadTypeId: l.lead_type_id || null,
+        leadTypeName: l.lead_type_id ? leadTypeMap[l.lead_type_id] || null : null,
         firstName: l.first_name,
         lastName: l.last_name,
         email: l.email || "",
@@ -264,12 +340,84 @@ export default function LeadsPage() {
     }
   }
 
+  const loadLeadTypes = async () => {
+    if (!businessId) return
+    try {
+      const { data, error } = await supabase
+        .from("lead_types")
+        .select("id, label")
+        .eq("business_id", businessId)
+        .order("order_index", { ascending: true })
+
+      if (error) throw error
+      setLeadTypes((data || []).map((lt: any) => ({ id: lt.id, label: lt.label })))
+    } catch (error: any) {
+      console.error("Error loading lead types:", error)
+      setLeadTypes([])
+    }
+  }
+
+  const loadLeadsStats = async () => {
+    if (!businessId) return
+    const { start, end } = getDateRange(datePreset, customStart, customEnd)
+    if (datePreset === "custom" && (!customStart || !customEnd)) {
+      setLeadsStats(null)
+      return
+    }
+    setStatsLoading(true)
+    try {
+      const [{ data: leadsData, error: leadsError }, { data: leadIdsData }] = await Promise.all([
+        supabase
+          .from("leads")
+          .select("id")
+          .eq("business_id", businessId)
+          .gte("created_at", start)
+          .lte("created_at", end),
+        supabase
+          .from("leads")
+          .select("id")
+          .eq("business_id", businessId),
+      ])
+      if (leadsError) throw leadsError
+
+      const newLeadsCount = leadsData?.length ?? 0
+
+      const leadIds = (leadIdsData || []).map((l: { id: string }) => l.id)
+      let followUpsCount = 0
+      if (leadIds.length > 0) {
+        const { count, error: actsError } = await supabase
+          .from("lead_activities")
+          .select("id", { count: "exact", head: true })
+          .in("lead_id", leadIds)
+          .gte("created_at", start)
+          .lte("created_at", end)
+        if (!actsError) followUpsCount = count ?? 0
+      }
+
+      setLeadsStats({
+        newLeadsCount,
+        followUpsCount,
+      })
+    } catch (error: any) {
+      console.error("Error loading leads stats:", error)
+      setLeadsStats(null)
+    } finally {
+      setStatsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (businessId) loadLeadsStats()
+  }, [businessId, datePreset, customStart, customEnd])
+
   // CRUD: Create or Update lead
   const handleSave = async (formData: LeadFormData) => {
     if (!businessId) throw new Error("No workspace selected")
 
     const payload = {
       business_id: businessId,
+      unique_customer_identifier: formData.uniqueCustomerIdentifier.trim() || null,
+      lead_type_id: formData.leadTypeId || null,
       first_name: formData.firstName.trim(),
       last_name: formData.lastName.trim(),
       email: formData.email.trim() || null,
@@ -309,6 +457,7 @@ export default function LeadsPage() {
     }
 
     await loadLeads()
+    loadLeadsStats()
     setEditingLead(null)
   }
 
@@ -366,6 +515,8 @@ export default function LeadsPage() {
   const handleEdit = (lead: Lead) => {
     setEditingLead({
       id: lead.id,
+      uniqueCustomerIdentifier: lead.uniqueCustomerIdentifier,
+      leadTypeId: lead.leadTypeId || "",
       firstName: lead.firstName,
       lastName: lead.lastName,
       email: lead.email,
@@ -485,6 +636,7 @@ export default function LeadsPage() {
             lead={editingLead}
             onSave={handleSave}
             workspaceUsers={workspaceUsers}
+            leadTypes={leadTypes}
           />
         </div>
       </DashboardLayout>
@@ -506,6 +658,88 @@ export default function LeadsPage() {
             <Plus className="w-4 h-4 mr-2" />
             New Lead
           </Button>
+        </div>
+
+        {/* Date filter and stats */}
+        <div className="rounded-lg border bg-card p-4 space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm font-medium text-muted-foreground">Date range:</span>
+            <Select value={datePreset} onValueChange={(v) => setDatePreset(v as DatePreset)}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="today">Today</SelectItem>
+                <SelectItem value="7d">Last 7 days</SelectItem>
+                <SelectItem value="14d">Last 2 weeks</SelectItem>
+                <SelectItem value="30d">Last month</SelectItem>
+                <SelectItem value="365d">Last year</SelectItem>
+                <SelectItem value="custom">Custom</SelectItem>
+              </SelectContent>
+            </Select>
+            {datePreset === "custom" && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-2">
+                    <Calendar className="w-4 h-4" />
+                    {customStart && customEnd ? `${customStart} – ${customEnd}` : "Select dates"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-4" align="start">
+                  <div className="flex flex-col gap-3">
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">Start</label>
+                      <Input
+                        type="date"
+                        value={customStart}
+                        onChange={(e) => setCustomStart(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground">End</label>
+                      <Input
+                        type="date"
+                        value={customEnd}
+                        onChange={(e) => setCustomEnd(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+
+          {statsLoading ? (
+            <div className="py-8 text-center text-sm text-muted-foreground">Loading stats...</div>
+          ) : leadsStats ? (
+            <div className="grid gap-6 sm:grid-cols-3">
+              <div className="rounded-md border bg-muted/30 p-4">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                  <LayoutList className="w-4 h-4" />
+                  <span className="text-sm font-medium">Total leads</span>
+                </div>
+                <p className="text-2xl font-semibold">{leads.length}</p>
+              </div>
+              <div className="rounded-md border bg-muted/30 p-4">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                  <Target className="w-4 h-4" />
+                  <span className="text-sm font-medium">New leads</span>
+                </div>
+                <p className="text-2xl font-semibold">{leadsStats.newLeadsCount}</p>
+              </div>
+              <div className="rounded-md border bg-muted/30 p-4">
+                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                  <Activity className="w-4 h-4" />
+                  <span className="text-sm font-medium">Follow-ups</span>
+                </div>
+                <p className="text-2xl font-semibold">{leadsStats.followUpsCount}</p>
+              </div>
+            </div>
+          ) : datePreset === "custom" && (!customStart || !customEnd) ? (
+            <div className="py-6 text-center text-sm text-muted-foreground">Select a custom date range to view stats</div>
+          ) : null}
         </div>
 
         {/* Search and Filters */}
@@ -614,6 +848,7 @@ export default function LeadsPage() {
           lead={editingLead}
           onSave={handleSave}
           workspaceUsers={workspaceUsers}
+          leadTypes={leadTypes}
         />
 
         {/* Delete Confirmation Dialog */}

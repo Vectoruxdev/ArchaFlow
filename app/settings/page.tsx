@@ -32,6 +32,7 @@ import {
   GripVertical,
   Building2,
   LogOut,
+  Target,
 } from "lucide-react"
 
 export default function SettingsPage() {
@@ -57,6 +58,15 @@ export default function SettingsPage() {
   const [isAddPositionOpen, setIsAddPositionOpen] = useState(false)
   const [newPosition, setNewPosition] = useState("")
   const [editingPosition, setEditingPosition] = useState<{ id: string; label: string } | null>(null)
+
+  // Lead Types state (persisted in lead_types table)
+  type LeadType = { id: string; label: string; order_index: number }
+  const [leadTypes, setLeadTypes] = useState<LeadType[]>([])
+  const [leadTypesLoading, setLeadTypesLoading] = useState(true)
+  const [leadTypesError, setLeadTypesError] = useState<string | null>(null)
+  const [isAddLeadTypeOpen, setIsAddLeadTypeOpen] = useState(false)
+  const [newLeadType, setNewLeadType] = useState("")
+  const [editingLeadType, setEditingLeadType] = useState<{ id: string; label: string } | null>(null)
 
   // Roles & Permissions state (Supabase)
   type Role = {
@@ -199,6 +209,88 @@ export default function SettingsPage() {
       showSaved()
     } catch (err: unknown) {
       setPositionsError(err instanceof Error ? err.message : "Failed to delete position")
+    }
+  }
+
+  // Load lead types from database
+  const loadLeadTypes = async () => {
+    if (!businessId) return
+    setLeadTypesLoading(true)
+    setLeadTypesError(null)
+    try {
+      const { data, error } = await supabase
+        .from("lead_types")
+        .select("id, label, order_index")
+        .eq("business_id", businessId)
+        .order("order_index", { ascending: true })
+
+      if (error) throw error
+      setLeadTypes((data || []) as LeadType[])
+    } catch (err: unknown) {
+      setLeadTypesError(err instanceof Error ? err.message : "Failed to load lead types")
+      setLeadTypes([])
+    } finally {
+      setLeadTypesLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadLeadTypes()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessId])
+
+  const handleAddLeadType = async () => {
+    const label = newLeadType.trim()
+    if (!label || !businessId || leadTypes.some((lt) => lt.label.toLowerCase() === label.toLowerCase()))
+      return
+    try {
+      const maxOrder = leadTypes.length > 0 ? Math.max(...leadTypes.map((lt) => lt.order_index)) : -1
+      const { data, error } = await supabase
+        .from("lead_types")
+        .insert([{ business_id: businessId, label, order_index: maxOrder + 1 }])
+        .select("id, label, order_index")
+        .single()
+
+      if (error) throw error
+      setLeadTypes((prev) => [...prev, data as LeadType])
+      setNewLeadType("")
+      setIsAddLeadTypeOpen(false)
+      showSaved()
+    } catch (err: unknown) {
+      setLeadTypesError(err instanceof Error ? err.message : "Failed to add lead type")
+    }
+  }
+
+  const handleEditLeadType = async () => {
+    if (!editingLeadType || !editingLeadType.label.trim()) return
+    const label = editingLeadType.label.trim()
+    if (leadTypes.some((lt) => lt.id !== editingLeadType.id && lt.label.toLowerCase() === label.toLowerCase()))
+      return
+    try {
+      const { error } = await supabase
+        .from("lead_types")
+        .update({ label })
+        .eq("id", editingLeadType.id)
+
+      if (error) throw error
+      setLeadTypes((prev) =>
+        prev.map((lt) => (lt.id === editingLeadType.id ? { ...lt, label } : lt))
+      )
+      setEditingLeadType(null)
+      showSaved()
+    } catch (err: unknown) {
+      setLeadTypesError(err instanceof Error ? err.message : "Failed to update lead type")
+    }
+  }
+
+  const handleDeleteLeadType = async (id: string) => {
+    try {
+      const { error } = await supabase.from("lead_types").delete().eq("id", id)
+      if (error) throw error
+      setLeadTypes((prev) => prev.filter((lt) => lt.id !== id))
+      showSaved()
+    } catch (err: unknown) {
+      setLeadTypesError(err instanceof Error ? err.message : "Failed to delete lead type")
     }
   }
 
@@ -894,6 +986,73 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Lead Types Section */}
+        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+                <Target className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              </div>
+              <div>
+                <h2 className="font-semibold">Lead Types</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Manage lead types for categorizing leads (e.g., Structural Engineering, Interior Design)
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {leadTypes.length} lead types configured
+              </p>
+              <Button size="sm" onClick={() => setIsAddLeadTypeOpen(true)} disabled={!businessId}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Lead Type
+              </Button>
+            </div>
+
+            {leadTypesError && (
+              <div className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-md p-3">
+                {leadTypesError}
+              </div>
+            )}
+
+            {leadTypesLoading ? (
+              <div className="text-sm text-gray-500">Loading lead types...</div>
+            ) : (
+              <div className="space-y-2">
+                {leadTypes.map((lt) => (
+                  <div
+                    key={lt.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
+                  >
+                    <span className="font-medium text-sm">{lt.label}</span>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setEditingLeadType({ id: lt.id, label: lt.label })}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        onClick={() => handleDeleteLeadType(lt.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Team Positions Section */}
         <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
           <div className="p-6 border-b border-gray-200 dark:border-gray-800">
@@ -1236,6 +1395,77 @@ export default function SettingsPage() {
             <Button onClick={handleAddPosition} disabled={!newPosition.trim()}>
               Add Position
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Lead Type Modal */}
+      <Dialog open={isAddLeadTypeOpen} onOpenChange={setIsAddLeadTypeOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Lead Type</DialogTitle>
+            <DialogDescription>
+              Create a new lead type for categorizing leads (e.g., Structural Engineering, Interior Design).
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Lead Type Name</label>
+              <Input
+                placeholder="e.g., Structural Engineering"
+                value={newLeadType}
+                onChange={(e) => setNewLeadType(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleAddLeadType()
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddLeadTypeOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddLeadType} disabled={!newLeadType.trim()}>
+              Add Lead Type
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Lead Type Modal */}
+      <Dialog open={!!editingLeadType} onOpenChange={() => setEditingLeadType(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Lead Type</DialogTitle>
+            <DialogDescription>
+              Update the lead type name.
+            </DialogDescription>
+          </DialogHeader>
+          {editingLeadType && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Lead Type Name</label>
+                <Input
+                  value={editingLeadType.label}
+                  onChange={(e) =>
+                    setEditingLeadType({ ...editingLeadType, label: e.target.value })
+                  }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleEditLeadType()
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingLeadType(null)}>
+              Cancel
+            </Button>
+            <Button onClick={handleEditLeadType}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -62,6 +62,9 @@ import { useAuth } from "@/lib/auth/auth-context"
 
 interface LeadDetail {
   id: string
+  uniqueCustomerIdentifier: string
+  leadTypeId: string | null
+  leadTypeName: string | null
   firstName: string
   lastName: string
   email: string
@@ -226,9 +229,12 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   const [isConvertDialogOpen, setIsConvertDialogOpen] = useState(false)
   const [isConverting, setIsConverting] = useState(false)
   const [workspaceUsers, setWorkspaceUsers] = useState<{ id: string; email: string; name?: string }[]>([])
+  const [leadTypes, setLeadTypes] = useState<{ id: string; label: string }[]>([])
 
   const [editingSection, setEditingSection] = useState<"contact" | "details" | null>(null)
   const [contactEditForm, setContactEditForm] = useState({
+    uniqueCustomerIdentifier: "",
+    leadTypeId: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -263,7 +269,10 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     loadLead()
     loadActivities()
-    if (businessId) loadWorkspaceUsers()
+    if (businessId) {
+      loadWorkspaceUsers()
+      loadLeadTypes()
+    }
   }, [params.id, businessId])
 
   // Auto-open convert dialog if ?convert=true
@@ -288,6 +297,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
       if (data) {
         setLead({
           id: data.id,
+          uniqueCustomerIdentifier: data.unique_customer_identifier || "",
+          leadTypeId: data.lead_type_id || null,
+          leadTypeName: null, // resolved when leadTypes load
           firstName: data.first_name,
           lastName: data.last_name,
           email: data.email || "",
@@ -390,6 +402,31 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
     }
   }
 
+  const loadLeadTypes = async () => {
+    if (!businessId) return
+    try {
+      const { data, error } = await supabase
+        .from("lead_types")
+        .select("id, label")
+        .eq("business_id", businessId)
+        .order("order_index", { ascending: true })
+
+      if (error) throw error
+      setLeadTypes((data || []).map((lt: any) => ({ id: lt.id, label: lt.label })))
+    } catch (error: any) {
+      console.error("Error loading lead types:", error)
+      setLeadTypes([])
+    }
+  }
+
+  // Resolve lead type name when leadTypes load
+  useEffect(() => {
+    if (lead && leadTypes.length > 0 && lead.leadTypeId && !lead.leadTypeName) {
+      const label = leadTypes.find((lt) => lt.id === lead.leadTypeId)?.label || null
+      setLead((prev) => (prev ? { ...prev, leadTypeName: label } : prev))
+    }
+  }, [lead, leadTypes])
+
   const archiveLead = async () => {
     try {
       const { error } = await supabase
@@ -408,6 +445,8 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
     if (!businessId) throw new Error("No workspace selected")
 
     const payload = {
+      unique_customer_identifier: formData.uniqueCustomerIdentifier.trim() || null,
+      lead_type_id: formData.leadTypeId || null,
       first_name: formData.firstName.trim(),
       last_name: formData.lastName.trim(),
       email: formData.email.trim() || null,
@@ -475,6 +514,8 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   const startEditContact = () => {
     if (!lead) return
     setContactEditForm({
+      uniqueCustomerIdentifier: lead.uniqueCustomerIdentifier,
+      leadTypeId: lead.leadTypeId || "",
       firstName: lead.firstName,
       lastName: lead.lastName,
       email: lead.email,
@@ -506,6 +547,8 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   const saveSectionContact = async () => {
     if (!lead) return
     const payload = {
+      unique_customer_identifier: contactEditForm.uniqueCustomerIdentifier.trim() || null,
+      lead_type_id: contactEditForm.leadTypeId || null,
       first_name: contactEditForm.firstName.trim(),
       last_name: contactEditForm.lastName.trim(),
       email: contactEditForm.email.trim() || null,
@@ -524,6 +567,11 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
       prev
         ? {
             ...prev,
+            uniqueCustomerIdentifier: contactEditForm.uniqueCustomerIdentifier.trim(),
+            leadTypeId: contactEditForm.leadTypeId || null,
+            leadTypeName: contactEditForm.leadTypeId
+              ? leadTypes.find((lt) => lt.id === contactEditForm.leadTypeId)?.label || null
+              : null,
             firstName: contactEditForm.firstName.trim(),
             lastName: contactEditForm.lastName.trim(),
             email: contactEditForm.email.trim(),
@@ -727,6 +775,8 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   const editFormData: LeadFormData | null = lead
     ? {
         id: lead.id,
+        uniqueCustomerIdentifier: lead.uniqueCustomerIdentifier,
+        leadTypeId: lead.leadTypeId || "",
         firstName: lead.firstName,
         lastName: lead.lastName,
         email: lead.email,
@@ -960,6 +1010,41 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                         </div>
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
+                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">Unique Customer ID</p>
+                              <Input
+                                value={contactEditForm.uniqueCustomerIdentifier}
+                                onChange={(e) =>
+                                  setContactEditForm((p) => ({ ...p, uniqueCustomerIdentifier: e.target.value }))
+                                }
+                                placeholder="e.g., CUST-001"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <Target className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">Lead Type</p>
+                              <Select
+                                value={contactEditForm.leadTypeId || "_none"}
+                                onValueChange={(v) =>
+                                  setContactEditForm((p) => ({ ...p, leadTypeId: v === "_none" ? "" : v }))
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select lead type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="_none">Select lead type</SelectItem>
+                                  {leadTypes.map((lt) => (
+                                    <SelectItem key={lt.id} value={lt.id}>{lt.label}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
                             <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
                             <div className="flex-1 space-y-2">
                               <p className="text-sm text-gray-500">Company</p>
@@ -1041,6 +1126,20 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                           </div>
                         </div>
                         <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">Unique Customer ID</p>
+                              <p className="font-medium">{lead.uniqueCustomerIdentifier || "---"}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <Target className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">Lead Type</p>
+                              <p className="font-medium">{lead.leadTypeName || "---"}</p>
+                            </div>
+                          </div>
                           <div className="flex items-start gap-3">
                             <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
                             <div>
@@ -1584,6 +1683,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
           lead={editFormData}
           onSave={handleEditSave}
           workspaceUsers={workspaceUsers}
+          leadTypes={leadTypes}
         />
 
         {/* Log Activity Modal */}
