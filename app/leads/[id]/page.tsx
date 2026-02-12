@@ -12,8 +12,6 @@ import {
   MapPin,
   User,
   Building2,
-  Briefcase,
-  DollarSign,
   Calendar,
   Target,
   ArrowRightCircle,
@@ -23,9 +21,22 @@ import {
   StickyNote,
   Clock,
   TrendingUp,
+  Save,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { SearchableSelect } from "@/components/ui/searchable-select"
+import { CityCombobox } from "@/components/ui/city-combobox"
+import { LeadScoreSlider } from "@/components/leads/lead-score-slider"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,6 +56,7 @@ import {
 import { DashboardLayout } from "@/components/layout/dashboard-layout"
 import { LeadFormModal, type LeadFormData } from "@/components/leads/lead-form-modal"
 import { LogActivityModal, type ActivityFormData } from "@/components/leads/log-activity-modal"
+import { authFetch } from "@/lib/auth/auth-fetch"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 
@@ -57,20 +69,22 @@ interface LeadDetail {
   companyName: string
   jobTitle: string
   address: string
+  city: string
+  state: string
   source: string
   interest: string
   painPoints: string
-  budgetMin: number | null
-  budgetMax: number | null
+  budget: number | null
+  squareFootage: number | null
+  costPerSqft: number | null
+  discountType: string | null
+  discountValue: number | null
   temperature: string
   status: string
   leadScore: number
   nextAction: string
   nextActionDate: string | null
   notes: string
-  industry: string
-  companySize: string
-  location: string
   assignedTo: string | null
   clientId: string | null
   projectId: string | null
@@ -112,6 +126,53 @@ const statusLabels: Record<string, string> = {
   won: "Won",
   lost: "Lost",
 }
+
+const temperatureOptions = [
+  { value: "cold", label: "Cold" },
+  { value: "warm", label: "Warm" },
+  { value: "hot", label: "Hot" },
+]
+
+const statusOptions = [
+  { value: "new", label: "New" },
+  { value: "contacted", label: "Contacted" },
+  { value: "qualified", label: "Qualified" },
+  { value: "proposal", label: "Proposal" },
+  { value: "negotiation", label: "Negotiation" },
+  { value: "won", label: "Won" },
+  { value: "lost", label: "Lost" },
+]
+
+const US_STATES = [
+  { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" }, { value: "AZ", label: "Arizona" },
+  { value: "AR", label: "Arkansas" }, { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+  { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" }, { value: "FL", label: "Florida" },
+  { value: "GA", label: "Georgia" }, { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+  { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" }, { value: "IA", label: "Iowa" },
+  { value: "KS", label: "Kansas" }, { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+  { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" }, { value: "MA", label: "Massachusetts" },
+  { value: "MI", label: "Michigan" }, { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+  { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" }, { value: "NE", label: "Nebraska" },
+  { value: "NV", label: "Nevada" }, { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+  { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" }, { value: "NC", label: "North Carolina" },
+  { value: "ND", label: "North Dakota" }, { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+  { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" }, { value: "RI", label: "Rhode Island" },
+  { value: "SC", label: "South Carolina" }, { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+  { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" }, { value: "VT", label: "Vermont" },
+  { value: "VA", label: "Virginia" }, { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+  { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" }, { value: "DC", label: "District of Columbia" },
+]
+
+const sourceOptions = [
+  { value: "website_form", label: "Website Form" },
+  { value: "email_campaign", label: "Email Campaign" },
+  { value: "social_media", label: "Social Media" },
+  { value: "referral", label: "Referral" },
+  { value: "cold_call", label: "Cold Call" },
+  { value: "ad", label: "Advertisement" },
+  { value: "trade_show", label: "Trade Show" },
+  { value: "other", label: "Other" },
+]
 
 const activityIcons: Record<string, any> = {
   call: PhoneCall,
@@ -166,7 +227,38 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   const [isConverting, setIsConverting] = useState(false)
   const [workspaceUsers, setWorkspaceUsers] = useState<{ id: string; email: string; name?: string }[]>([])
 
+  const [editingSection, setEditingSection] = useState<"contact" | "details" | null>(null)
+  const [contactEditForm, setContactEditForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    companyName: "",
+    address: "",
+    city: "",
+    state: "",
+  })
+  const [detailsEditForm, setDetailsEditForm] = useState({
+    source: "",
+    interest: "",
+    painPoints: "",
+    budget: "",
+    squareFootage: "",
+    costPerSqft: "",
+    discountType: "",
+    discountValue: "",
+    notes: "",
+  })
+
   const businessId = currentWorkspace?.id
+
+  const canEditLead =
+    !!lead &&
+    !lead.convertedAt &&
+    !lead.archivedAt &&
+    (currentWorkspace?.role === "owner" ||
+      currentWorkspace?.role === "admin" ||
+      currentWorkspace?.role === "editor")
 
   useEffect(() => {
     loadLead()
@@ -203,20 +295,22 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
           companyName: data.company_name || "",
           jobTitle: data.job_title || "",
           address: data.address || "",
+          city: data.city || "",
+          state: data.state || "",
           source: data.source || "other",
           interest: data.interest || "",
           painPoints: data.pain_points || "",
-          budgetMin: data.budget_min,
-          budgetMax: data.budget_max,
+          budget: data.budget ?? null,
+          squareFootage: data.square_footage ?? null,
+          costPerSqft: data.cost_per_sqft ?? null,
+          discountType: data.discount_type ?? null,
+          discountValue: data.discount_value ?? null,
           temperature: data.temperature || "cold",
           status: data.status || "new",
           leadScore: data.lead_score || 0,
           nextAction: data.next_action || "",
           nextActionDate: data.next_action_date,
           notes: data.notes || "",
-          industry: data.industry || "",
-          companySize: data.company_size || "",
-          location: data.location || "",
           assignedTo: data.assigned_to,
           clientId: data.client_id,
           projectId: data.project_id,
@@ -264,24 +358,35 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   const loadWorkspaceUsers = async () => {
     if (!businessId) return
     try {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("user_id, users:user_id(email, raw_user_meta_data)")
-        .eq("business_id", businessId)
-
-      if (error) return
-
-      const users = (data || []).map((ur: any) => ({
-        id: ur.user_id,
-        email: ur.users?.email || "",
-        name:
-          ur.users?.raw_user_meta_data?.full_name ||
-          ur.users?.raw_user_meta_data?.name ||
-          undefined,
-      }))
-      setWorkspaceUsers(users)
+      const res = await authFetch(
+        `/api/teams/members?businessId=${encodeURIComponent(businessId)}`
+      )
+      if (!res.ok) {
+        console.error("Error loading workspace users:", res.status)
+        setWorkspaceUsers([])
+        return
+      }
+      const members = await res.json()
+      const toUser = (m: any) => ({
+        id: m.userId,
+        email: m.email || "",
+        name: [m.firstName, m.lastName].filter(Boolean).join(" ").trim() || m.email || undefined,
+      })
+      const allMapped = (Array.isArray(members) ? members : []).map(toUser)
+      const salesAgents = (Array.isArray(members) ? members : [])
+        .filter((m: any) => (m.position || "").trim().toLowerCase() === "sales agent")
+        .map(toUser)
+      const seen = new Set<string>()
+      const dedupe = (arr: { id: string; email: string; name?: string }[]) =>
+        arr.filter((u) => {
+          if (seen.has(u.id)) return false
+          seen.add(u.id)
+          return true
+        })
+      setWorkspaceUsers(dedupe(salesAgents.length > 0 ? salesAgents : allMapped))
     } catch (error: any) {
       console.error("Error loading workspace users:", error)
+      setWorkspaceUsers([])
     }
   }
 
@@ -308,22 +413,23 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
       email: formData.email.trim() || null,
       phone: formData.phone.trim() || null,
       company_name: formData.companyName.trim() || null,
-      job_title: formData.jobTitle.trim() || null,
       address: formData.address.trim() || null,
+      city: formData.city?.trim() || null,
+      state: formData.state || null,
       source: formData.source || "other",
       interest: formData.interest.trim() || null,
       pain_points: formData.painPoints.trim() || null,
-      budget_min: formData.budgetMin ? parseFloat(formData.budgetMin) : null,
-      budget_max: formData.budgetMax ? parseFloat(formData.budgetMax) : null,
+      budget: formData.budget ? parseFloat(formData.budget) : null,
+      square_footage: formData.squareFootage ? parseFloat(formData.squareFootage) : null,
+      cost_per_sqft: formData.costPerSqft ? parseFloat(formData.costPerSqft) : null,
+      discount_type: formData.discountType || null,
+      discount_value: formData.discountValue ? parseFloat(formData.discountValue) : null,
       temperature: formData.temperature || "cold",
       status: formData.status || "new",
       lead_score: formData.leadScore ? parseInt(formData.leadScore) : 0,
       next_action: formData.nextAction.trim() || null,
       next_action_date: formData.nextActionDate || null,
       notes: formData.notes.trim() || null,
-      industry: formData.industry.trim() || null,
-      company_size: formData.companySize || null,
-      location: formData.location.trim() || null,
       assigned_to: formData.assignedTo && formData.assignedTo !== "unassigned" ? formData.assignedTo : null,
     }
 
@@ -335,6 +441,141 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
     if (error) throw error
     await loadLead()
   }
+
+  const saveLeadField = async (
+    field: "temperature" | "status" | "leadScore",
+    value: string | number
+  ) => {
+    if (!lead) return
+    const snakeMap: Record<string, string> = {
+      temperature: "temperature",
+      status: "status",
+      leadScore: "lead_score",
+    }
+    const dbField = snakeMap[field]
+    const dbValue =
+      field === "leadScore"
+        ? Math.max(0, Math.min(100, Number(value)))
+        : value
+    const prevValue = lead[field]
+
+    setLead((prev) => (prev ? { ...prev, [field]: dbValue } : prev))
+
+    const { error } = await supabase
+      .from("leads")
+      .update({ [dbField]: dbValue })
+      .eq("id", params.id)
+
+    if (error) {
+      setLead((prev) => (prev ? { ...prev, [field]: prevValue } : prev))
+      alert("Failed to save: " + error.message)
+    }
+  }
+
+  const startEditContact = () => {
+    if (!lead) return
+    setContactEditForm({
+      firstName: lead.firstName,
+      lastName: lead.lastName,
+      email: lead.email,
+      phone: lead.phone,
+      companyName: lead.companyName,
+      address: lead.address,
+      city: lead.city,
+      state: lead.state,
+    })
+    setEditingSection("contact")
+  }
+
+  const startEditDetails = () => {
+    if (!lead) return
+    setDetailsEditForm({
+      source: lead.source || "other",
+      interest: lead.interest,
+      painPoints: lead.painPoints,
+      budget: lead.budget != null ? String(lead.budget) : "",
+      squareFootage: lead.squareFootage != null ? String(lead.squareFootage) : "",
+      costPerSqft: lead.costPerSqft != null ? String(lead.costPerSqft) : "",
+      discountType: lead.discountType || "",
+      discountValue: lead.discountValue != null ? String(lead.discountValue) : "",
+      notes: lead.notes,
+    })
+    setEditingSection("details")
+  }
+
+  const saveSectionContact = async () => {
+    if (!lead) return
+    const payload = {
+      first_name: contactEditForm.firstName.trim(),
+      last_name: contactEditForm.lastName.trim(),
+      email: contactEditForm.email.trim() || null,
+      phone: contactEditForm.phone.trim() || null,
+      company_name: contactEditForm.companyName.trim() || null,
+      address: contactEditForm.address.trim() || null,
+      city: contactEditForm.city.trim() || null,
+      state: contactEditForm.state || null,
+    }
+    const { error } = await supabase.from("leads").update(payload).eq("id", params.id)
+    if (error) {
+      alert("Failed to save: " + error.message)
+      return
+    }
+    setLead((prev) =>
+      prev
+        ? {
+            ...prev,
+            firstName: contactEditForm.firstName.trim(),
+            lastName: contactEditForm.lastName.trim(),
+            email: contactEditForm.email.trim(),
+            phone: contactEditForm.phone.trim(),
+            companyName: contactEditForm.companyName.trim(),
+            address: contactEditForm.address.trim(),
+            city: contactEditForm.city.trim(),
+            state: contactEditForm.state || "",
+          }
+        : prev
+    )
+    setEditingSection(null)
+  }
+
+  const saveSectionDetails = async () => {
+    if (!lead) return
+    const payload = {
+      source: detailsEditForm.source || "other",
+      interest: detailsEditForm.interest.trim() || null,
+      pain_points: detailsEditForm.painPoints.trim() || null,
+      budget: detailsEditForm.budget ? parseFloat(detailsEditForm.budget) : null,
+      square_footage: detailsEditForm.squareFootage ? parseFloat(detailsEditForm.squareFootage) : null,
+      cost_per_sqft: detailsEditForm.costPerSqft ? parseFloat(detailsEditForm.costPerSqft) : null,
+      discount_type: detailsEditForm.discountType || null,
+      discount_value: detailsEditForm.discountValue ? parseFloat(detailsEditForm.discountValue) : null,
+      notes: detailsEditForm.notes.trim() || null,
+    }
+    const { error } = await supabase.from("leads").update(payload).eq("id", params.id)
+    if (error) {
+      alert("Failed to save: " + error.message)
+      return
+    }
+    setLead((prev) =>
+      prev
+        ? {
+            ...prev,
+            source: detailsEditForm.source || "other",
+            interest: detailsEditForm.interest.trim(),
+            painPoints: detailsEditForm.painPoints.trim(),
+            budget: detailsEditForm.budget ? parseFloat(detailsEditForm.budget) : null,
+            squareFootage: detailsEditForm.squareFootage ? parseFloat(detailsEditForm.squareFootage) : null,
+            costPerSqft: detailsEditForm.costPerSqft ? parseFloat(detailsEditForm.costPerSqft) : null,
+            discountType: detailsEditForm.discountType || null,
+            discountValue: detailsEditForm.discountValue ? parseFloat(detailsEditForm.discountValue) : null,
+            notes: detailsEditForm.notes.trim(),
+          }
+        : prev
+    )
+    setEditingSection(null)
+  }
+
+  const cancelEditSection = () => setEditingSection(null)
 
   const handleLogActivity = async (data: ActivityFormData) => {
     if (!user) throw new Error("Not authenticated")
@@ -372,8 +613,8 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
             last_name: lead.lastName.trim(),
             email: lead.email.trim() || null,
             phone: lead.phone.trim() || null,
-            address: lead.address.trim() || null,
-            description: lead.companyName ? `${lead.companyName} - ${lead.jobTitle || ""}`.trim() : null,
+            address: [lead.address, lead.city, lead.state].filter(Boolean).join(", ").trim() || null,
+            description: lead.companyName ? [lead.companyName, lead.jobTitle].filter(Boolean).join(" - ") : null,
           }])
           .select()
           .single()
@@ -385,6 +626,19 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
       // 2. Create the project with ALL lead data mapped
       const projectTitle = lead.interest || `${lead.firstName} ${lead.lastName} - ${lead.companyName || "Project"}`
 
+      const sqft = lead.squareFootage ?? null
+      const cost = lead.costPerSqft ?? null
+      const total = sqft != null && cost != null && sqft > 0 && cost > 0 ? sqft * cost : null
+      const discountType = lead.discountType || null
+      const discountVal = lead.discountValue ?? null
+      const discount = total != null && discountType && discountVal != null && discountVal > 0
+        ? discountType === "percent"
+          ? (total * discountVal) / 100
+          : discountVal
+        : 0
+      const finalTotal = total != null ? total - discount : null
+      const projectBudget = finalTotal ?? lead.budget ?? null
+
       const { data: newProject, error: projectError } = await supabase
         .from("projects")
         .insert([{
@@ -394,7 +648,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
           client_name: `${lead.firstName} ${lead.lastName}`,
           client_email: lead.email || null,
           client_phone: lead.phone || null,
-          client_address: lead.address || null,
+          client_address: [lead.address, lead.city, lead.state].filter(Boolean).join(", ").trim() || lead.address || null,
           status: "lead",
           description: lead.painPoints || null,
           // Lead-specific fields mapped to project
@@ -402,17 +656,13 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
           interest: lead.interest || null,
           pain_points: lead.painPoints || null,
           notes: lead.notes || null,
-          budget: lead.budgetMax || null,
-          budget_min: lead.budgetMin || null,
+          budget: projectBudget,
           temperature: lead.temperature || null,
           lead_score: lead.leadScore || null,
           next_action: lead.nextAction || null,
           next_action_date: lead.nextActionDate || null,
           company_name: lead.companyName || null,
           job_title: lead.jobTitle || null,
-          industry: lead.industry || null,
-          company_size: lead.companySize || null,
-          location: lead.location || null,
           lead_id: lead.id,
         }])
         .select()
@@ -482,22 +732,23 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
         email: lead.email,
         phone: lead.phone,
         companyName: lead.companyName,
-        jobTitle: lead.jobTitle,
         address: lead.address,
+        city: lead.city,
+        state: lead.state,
         source: lead.source,
         interest: lead.interest,
         painPoints: lead.painPoints,
-        budgetMin: lead.budgetMin?.toString() || "",
-        budgetMax: lead.budgetMax?.toString() || "",
+        budget: lead.budget?.toString() || "",
+        squareFootage: lead.squareFootage?.toString() || "",
+        costPerSqft: lead.costPerSqft?.toString() || "",
+        discountType: lead.discountType || "",
+        discountValue: lead.discountValue?.toString() || "",
         temperature: lead.temperature,
         status: lead.status,
         leadScore: lead.leadScore.toString(),
         nextAction: lead.nextAction,
         nextActionDate: lead.nextActionDate || "",
         notes: lead.notes,
-        industry: lead.industry,
-        companySize: lead.companySize,
-        location: lead.location,
         assignedTo: lead.assignedTo || "",
       }
     : null
@@ -624,109 +875,469 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
               <div className="lg:col-span-2 space-y-6">
                 {/* Contact Information */}
                 <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold">Contact Information</h2>
+                    {canEditLead && (
+                      editingSection === "contact" ? (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={cancelEditSection}
+                          >
+                            Cancel
+                          </Button>
+                          <Button size="sm" onClick={saveSectionContact}>
+                            <Save className="w-4 h-4 mr-2" />
+                            Save
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button size="sm" variant="outline" onClick={startEditContact}>
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit
+                        </Button>
+                      )
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <User className="w-5 h-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="text-sm text-gray-500">Full Name</p>
-                          <p className="font-medium">{lead.firstName} {lead.lastName}</p>
+                    {editingSection === "contact" ? (
+                      <>
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">First Name</p>
+                              <Input
+                                value={contactEditForm.firstName}
+                                onChange={(e) =>
+                                  setContactEditForm((p) => ({ ...p, firstName: e.target.value }))
+                                }
+                                placeholder="First name"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">Last Name</p>
+                              <Input
+                                value={contactEditForm.lastName}
+                                onChange={(e) =>
+                                  setContactEditForm((p) => ({ ...p, lastName: e.target.value }))
+                                }
+                                placeholder="Last name"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">Email</p>
+                              <Input
+                                type="email"
+                                value={contactEditForm.email}
+                                onChange={(e) =>
+                                  setContactEditForm((p) => ({ ...p, email: e.target.value }))
+                                }
+                                placeholder="Email"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <PhoneIcon className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">Phone</p>
+                              <Input
+                                value={contactEditForm.phone}
+                                onChange={(e) =>
+                                  setContactEditForm((p) => ({ ...p, phone: e.target.value }))
+                                }
+                                placeholder="Phone"
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="text-sm text-gray-500">Email</p>
-                          <p className="font-medium">{lead.email || "---"}</p>
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">Company</p>
+                              <Input
+                                value={contactEditForm.companyName}
+                                onChange={(e) =>
+                                  setContactEditForm((p) => ({ ...p, companyName: e.target.value }))
+                                }
+                                placeholder="Company"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">Address</p>
+                              <Input
+                                value={contactEditForm.address}
+                                onChange={(e) =>
+                                  setContactEditForm((p) => ({ ...p, address: e.target.value }))
+                                }
+                                placeholder="Address"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">City</p>
+                              <CityCombobox
+                                value={contactEditForm.city}
+                                onChange={(v) =>
+                                  setContactEditForm((p) => ({ ...p, city: v }))
+                                }
+                                placeholder="Search city..."
+                              />
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div className="flex-1 space-y-2">
+                              <p className="text-sm text-gray-500">State</p>
+                              <SearchableSelect
+                                options={US_STATES}
+                                value={contactEditForm.state}
+                                onValueChange={(v) =>
+                                  setContactEditForm((p) => ({ ...p, state: v }))
+                                }
+                                placeholder="Select state"
+                                searchPlaceholder="Search states..."
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <PhoneIcon className="w-5 h-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="text-sm text-gray-500">Phone</p>
-                          <p className="font-medium">{lead.phone || "---"}</p>
+                      </>
+                    ) : (
+                      <>
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">Full Name</p>
+                              <p className="font-medium">{lead.firstName} {lead.lastName}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">Email</p>
+                              <p className="font-medium">{lead.email || "---"}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <PhoneIcon className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">Phone</p>
+                              <p className="font-medium">{lead.phone || "---"}</p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3">
-                        <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="text-sm text-gray-500">Company</p>
-                          <p className="font-medium">{lead.companyName || "---"}</p>
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">Company</p>
+                              <p className="font-medium">{lead.companyName || "---"}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">Address</p>
+                              <p className="font-medium">{lead.address || "---"}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">City</p>
+                              <p className="font-medium">{lead.city || "---"}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-3">
+                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <div>
+                              <p className="text-sm text-gray-500">State</p>
+                              <p className="font-medium">
+                                {lead.state ? US_STATES.find((s) => s.value === lead.state)?.label || lead.state : "---"}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Briefcase className="w-5 h-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="text-sm text-gray-500">Job Title</p>
-                          <p className="font-medium">{lead.jobTitle || "---"}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="text-sm text-gray-500">Address</p>
-                          <p className="font-medium">{lead.address || "---"}</p>
-                        </div>
-                      </div>
-                    </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                {/* Interest & Details */}
+                {/* Details */}
                 <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold mb-4">Interest & Details</h2>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <p className="text-sm text-gray-500">Source</p>
-                        <p className="font-medium">{sourceLabels[lead.source] || lead.source}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Interest / Service</p>
-                        <p className="font-medium">{lead.interest || "---"}</p>
-                      </div>
-                    </div>
-                    {lead.painPoints && (
-                      <div>
-                        <p className="text-sm text-gray-500">Pain Points</p>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">{lead.painPoints}</p>
-                      </div>
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold">Details</h2>
+                    {canEditLead && (
+                      editingSection === "details" ? (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={cancelEditSection}
+                          >
+                            Cancel
+                          </Button>
+                          <Button size="sm" onClick={saveSectionDetails}>
+                            <Save className="w-4 h-4 mr-2" />
+                            Save
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button size="sm" variant="outline" onClick={startEditDetails}>
+                          <Edit className="w-4 h-4 mr-2" />
+                          Edit
+                        </Button>
+                      )
                     )}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="flex items-start gap-3">
-                        <DollarSign className="w-5 h-5 text-gray-400 mt-0.5" />
-                        <div>
-                          <p className="text-sm text-gray-500">Budget Range</p>
+                  </div>
+                  <div className="space-y-4">
+                    {editingSection === "details" ? (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <p className="text-sm text-gray-500">Source</p>
+                            <Select
+                              value={detailsEditForm.source || "other"}
+                              onValueChange={(v) =>
+                                setDetailsEditForm((p) => ({ ...p, source: v }))
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select source" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {sourceOptions.map((o) => (
+                                  <SelectItem key={o.value} value={o.value}>
+                                    {o.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-sm text-gray-500">Service</p>
+                            <Input
+                              value={detailsEditForm.interest}
+                              onChange={(e) =>
+                                setDetailsEditForm((p) => ({ ...p, interest: e.target.value }))
+                              }
+                              placeholder="Service"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-500">Pain Points</p>
+                          <Textarea
+                            value={detailsEditForm.painPoints}
+                            onChange={(e) =>
+                              setDetailsEditForm((p) => ({ ...p, painPoints: e.target.value }))
+                            }
+                            placeholder="Pain points"
+                            rows={3}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-500">Budget</p>
+                          <Input
+                            type="number"
+                            value={detailsEditForm.budget}
+                            onChange={(e) =>
+                              setDetailsEditForm((p) => ({ ...p, budget: e.target.value }))
+                            }
+                            placeholder="Budget"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <p className="text-sm text-gray-500">Square Footage</p>
+                            <Input
+                              type="number"
+                              value={detailsEditForm.squareFootage}
+                              onChange={(e) =>
+                                setDetailsEditForm((p) => ({ ...p, squareFootage: e.target.value }))
+                              }
+                              placeholder="Square footage"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <p className="text-sm text-gray-500">Cost per Sq Ft</p>
+                            <Input
+                              type="number"
+                              value={detailsEditForm.costPerSqft}
+                              onChange={(e) =>
+                                setDetailsEditForm((p) => ({ ...p, costPerSqft: e.target.value }))
+                              }
+                              placeholder="Cost per sq ft"
+                            />
+                          </div>
+                        </div>
+                        {(() => {
+                          const sqft = parseFloat(detailsEditForm.squareFootage)
+                          const cost = parseFloat(detailsEditForm.costPerSqft)
+                          const total = !isNaN(sqft) && !isNaN(cost) && sqft > 0 && cost > 0 ? sqft * cost : null
+                          const discountType = detailsEditForm.discountType || null
+                          const discountVal = parseFloat(detailsEditForm.discountValue)
+                          const discount = total != null && discountType && !isNaN(discountVal) && discountVal > 0
+                            ? discountType === "percent"
+                              ? (total * discountVal) / 100
+                              : discountVal
+                            : 0
+                          const finalTotal = total != null ? total - discount : null
+                          const hasDiscount = discount > 0
+                          return (
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-3 px-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500">Total Price</span>
+                                <span className="font-medium tabular-nums">
+                                  {total != null ? `$${total.toLocaleString()}` : "---"}
+                                  {hasDiscount && (
+                                    <span className="text-xs text-gray-500 font-normal ml-1">
+                                      (− {discountType === "percent" ? `${discountVal}%` : `$${discount.toLocaleString()}`})
+                                    </span>
+                                  )}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500">Discount</span>
+                                <Select
+                                  value={detailsEditForm.discountType || "_none"}
+                                  onValueChange={(v) =>
+                                    setDetailsEditForm((p) => ({ ...p, discountType: v === "_none" ? "" : v }))
+                                  }
+                                >
+                                  <SelectTrigger className="w-[120px] h-9">
+                                    <SelectValue placeholder="Type" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="_none">None</SelectItem>
+                                    <SelectItem value="percent">Percent</SelectItem>
+                                    <SelectItem value="fixed">Fixed</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <Input
+                                  type="number"
+                                  className="w-20 h-9"
+                                  value={detailsEditForm.discountValue}
+                                  onChange={(e) =>
+                                    setDetailsEditForm((p) => ({ ...p, discountValue: e.target.value }))
+                                  }
+                                  placeholder={detailsEditForm.discountType === "percent" ? "10" : "5000"}
+                                />
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500">Final Total</span>
+                                <span className="font-semibold tabular-nums">{finalTotal != null ? `$${finalTotal.toLocaleString()}` : "---"}</span>
+                              </div>
+                            </div>
+                          )
+                        })()}
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-500">Notes</p>
+                          <Textarea
+                            value={detailsEditForm.notes}
+                            onChange={(e) =>
+                              setDetailsEditForm((p) => ({ ...p, notes: e.target.value }))
+                            }
+                            placeholder="Notes"
+                            rows={4}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <p className="text-sm text-gray-500">Source</p>
+                            <p className="font-medium">{sourceLabels[lead.source] || lead.source}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">Service</p>
+                            <p className="font-medium">{lead.interest || "---"}</p>
+                          </div>
+                        </div>
+                        {lead.painPoints && (
+                          <div>
+                            <p className="text-sm text-gray-500">Pain Points</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">{lead.painPoints}</p>
+                          </div>
+                        )}
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-500">Budget</p>
                           <p className="font-medium">
-                            {lead.budgetMin || lead.budgetMax
-                              ? `$${(lead.budgetMin || 0).toLocaleString()} - $${(lead.budgetMax || 0).toLocaleString()}`
-                              : "---"}
+                            {lead.budget != null ? `$${lead.budget.toLocaleString()}` : "---"}
                           </p>
                         </div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div>
-                        <p className="text-sm text-gray-500">Industry</p>
-                        <p className="font-medium">{lead.industry || "---"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Company Size</p>
-                        <p className="font-medium">{lead.companySize || "---"}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Location</p>
-                        <p className="font-medium">{lead.location || "---"}</p>
-                      </div>
-                    </div>
-                    {lead.notes && (
-                      <div>
-                        <p className="text-sm text-gray-500">Notes</p>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">{lead.notes}</p>
-                      </div>
+                        {(() => {
+                          const sqft = lead.squareFootage ?? null
+                          const cost = lead.costPerSqft ?? null
+                          const total = sqft != null && cost != null && sqft > 0 && cost > 0 ? sqft * cost : null
+                          const discountType = lead.discountType || null
+                          const discountVal = lead.discountValue ?? null
+                          const discount = total != null && discountType && discountVal != null && discountVal > 0
+                            ? discountType === "percent"
+                              ? (total * discountVal) / 100
+                              : discountVal
+                            : 0
+                          const finalTotal = total != null ? total - discount : null
+                          const hasDiscount = discount > 0
+                          const hasPricing = (sqft != null || cost != null) || (discountType && discountVal != null && discountVal > 0)
+                          return hasPricing ? (
+                            <>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                  <p className="text-sm text-gray-500">Square Footage</p>
+                                  <p className="font-medium">{sqft != null ? sqft.toLocaleString() : "---"}</p>
+                                </div>
+                                <div className="space-y-2">
+                                  <p className="text-sm text-gray-500">Cost per Sq Ft</p>
+                                  <p className="font-medium">{cost != null ? `$${cost.toLocaleString()}` : "---"}</p>
+                                </div>
+                              </div>
+                              {total != null && (
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3 px-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-sm text-gray-500">Total Price</span>
+                                    <span className="font-medium tabular-nums">
+                                      ${total.toLocaleString()}
+                                      {hasDiscount && (
+                                        <span className="text-xs text-gray-500 font-normal ml-1">
+                                          (− {discountType === "percent" ? `${discountVal}%` : `$${discount.toLocaleString()}`})
+                                        </span>
+                                      )}
+                                    </span>
+                                  </div>
+                                  {finalTotal != null && (
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-sm text-gray-500">Final Total</span>
+                                      <span className="font-semibold tabular-nums">${finalTotal.toLocaleString()}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </>
+                          ) : null
+                        })()}
+                        {lead.notes && (
+                          <div>
+                            <p className="text-sm text-gray-500">Notes</p>
+                            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">{lead.notes}</p>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
@@ -833,29 +1444,71 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                     <div>
                       <p className="text-sm text-gray-500">Temperature</p>
                       <div className="mt-1">
-                        <TemperatureBadge temperature={lead.temperature} />
+                        {canEditLead ? (
+                          <Select
+                            value={lead.temperature}
+                            onValueChange={(v) => saveLeadField("temperature", v)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {temperatureOptions.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <TemperatureBadge temperature={lead.temperature} />
+                        )}
                       </div>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Status</p>
                       <div className="mt-1">
-                        <StatusBadge status={lead.status} />
+                        {canEditLead ? (
+                          <Select
+                            value={lead.status}
+                            onValueChange={(v) => saveLeadField("status", v)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {statusOptions.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <StatusBadge status={lead.status} />
+                        )}
                       </div>
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">Lead Score</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full transition-all ${
-                              lead.leadScore >= 70 ? "bg-green-500" :
-                              lead.leadScore >= 40 ? "bg-yellow-500" :
-                              "bg-gray-400"
-                            }`}
-                            style={{ width: `${lead.leadScore}%` }}
+                      <div className="mt-1">
+                        {canEditLead ? (
+                          <LeadScoreSlider
+                            value={lead.leadScore}
+                            onValueChange={(v) =>
+                              setLead((prev) =>
+                                prev ? { ...prev, leadScore: v } : prev
+                              )
+                            }
+                            onValueCommit={(v) => saveLeadField("leadScore", v)}
                           />
-                        </div>
-                        <span className="text-sm font-medium">{lead.leadScore}</span>
+                        ) : (
+                          <LeadScoreSlider
+                            value={lead.leadScore}
+                            onValueChange={() => {}}
+                            disabled
+                          />
+                        )}
                       </div>
                     </div>
                     {lead.assignedTo && (
@@ -966,18 +1619,32 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                   )}
                   {lead.interest && (
                     <p className="text-sm">
-                      <span className="text-gray-500">Interest:</span>{" "}
+                      <span className="text-gray-500">Service:</span>{" "}
                       <span className="font-medium">{lead.interest}</span>
                     </p>
                   )}
-                  {(lead.budgetMin || lead.budgetMax) && (
-                    <p className="text-sm">
-                      <span className="text-gray-500">Budget:</span>{" "}
-                      <span className="font-medium">
-                        ${(lead.budgetMin || 0).toLocaleString()} - ${(lead.budgetMax || 0).toLocaleString()}
-                      </span>
-                    </p>
-                  )}
+                  {(() => {
+                    const sqft = lead.squareFootage ?? null
+                    const cost = lead.costPerSqft ?? null
+                    const total = sqft != null && cost != null && sqft > 0 && cost > 0 ? sqft * cost : null
+                    const discountType = lead.discountType || null
+                    const discountVal = lead.discountValue ?? null
+                    const discount = total != null && discountType && discountVal != null && discountVal > 0
+                      ? discountType === "percent"
+                        ? (total * discountVal) / 100
+                        : discountVal
+                      : 0
+                    const finalTotal = total != null ? total - discount : null
+                    const displayBudget = finalTotal ?? lead.budget ?? null
+                    return displayBudget != null ? (
+                      <p className="text-sm">
+                        <span className="text-gray-500">Budget:</span>{" "}
+                        <span className="font-medium">
+                          ${displayBudget.toLocaleString()}
+                        </span>
+                      </p>
+                    ) : null
+                  })()}
                 </div>
                 <p className="text-sm text-gray-500">
                   A new client and project will be created. The lead will be moved to the &quot;Converted&quot; tab.

@@ -49,18 +49,14 @@ export default function SettingsPage() {
   const [isWorkspaceActionLoading, setIsWorkspaceActionLoading] = useState(false)
   const [workspaceActionError, setWorkspaceActionError] = useState<string | null>(null)
   
-  // Team Positions state
-  const [positions, setPositions] = useState([
-    "Architect",
-    "Manager",
-    "Drafter",
-    "Sales Agent",
-    "Project Manager",
-    "Designer",
-  ])
+  // Team Positions state (persisted in business_positions table)
+  type Position = { id: string; label: string; order_index: number }
+  const [positions, setPositions] = useState<Position[]>([])
+  const [positionsLoading, setPositionsLoading] = useState(true)
+  const [positionsError, setPositionsError] = useState<string | null>(null)
   const [isAddPositionOpen, setIsAddPositionOpen] = useState(false)
   const [newPosition, setNewPosition] = useState("")
-  const [editingPosition, setEditingPosition] = useState<{ index: number; value: string } | null>(null)
+  const [editingPosition, setEditingPosition] = useState<{ id: string; label: string } | null>(null)
 
   // Roles & Permissions state (Supabase)
   type Role = {
@@ -81,6 +77,7 @@ export default function SettingsPage() {
 
   const featureList = [
     { key: "projects", label: "Projects" },
+    { key: "leads", label: "Leads" },
     { key: "invoices", label: "Invoices" },
     { key: "billing", label: "Billing" },
     { key: "reports", label: "Reports" },
@@ -123,28 +120,86 @@ export default function SettingsPage() {
     setTimeout(() => setSaved(false), 2000)
   }
 
-  const handleAddPosition = () => {
-    if (newPosition.trim() && !positions.includes(newPosition.trim())) {
-      setPositions([...positions, newPosition.trim()])
+  // Load positions from database
+  const loadPositions = async () => {
+    if (!businessId) return
+    setPositionsLoading(true)
+    setPositionsError(null)
+    try {
+      const { data, error } = await supabase
+        .from("business_positions")
+        .select("id, label, order_index")
+        .eq("business_id", businessId)
+        .order("order_index", { ascending: true })
+
+      if (error) throw error
+      setPositions((data || []) as Position[])
+    } catch (err: unknown) {
+      setPositionsError(err instanceof Error ? err.message : "Failed to load positions")
+      setPositions([])
+    } finally {
+      setPositionsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadPositions()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessId])
+
+  const handleAddPosition = async () => {
+    const label = newPosition.trim()
+    if (!label || !businessId || positions.some((p) => p.label.toLowerCase() === label.toLowerCase()))
+      return
+    try {
+      const maxOrder = positions.length > 0 ? Math.max(...positions.map((p) => p.order_index)) : -1
+      const { data, error } = await supabase
+        .from("business_positions")
+        .insert([{ business_id: businessId, label, order_index: maxOrder + 1 }])
+        .select("id, label, order_index")
+        .single()
+
+      if (error) throw error
+      setPositions((prev) => [...prev, data as Position])
       setNewPosition("")
       setIsAddPositionOpen(false)
       showSaved()
+    } catch (err: unknown) {
+      setPositionsError(err instanceof Error ? err.message : "Failed to add position")
     }
   }
 
-  const handleEditPosition = () => {
-    if (editingPosition && editingPosition.value.trim()) {
-      const newPositions = [...positions]
-      newPositions[editingPosition.index] = editingPosition.value.trim()
-      setPositions(newPositions)
+  const handleEditPosition = async () => {
+    if (!editingPosition || !editingPosition.label.trim()) return
+    const label = editingPosition.label.trim()
+    if (positions.some((p) => p.id !== editingPosition.id && p.label.toLowerCase() === label.toLowerCase()))
+      return
+    try {
+      const { error } = await supabase
+        .from("business_positions")
+        .update({ label })
+        .eq("id", editingPosition.id)
+
+      if (error) throw error
+      setPositions((prev) =>
+        prev.map((p) => (p.id === editingPosition.id ? { ...p, label } : p))
+      )
       setEditingPosition(null)
       showSaved()
+    } catch (err: unknown) {
+      setPositionsError(err instanceof Error ? err.message : "Failed to update position")
     }
   }
 
-  const handleDeletePosition = (index: number) => {
-    setPositions(positions.filter((_, i) => i !== index))
-    showSaved()
+  const handleDeletePosition = async (id: string) => {
+    try {
+      const { error } = await supabase.from("business_positions").delete().eq("id", id)
+      if (error) throw error
+      setPositions((prev) => prev.filter((p) => p.id !== id))
+      showSaved()
+    } catch (err: unknown) {
+      setPositionsError(err instanceof Error ? err.message : "Failed to delete position")
+    }
   }
 
   const buildPermissionKey = (feature: string, action: string) => `${feature}:${action}`
@@ -209,11 +264,15 @@ export default function SettingsPage() {
     })
 
     ;(permissionsData as Permission[]).forEach((permission) => {
-      const key = buildPermissionKey(permission.feature_type, permission.action)
+      // Map legacy action names (view/edit) to CRUD names (read/update) for consistency
+      const actionMap: Record<string, string> = { view: "read", edit: "update" }
+      const action = actionMap[permission.action] || permission.action
+      const key = buildPermissionKey(permission.feature_type, action)
       if (!nextMap[permission.role_id]) {
         nextMap[permission.role_id] = {}
       }
-      nextMap[permission.role_id][key] = permission.allowed
+      // Use OR so legacy view/edit and new read/update both contribute
+      nextMap[permission.role_id][key] = nextMap[permission.role_id][key] || permission.allowed
     })
 
     setPermissionsMap(nextMap)
@@ -855,40 +914,50 @@ export default function SettingsPage() {
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {positions.length} positions configured
               </p>
-              <Button size="sm" onClick={() => setIsAddPositionOpen(true)}>
+              <Button size="sm" onClick={() => setIsAddPositionOpen(true)} disabled={!businessId}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add Position
               </Button>
             </div>
 
-            <div className="space-y-2">
-              {positions.map((position, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
-                >
-                  <span className="font-medium text-sm">{position}</span>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => setEditingPosition({ index, value: position })}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
-                      onClick={() => handleDeletePosition(index)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+            {positionsError && (
+              <div className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-md p-3">
+                {positionsError}
+              </div>
+            )}
+
+            {positionsLoading ? (
+              <div className="text-sm text-gray-500">Loading positions...</div>
+            ) : (
+              <div className="space-y-2">
+                {positions.map((p) => (
+                  <div
+                    key={p.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
+                  >
+                    <span className="font-medium text-sm">{p.label}</span>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => setEditingPosition({ id: p.id, label: p.label })}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        onClick={() => handleDeletePosition(p.id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -1185,9 +1254,9 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <label className="text-sm font-medium">Position Name</label>
                 <Input
-                  value={editingPosition.value}
+                  value={editingPosition.label}
                   onChange={(e) =>
-                    setEditingPosition({ ...editingPosition, value: e.target.value })
+                    setEditingPosition({ ...editingPosition, label: e.target.value })
                   }
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {

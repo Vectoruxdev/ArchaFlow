@@ -93,7 +93,7 @@ interface WorkspaceRole {
   isCustom: boolean
 }
 
-const defaultPositions = [
+const fallbackPositions = [
   "Architect",
   "Manager",
   "Drafter",
@@ -120,6 +120,7 @@ export default function TeamsPage() {
   const [members, setMembers] = useState<TeamMember[]>([])
   const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([])
   const [roles, setRoles] = useState<WorkspaceRole[]>([])
+  const [positions, setPositions] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
@@ -190,7 +191,15 @@ export default function TeamsPage() {
       }))
       setRoles(workspaceRoles)
 
-      // 2. Load members via API (includes emails and works with RLS)
+      // 2. Load positions from business_positions (Settings → Team Positions)
+      const { data: positionsData } = await supabase
+        .from("business_positions")
+        .select("label")
+        .eq("business_id", businessId)
+        .order("order_index", { ascending: true })
+      setPositions((positionsData || []).map((p: { label: string }) => p.label))
+
+      // 3. Load members via API (includes emails and works with RLS)
       const membersRes = await authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
       if (!membersRes.ok) {
         const errData = await membersRes.json().catch(() => ({}))
@@ -202,7 +211,7 @@ export default function TeamsPage() {
         setMembers(Array.isArray(memberList) ? memberList : [])
       }
 
-      // 3. Load pending invitations via API (server-side so list is not blocked by RLS)
+      // 4. Load pending invitations via API (server-side so list is not blocked by RLS)
       const invRes = await authFetch(`/api/teams/invitations?businessId=${encodeURIComponent(businessId)}`)
       if (!invRes.ok) {
         console.error("Error loading pending invitations:", invRes.status)
@@ -755,7 +764,7 @@ export default function TeamsPage() {
                     <SelectValue placeholder="Select position" />
                   </SelectTrigger>
                   <SelectContent>
-                    {defaultPositions.map((pos) => (
+                    {(positions.length > 0 ? positions : fallbackPositions).map((pos) => (
                       <SelectItem key={pos} value={pos}>
                         {pos}
                       </SelectItem>
@@ -889,7 +898,7 @@ export default function TeamsPage() {
                   <SelectValue placeholder="Select position (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  {defaultPositions.map((pos) => (
+                  {(positions.length > 0 ? positions : fallbackPositions).map((pos) => (
                     <SelectItem key={pos} value={pos}>
                       {pos}
                     </SelectItem>

@@ -37,8 +37,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LeadFormModal, type LeadFormData } from "@/components/leads/lead-form-modal"
+import { authFetch } from "@/lib/auth/auth-fetch"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import {
@@ -62,22 +62,23 @@ interface Lead {
   email: string
   phone: string
   companyName: string
-  jobTitle: string
   address: string
+  city: string
+  state: string
   source: string
   interest: string
   painPoints: string
-  budgetMin: number | null
-  budgetMax: number | null
+  budget: number | null
+  squareFootage: number | null
+  costPerSqft: number | null
+  discountType: string | null
+  discountValue: number | null
   temperature: string
   status: string
   leadScore: number
   nextAction: string
   nextActionDate: string | null
   notes: string
-  industry: string
-  companySize: string
-  location: string
   assignedTo: string | null
   assignedName: string | null
   clientId: string | null
@@ -146,6 +147,8 @@ export default function LeadsPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [temperatureFilter, setTemperatureFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [lifecycleFilter, setLifecycleFilter] = useState<"all" | "active" | "converted" | "archived">("all")
+  const [assignedToFilter, setAssignedToFilter] = useState<string>("all")
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingLead, setEditingLead] = useState<LeadFormData | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
@@ -153,8 +156,8 @@ export default function LeadsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<"active" | "converted" | "archived">("active")
   const [workspaceUsers, setWorkspaceUsers] = useState<{ id: string; email: string; name?: string }[]>([])
+  const [salesAgentsForFilter, setSalesAgentsForFilter] = useState<{ id: string; email: string; name?: string }[]>([])
   const itemsPerPage = 10
 
   const businessId = currentWorkspace?.id
@@ -188,22 +191,23 @@ export default function LeadsPage() {
         email: l.email || "",
         phone: l.phone || "",
         companyName: l.company_name || "",
-        jobTitle: l.job_title || "",
         address: l.address || "",
+        city: l.city || "",
+        state: l.state || "",
         source: l.source || "other",
         interest: l.interest || "",
         painPoints: l.pain_points || "",
-        budgetMin: l.budget_min,
-        budgetMax: l.budget_max,
+        budget: l.budget ?? null,
+        squareFootage: l.square_footage ?? null,
+        costPerSqft: l.cost_per_sqft ?? null,
+        discountType: l.discount_type ?? null,
+        discountValue: l.discount_value ?? null,
         temperature: l.temperature || "cold",
         status: l.status || "new",
         leadScore: l.lead_score || 0,
         nextAction: l.next_action || "",
         nextActionDate: l.next_action_date,
         notes: l.notes || "",
-        industry: l.industry || "",
-        companySize: l.company_size || "",
-        location: l.location || "",
         assignedTo: l.assigned_to,
         assignedName: null, // will be populated below
         clientId: l.client_id,
@@ -226,28 +230,37 @@ export default function LeadsPage() {
   const loadWorkspaceUsers = async () => {
     if (!businessId) return
     try {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("user_id, users:user_id(email, raw_user_meta_data)")
-        .eq("business_id", businessId)
-
-      if (error) {
-        console.error("Error loading workspace users:", error)
+      const res = await authFetch(
+        `/api/teams/members?businessId=${encodeURIComponent(businessId)}`
+      )
+      if (!res.ok) {
+        console.error("Error loading workspace users:", res.status)
+        setWorkspaceUsers([])
         return
       }
-
-      const users = (data || []).map((ur: any) => ({
-        id: ur.user_id,
-        email: ur.users?.email || "",
-        name:
-          ur.users?.raw_user_meta_data?.full_name ||
-          ur.users?.raw_user_meta_data?.name ||
-          undefined,
-      }))
-
-      setWorkspaceUsers(users)
+      const members = await res.json()
+      const toUser = (m: any) => ({
+        id: m.userId,
+        email: m.email || "",
+        name: [m.firstName, m.lastName].filter(Boolean).join(" ").trim() || m.email || undefined,
+      })
+      const allMapped = (Array.isArray(members) ? members : []).map(toUser)
+      const salesAgents = (Array.isArray(members) ? members : [])
+        .filter((m: any) => (m.position || "").trim().toLowerCase() === "sales agent")
+        .map(toUser)
+      const dedupe = (arr: { id: string; email: string; name?: string }[]) => {
+        const seen = new Set<string>()
+        return arr.filter((u) => {
+          if (seen.has(u.id)) return false
+          seen.add(u.id)
+          return true
+        })
+      }
+      setSalesAgentsForFilter(dedupe(salesAgents))
+      setWorkspaceUsers(dedupe(salesAgents.length > 0 ? salesAgents : allMapped))
     } catch (error: any) {
       console.error("Error loading workspace users:", error)
+      setWorkspaceUsers([])
     }
   }
 
@@ -262,22 +275,23 @@ export default function LeadsPage() {
       email: formData.email.trim() || null,
       phone: formData.phone.trim() || null,
       company_name: formData.companyName.trim() || null,
-      job_title: formData.jobTitle.trim() || null,
       address: formData.address.trim() || null,
+      city: formData.city?.trim() || null,
+      state: formData.state || null,
       source: formData.source || "other",
       interest: formData.interest.trim() || null,
       pain_points: formData.painPoints.trim() || null,
-      budget_min: formData.budgetMin ? parseFloat(formData.budgetMin) : null,
-      budget_max: formData.budgetMax ? parseFloat(formData.budgetMax) : null,
+      budget: formData.budget ? parseFloat(formData.budget) : null,
+      square_footage: formData.squareFootage ? parseFloat(formData.squareFootage) : null,
+      cost_per_sqft: formData.costPerSqft ? parseFloat(formData.costPerSqft) : null,
+      discount_type: formData.discountType || null,
+      discount_value: formData.discountValue ? parseFloat(formData.discountValue) : null,
       temperature: formData.temperature || "cold",
       status: formData.status || "new",
       lead_score: formData.leadScore ? parseInt(formData.leadScore) : 0,
       next_action: formData.nextAction.trim() || null,
       next_action_date: formData.nextActionDate || null,
       notes: formData.notes.trim() || null,
-      industry: formData.industry.trim() || null,
-      company_size: formData.companySize || null,
-      location: formData.location.trim() || null,
       assigned_to: formData.assignedTo && formData.assignedTo !== "unassigned" ? formData.assignedTo : null,
     }
 
@@ -357,22 +371,23 @@ export default function LeadsPage() {
       email: lead.email,
       phone: lead.phone,
       companyName: lead.companyName,
-      jobTitle: lead.jobTitle,
       address: lead.address,
+      city: lead.city,
+      state: lead.state,
       source: lead.source,
       interest: lead.interest,
       painPoints: lead.painPoints,
-      budgetMin: lead.budgetMin?.toString() || "",
-      budgetMax: lead.budgetMax?.toString() || "",
+      budget: lead.budget?.toString() || "",
+      squareFootage: lead.squareFootage?.toString() || "",
+      costPerSqft: lead.costPerSqft?.toString() || "",
+      discountType: lead.discountType || "",
+      discountValue: lead.discountValue?.toString() || "",
       temperature: lead.temperature,
       status: lead.status,
       leadScore: lead.leadScore.toString(),
       nextAction: lead.nextAction,
       nextActionDate: lead.nextActionDate || "",
       notes: lead.notes,
-      industry: lead.industry,
-      companySize: lead.companySize,
-      location: lead.location,
       assignedTo: lead.assignedTo || "",
     })
     setIsFormOpen(true)
@@ -394,9 +409,13 @@ export default function LeadsPage() {
       const matchesStatus =
         statusFilter === "all" || lead.status === statusFilter
 
-      return matchesSearch && matchesTemp && matchesStatus
+      const matchesAssigned =
+        assignedToFilter === "all" ||
+        (assignedToFilter === "unassigned" ? !lead.assignedTo : lead.assignedTo === assignedToFilter)
+
+      return matchesSearch && matchesTemp && matchesStatus && matchesAssigned
     })
-  }, [leads, searchQuery, temperatureFilter, statusFilter])
+  }, [leads, searchQuery, temperatureFilter, statusFilter, assignedToFilter])
 
   const activeLeads = useMemo(
     () => filteredLeads.filter((l) => !l.archivedAt && !l.convertedAt),
@@ -411,12 +430,12 @@ export default function LeadsPage() {
     [filteredLeads]
   )
 
-  const displayLeads =
-    activeTab === "active"
-      ? activeLeads
-      : activeTab === "converted"
-        ? convertedLeads
-        : archivedLeads
+  const displayLeads = useMemo(() => {
+    if (lifecycleFilter === "active") return activeLeads
+    if (lifecycleFilter === "converted") return convertedLeads
+    if (lifecycleFilter === "archived") return archivedLeads
+    return filteredLeads
+  }, [filteredLeads, activeLeads, convertedLeads, archivedLeads, lifecycleFilter])
 
   // Pagination
   const totalPages = Math.ceil(displayLeads.length / itemsPerPage)
@@ -425,10 +444,10 @@ export default function LeadsPage() {
     currentPage * itemsPerPage
   )
 
-  // Reset page on tab/filter change
+  // Reset page on filter change
   useEffect(() => {
     setCurrentPage(1)
-  }, [activeTab, searchQuery, temperatureFilter, statusFilter])
+  }, [lifecycleFilter, searchQuery, temperatureFilter, statusFilter, assignedToFilter])
 
   // Loading state
   if (isLoading) {
@@ -526,35 +545,35 @@ export default function LeadsPage() {
               <SelectItem value="lost">Lost</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={lifecycleFilter} onValueChange={(v) => setLifecycleFilter(v as "all" | "active" | "converted" | "archived")}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Lifecycle" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Lifecycle</SelectItem>
+              <SelectItem value="active">Active ({activeLeads.length})</SelectItem>
+              <SelectItem value="converted">Converted ({convertedLeads.length})</SelectItem>
+              <SelectItem value="archived">Archived ({archivedLeads.length})</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={assignedToFilter} onValueChange={setAssignedToFilter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sales Agent" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Agents</SelectItem>
+              <SelectItem value="unassigned">Unassigned</SelectItem>
+              {salesAgentsForFilter.map((agent) => (
+                <SelectItem key={agent.id} value={agent.id}>
+                  {agent.name || agent.email}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Tabs */}
-        <Tabs
-          value={activeTab}
-          onValueChange={(v) => setActiveTab(v as "active" | "converted" | "archived")}
-        >
-          <TabsList>
-            <TabsTrigger value="active">
-              Active ({activeLeads.length})
-            </TabsTrigger>
-            <TabsTrigger value="converted">
-              Converted ({convertedLeads.length})
-            </TabsTrigger>
-            <TabsTrigger value="archived">
-              Archived ({archivedLeads.length})
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="active" className="mt-4">
-            {renderTable(paginatedLeads, "active")}
-          </TabsContent>
-          <TabsContent value="converted" className="mt-4">
-            {renderTable(paginatedLeads, "converted")}
-          </TabsContent>
-          <TabsContent value="archived" className="mt-4">
-            {renderTable(paginatedLeads, "archived")}
-          </TabsContent>
-        </Tabs>
+        {/* Leads Table */}
+        {renderTable(paginatedLeads)}
 
         {/* Pagination */}
         {totalPages > 1 && (
@@ -630,18 +649,14 @@ export default function LeadsPage() {
   )
 
   // Render table helper
-  function renderTable(leadsList: Lead[], tab: string) {
+  function renderTable(leadsList: Lead[]) {
     if (leadsList.length === 0) {
       return (
         <div className="text-center py-12 border border-gray-200 dark:border-gray-800 rounded-lg">
           <p className="text-gray-500 dark:text-gray-400">
-            {searchQuery || temperatureFilter !== "all" || statusFilter !== "all"
+            {searchQuery || temperatureFilter !== "all" || statusFilter !== "all" || lifecycleFilter !== "all" || assignedToFilter !== "all"
               ? "No leads found matching your filters."
-              : tab === "archived"
-                ? "No archived leads."
-                : tab === "converted"
-                  ? "No converted leads yet."
-                  : "No active leads."}
+              : "No leads yet."}
           </p>
         </div>
       )
@@ -730,7 +745,7 @@ export default function LeadsPage() {
                         <Eye className="w-4 h-4 mr-2" />
                         View Details
                       </DropdownMenuItem>
-                      {tab === "active" && (
+                      {!lead.archivedAt && !lead.convertedAt && (
                         <>
                           <DropdownMenuItem
                             onClick={(e) => {
@@ -763,7 +778,7 @@ export default function LeadsPage() {
                           </DropdownMenuItem>
                         </>
                       )}
-                      {tab === "archived" && (
+                      {lead.archivedAt && (
                         <>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem

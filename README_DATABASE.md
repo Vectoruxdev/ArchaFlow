@@ -18,6 +18,7 @@ Your Supabase database is structured as a **multi-tenant workspace system** wher
 | `supabase-schema.sql` | Core tables (businesses, roles, permissions) |
 | `supabase-auth-schema.sql` | User management and RLS policies |
 | `supabase-projects-schema.sql` | Project management features |
+| `supabase-settings-positions.sql` | Team positions (Settings CRUD) |
 
 ## 🚀 Setup Instructions
 

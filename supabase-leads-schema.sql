@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS leads (
   company_name TEXT,
   job_title TEXT,
   address TEXT,
+  city TEXT,
+  state TEXT,
 
   -- Source and Timing
   source TEXT DEFAULT 'other'
@@ -26,8 +28,11 @@ CREATE TABLE IF NOT EXISTS leads (
   -- Interest Details
   interest TEXT,
   pain_points TEXT,
-  budget_min NUMERIC(12,2),
-  budget_max NUMERIC(12,2),
+  budget NUMERIC(12,2),
+  square_footage NUMERIC(12,2),
+  cost_per_sqft NUMERIC(12,2),
+  discount_type TEXT CHECK (discount_type IS NULL OR discount_type IN ('percent', 'fixed')),
+  discount_value NUMERIC(12,2),
 
   -- Status and Scoring
   temperature TEXT DEFAULT 'cold'
@@ -38,11 +43,6 @@ CREATE TABLE IF NOT EXISTS leads (
   next_action TEXT,
   next_action_date DATE,
   notes TEXT,
-
-  -- Demographics / Firmographic
-  industry TEXT,
-  company_size TEXT,
-  location TEXT,
 
   -- Assignment
   assigned_to UUID REFERENCES auth.users(id) ON DELETE SET NULL,

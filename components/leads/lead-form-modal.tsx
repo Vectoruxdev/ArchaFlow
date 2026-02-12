@@ -20,6 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { SearchableSelect } from "@/components/ui/searchable-select"
+import { CityCombobox } from "@/components/ui/city-combobox"
 
 export interface LeadFormData {
   id?: string
@@ -28,16 +30,17 @@ export interface LeadFormData {
   email: string
   phone: string
   companyName: string
-  jobTitle: string
   address: string
+  city: string
+  state: string
   source: string
   interest: string
   painPoints: string
-  budgetMin: string
-  budgetMax: string
-  industry: string
-  companySize: string
-  location: string
+  budget: string
+  squareFootage: string
+  costPerSqft: string
+  discountType: string
+  discountValue: string
   temperature: string
   status: string
   leadScore: string
@@ -53,16 +56,17 @@ const emptyForm = (): LeadFormData => ({
   email: "",
   phone: "",
   companyName: "",
-  jobTitle: "",
   address: "",
+  city: "",
+  state: "",
   source: "other",
   interest: "",
   painPoints: "",
-  budgetMin: "",
-  budgetMax: "",
-  industry: "",
-  companySize: "",
-  location: "",
+  budget: "",
+  squareFootage: "",
+  costPerSqft: "",
+  discountType: "",
+  discountValue: "",
   temperature: "cold",
   status: "new",
   leadScore: "0",
@@ -83,6 +87,26 @@ const sourceOptions = [
   { value: "other", label: "Other" },
 ]
 
+const US_STATES = [
+  { value: "AL", label: "Alabama" }, { value: "AK", label: "Alaska" }, { value: "AZ", label: "Arizona" },
+  { value: "AR", label: "Arkansas" }, { value: "CA", label: "California" }, { value: "CO", label: "Colorado" },
+  { value: "CT", label: "Connecticut" }, { value: "DE", label: "Delaware" }, { value: "FL", label: "Florida" },
+  { value: "GA", label: "Georgia" }, { value: "HI", label: "Hawaii" }, { value: "ID", label: "Idaho" },
+  { value: "IL", label: "Illinois" }, { value: "IN", label: "Indiana" }, { value: "IA", label: "Iowa" },
+  { value: "KS", label: "Kansas" }, { value: "KY", label: "Kentucky" }, { value: "LA", label: "Louisiana" },
+  { value: "ME", label: "Maine" }, { value: "MD", label: "Maryland" }, { value: "MA", label: "Massachusetts" },
+  { value: "MI", label: "Michigan" }, { value: "MN", label: "Minnesota" }, { value: "MS", label: "Mississippi" },
+  { value: "MO", label: "Missouri" }, { value: "MT", label: "Montana" }, { value: "NE", label: "Nebraska" },
+  { value: "NV", label: "Nevada" }, { value: "NH", label: "New Hampshire" }, { value: "NJ", label: "New Jersey" },
+  { value: "NM", label: "New Mexico" }, { value: "NY", label: "New York" }, { value: "NC", label: "North Carolina" },
+  { value: "ND", label: "North Dakota" }, { value: "OH", label: "Ohio" }, { value: "OK", label: "Oklahoma" },
+  { value: "OR", label: "Oregon" }, { value: "PA", label: "Pennsylvania" }, { value: "RI", label: "Rhode Island" },
+  { value: "SC", label: "South Carolina" }, { value: "SD", label: "South Dakota" }, { value: "TN", label: "Tennessee" },
+  { value: "TX", label: "Texas" }, { value: "UT", label: "Utah" }, { value: "VT", label: "Vermont" },
+  { value: "VA", label: "Virginia" }, { value: "WA", label: "Washington" }, { value: "WV", label: "West Virginia" },
+  { value: "WI", label: "Wisconsin" }, { value: "WY", label: "Wyoming" }, { value: "DC", label: "District of Columbia" },
+]
+
 const statusOptions = [
   { value: "new", label: "New" },
   { value: "contacted", label: "Contacted" },
@@ -91,15 +115,6 @@ const statusOptions = [
   { value: "negotiation", label: "Negotiation" },
   { value: "won", label: "Won" },
   { value: "lost", label: "Lost" },
-]
-
-const companySizeOptions = [
-  { value: "1-10", label: "1-10 employees" },
-  { value: "11-50", label: "11-50 employees" },
-  { value: "51-200", label: "51-200 employees" },
-  { value: "201-500", label: "201-500 employees" },
-  { value: "501-1000", label: "501-1,000 employees" },
-  { value: "1001+", label: "1,001+ employees" },
 ]
 
 interface LeadFormModalProps {
@@ -208,30 +223,38 @@ export function LeadFormModal({
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Company Name</label>
-                  <Input
-                    placeholder="Acme Corp"
-                    value={formData.companyName}
-                    onChange={(e) => update("companyName", e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Job Title</label>
-                  <Input
-                    placeholder="CEO"
-                    value={formData.jobTitle}
-                    onChange={(e) => update("jobTitle", e.target.value)}
-                  />
-                </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Company Name</label>
+                <Input
+                  placeholder="Acme Corp"
+                  value={formData.companyName}
+                  onChange={(e) => update("companyName", e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Address</label>
                 <Input
-                  placeholder="123 Main St, City, State"
+                  placeholder="123 Main St"
                   value={formData.address}
                   onChange={(e) => update("address", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">City</label>
+                <CityCombobox
+                  value={formData.city}
+                  onChange={(v) => update("city", v)}
+                  placeholder="Search city..."
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">State</label>
+                <SearchableSelect
+                  options={US_STATES}
+                  value={formData.state}
+                  onValueChange={(v) => update("state", v)}
+                  placeholder="Select state"
+                  searchPlaceholder="Search states..."
                 />
               </div>
             </TabsContent>
@@ -250,7 +273,7 @@ export function LeadFormModal({
                 </Select>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Interest / Service</label>
+                <label className="text-sm font-medium">Service</label>
                 <Input
                   placeholder="Custom home design, commercial renovation..."
                   value={formData.interest}
@@ -266,55 +289,86 @@ export function LeadFormModal({
                   onChange={(e) => update("painPoints", e.target.value)}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Budget Min ($)</label>
-                  <Input
-                    type="number"
-                    placeholder="50000"
-                    value={formData.budgetMin}
-                    onChange={(e) => update("budgetMin", e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Budget Max ($)</label>
-                  <Input
-                    type="number"
-                    placeholder="200000"
-                    value={formData.budgetMax}
-                    onChange={(e) => update("budgetMax", e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Industry</label>
-                  <Input
-                    placeholder="Real Estate, Construction..."
-                    value={formData.industry}
-                    onChange={(e) => update("industry", e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Company Size</label>
-                  <Select value={formData.companySize} onValueChange={(v) => update("companySize", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select size" /></SelectTrigger>
-                    <SelectContent>
-                      {companySizeOptions.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Location</label>
+                <label className="text-sm font-medium">Budget</label>
                 <Input
-                  placeholder="City, State or Region"
-                  value={formData.location}
-                  onChange={(e) => update("location", e.target.value)}
+                  type="number"
+                  placeholder="50000"
+                  value={formData.budget}
+                  onChange={(e) => update("budget", e.target.value)}
                 />
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Square Footage</label>
+                  <Input
+                    type="number"
+                    placeholder="2500"
+                    value={formData.squareFootage}
+                    onChange={(e) => update("squareFootage", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Cost per Sq Ft</label>
+                  <Input
+                    type="number"
+                    placeholder="150"
+                    value={formData.costPerSqft}
+                    onChange={(e) => update("costPerSqft", e.target.value)}
+                  />
+                </div>
+              </div>
+              {(() => {
+                const sqft = parseFloat(formData.squareFootage)
+                const cost = parseFloat(formData.costPerSqft)
+                const total = !isNaN(sqft) && !isNaN(cost) && sqft > 0 && cost > 0 ? sqft * cost : null
+                const discountType = formData.discountType || null
+                const discountVal = parseFloat(formData.discountValue)
+                const discount = total != null && discountType && !isNaN(discountVal) && discountVal > 0
+                  ? discountType === "percent"
+                    ? (total * discountVal) / 100
+                    : discountVal
+                  : 0
+                const finalTotal = total != null ? total - discount : null
+                const hasDiscount = discount > 0
+                return (
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-3 px-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">Total Price</span>
+                      <span className="text-sm font-medium tabular-nums">
+                        {total != null ? `$${total.toLocaleString()}` : "---"}
+                        {hasDiscount && (
+                          <span className="text-xs text-gray-500 font-normal ml-1">
+                            (− {discountType === "percent" ? `${discountVal}%` : `$${discount.toLocaleString()}`})
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">Discount</span>
+                      <Select value={formData.discountType || "_none"} onValueChange={(v) => update("discountType", v === "_none" ? "" : v)}>
+                        <SelectTrigger className="w-[120px] h-9"><SelectValue placeholder="Type" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="_none">None</SelectItem>
+                          <SelectItem value="percent">Percent</SelectItem>
+                          <SelectItem value="fixed">Fixed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        type="number"
+                        className="w-20 h-9"
+                        placeholder={formData.discountType === "percent" ? "10" : "5000"}
+                        value={formData.discountValue}
+                        onChange={(e) => update("discountValue", e.target.value)}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500">Final Total</span>
+                      <span className="text-sm font-semibold tabular-nums">{finalTotal != null ? `$${finalTotal.toLocaleString()}` : "---"}</span>
+                    </div>
+                  </div>
+                )
+              })()}
             </TabsContent>
 
             {/* Status Tab */}
