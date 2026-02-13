@@ -25,6 +25,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { supabase } from "@/lib/supabase/client"
+import { recordActivity } from "@/lib/activity"
 import { useAuth } from "@/lib/auth/auth-context"
 import { authFetch } from "@/lib/auth/auth-fetch"
 import {
@@ -98,7 +99,7 @@ const priorityColors = {
 
 export default function ProjectsPage() {
   const router = useRouter()
-  const { currentWorkspace, workspacesLoaded } = useAuth()
+  const { currentWorkspace, workspacesLoaded, user } = useAuth()
   const [projects, setProjects] = useState(allProjects)
   const [searchQuery, setSearchQuery] = useState("")
   const [filterStatus, setFilterStatus] = useState<ProjectStatus | "all">("all")
@@ -294,6 +295,16 @@ export default function ProjectsPage() {
       if (error) throw error
 
       console.log("✅ [Projects Page] Project created successfully:", data)
+      if (currentWorkspace?.id && data) {
+        recordActivity({
+          businessId: currentWorkspace.id,
+          userId: user?.id,
+          activityType: "project_created",
+          entityType: "project",
+          entityId: data.id,
+          message: `Project "${data.title}" created`,
+        }).catch(() => {})
+      }
       return data
     } catch (error) {
       console.error("❌ [Projects Page] Error creating project:", error)

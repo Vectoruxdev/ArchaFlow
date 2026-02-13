@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase/client"
+import { recordActivity } from "@/lib/activity"
 import { useAuth } from "@/lib/auth/auth-context"
 import { ClientFormModal, type ClientFormData } from "@/components/clients/client-form-modal"
 import { Search, X, Plus, User } from "lucide-react"
@@ -26,7 +27,7 @@ export function ClientSelect({
   onChange,
   placeholder = "Search for a client...",
 }: ClientSelectProps) {
-  const { currentWorkspace } = useAuth()
+  const { currentWorkspace, user } = useAuth()
   const [query, setQuery] = useState("")
   const [options, setOptions] = useState<ClientOption[]>([])
   const [isOpen, setIsOpen] = useState(false)
@@ -153,6 +154,17 @@ export function ClientSelect({
       .single()
 
     if (error) throw error
+
+    if (businessId && newClient) {
+      recordActivity({
+        businessId,
+        userId: user?.id,
+        activityType: "client_created",
+        entityType: "client",
+        entityId: newClient.id,
+        message: `Client "${newClient.first_name} ${newClient.last_name}" added`,
+      }).catch(() => {})
+    }
 
     // Insert sub-contacts if any
     if (formData.contacts.length > 0 && newClient) {

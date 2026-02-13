@@ -11,12 +11,19 @@ import {
   Clock,
   ListTodo,
   ChevronRight,
+  StickyNote,
+  Paperclip,
+  ArrowRightLeft,
+  UserPlus,
+  FolderPlus,
+  User,
 } from "lucide-react"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { isSupabaseConfigured } from "@/lib/supabase/client"
+import { authFetch } from "@/lib/auth/auth-fetch"
 
 type CompanyStats = {
   newLeads: number
@@ -36,6 +43,28 @@ type PersonalStats = {
   upcomingDueCount: number
 }
 
+type WorkspaceActivity = {
+  id: string
+  activity_type: string
+  message: string
+  created_at: string
+  user_id: string | null
+}
+
+function formatTimeAgo(iso: string): string {
+  const date = new Date(iso)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+  const diffMins = Math.floor(diffMs / 60000)
+  const diffHours = Math.floor(diffMs / 3600000)
+  const diffDays = Math.floor(diffMs / 86400000)
+  if (diffMins < 1) return "Just now"
+  if (diffMins < 60) return `${diffMins}m ago`
+  if (diffHours < 24) return `${diffHours}h ago`
+  if (diffDays < 7) return `${diffDays}d ago`
+  return date.toLocaleDateString()
+}
+
 export default function DashboardPage() {
   const { user, currentWorkspace, workspaces, workspacesLoaded, loading: authLoading, switchWorkspace } = useAuth()
   const businessId = currentWorkspace?.id
@@ -44,6 +73,7 @@ export default function DashboardPage() {
 
   const [companyStats, setCompanyStats] = useState<CompanyStats | null>(null)
   const [personalStats, setPersonalStats] = useState<PersonalStats | null>(null)
+  const [activities, setActivities] = useState<WorkspaceActivity[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
 
@@ -54,6 +84,22 @@ export default function DashboardPage() {
       switchWorkspace(workspaces[0].id)
     }
   }, [isAuthReady, currentWorkspace, workspaces, switchWorkspace])
+
+  useEffect(() => {
+    if (!businessId) return
+    const loadActivities = async () => {
+      try {
+        const res = await authFetch(`/api/activities?businessId=${encodeURIComponent(businessId)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setActivities(Array.isArray(data) ? data : [])
+        }
+      } catch {
+        setActivities([])
+      }
+    }
+    loadActivities()
+  }, [businessId])
 
   useEffect(() => {
     if (!isAuthReady || !businessId || !user) {
@@ -429,6 +475,42 @@ export default function DashboardPage() {
             </div>
           </>
         )}
+
+        {/* Recent Activity */}
+        <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
+          <h3 className="font-semibold mb-4">Recent Activity</h3>
+          <div className="space-y-4">
+            {activities.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400">No recent activity yet.</p>
+            ) : (
+              activities.map((activity) => {
+                const iconMap: Record<string, React.ReactElement> = {
+                  project_moved: <ArrowRightLeft className="w-4 h-4" />,
+                  lead_converted: <Target className="w-4 h-4" />,
+                  member_invited: <UserPlus className="w-4 h-4" />,
+                  member_joined: <User className="w-4 h-4" />,
+                  project_created: <FolderPlus className="w-4 h-4" />,
+                  client_created: <User className="w-4 h-4" />,
+                }
+                const Icon = iconMap[activity.activity_type] || <StickyNote className="w-4 h-4" />
+                const timeAgo = formatTimeAgo(activity.created_at)
+                return (
+                  <div key={activity.id} className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center flex-shrink-0 text-gray-600 dark:text-gray-400">
+                      {Icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-gray-900 dark:text-gray-100 line-clamp-2">
+                        {activity.message}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">{timeAgo}</p>
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </div>
+        </div>
       </div>
     </AppLayout>
   )

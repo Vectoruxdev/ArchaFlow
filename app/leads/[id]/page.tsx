@@ -58,6 +58,7 @@ import { LeadFormModal, type LeadFormData } from "@/components/leads/lead-form-m
 import { LogActivityModal, type ActivityFormData } from "@/components/leads/log-activity-modal"
 import { authFetch } from "@/lib/auth/auth-fetch"
 import { supabase } from "@/lib/supabase/client"
+import { recordActivity } from "@/lib/activity"
 import { useAuth } from "@/lib/auth/auth-context"
 
 interface LeadDetail {
@@ -747,6 +748,18 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
         subject: "Lead Converted to Project",
         description: `Converted to project "${projectTitle}"`,
       }])
+
+      if (businessId) {
+        recordActivity({
+          businessId,
+          userId: user?.id,
+          activityType: "lead_converted",
+          entityType: "project",
+          entityId: newProject.id,
+          message: `Lead "${lead.firstName} ${lead.lastName}" converted to project "${projectTitle}"`,
+          metadata: { leadId: lead.id },
+        }).catch(() => {})
+      }
 
       // 5. Navigate to the new project
       setIsConvertDialogOpen(false)

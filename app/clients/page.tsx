@@ -33,6 +33,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ClientFormModal, type ClientFormData } from "@/components/clients/client-form-modal"
 import { supabase } from "@/lib/supabase/client"
+import { recordActivity } from "@/lib/activity"
 import { useAuth } from "@/lib/auth/auth-context"
 import {
   Search,
@@ -74,7 +75,7 @@ interface Client {
 
 export default function ClientsPage() {
   const router = useRouter()
-  const { currentWorkspace, workspacesLoaded } = useAuth()
+  const { currentWorkspace, workspacesLoaded, user } = useAuth()
   const [clients, setClients] = useState<Client[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -230,6 +231,17 @@ export default function ClientsPage() {
         .single()
 
       if (insertError) throw insertError
+
+      if (businessId && newClient) {
+        recordActivity({
+          businessId,
+          userId: user?.id,
+          activityType: "client_created",
+          entityType: "client",
+          entityId: newClient.id,
+          message: `Client "${newClient.first_name} ${newClient.last_name}" added`,
+        }).catch(() => {})
+      }
 
       // Insert sub-contacts
       if (formData.contacts.length > 0 && newClient) {

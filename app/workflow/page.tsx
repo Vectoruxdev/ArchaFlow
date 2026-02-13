@@ -75,6 +75,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { supabase } from "@/lib/supabase/client"
+import { recordActivity } from "@/lib/activity"
 import { ClientSelect } from "@/components/ui/client-select"
 
 // Types
@@ -136,17 +137,8 @@ interface Project {
   secondaryOwnerId?: string | null
 }
 
-interface Activity {
-  id: string
-  type: "note" | "payment" | "file" | "status"
-  message: string
-  time: string
-  user: string
-}
-
 // No mock data - application starts clean
 const initialProjects: Project[] = []
-const activities: Activity[] = []
 
 const defaultColumns: Column[] = [
   { id: "lead", label: "Lead", colorKey: "lead" },
@@ -171,7 +163,7 @@ const paymentColors = {
 
 export default function WorkflowPage() {
   const router = useRouter()
-  const { currentWorkspace, workspaces, switchWorkspace, loading: authLoading, workspacesLoading, workspacesLoaded } = useAuth()
+  const { currentWorkspace, workspaces, switchWorkspace, loading: authLoading, workspacesLoading, workspacesLoaded, user } = useAuth()
   const [projects, setProjects] = useState(initialProjects)
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false)
   
@@ -655,6 +647,17 @@ export default function WorkflowPage() {
       // Notify other pages that projects have been updated
       window.dispatchEvent(new Event('projectsUpdated'))
       console.log("📢 Dispatched projectsUpdated event")
+      
+      if (businessId && data) {
+        recordActivity({
+          businessId,
+          userId: user?.id,
+          activityType: "project_created",
+          entityType: "project",
+          entityId: data.id,
+          message: `Project "${data.title}" created`,
+        }).catch(() => {})
+      }
       
       return data
     } catch (error: any) {
@@ -1344,6 +1347,20 @@ export default function WorkflowPage() {
       try {
         await updateProjectStatus(draggableId, newStatus)
         console.log("✅ Project status updated in database")
+        const project = projects.find((p) => p.id === draggableId)
+        const fromLabel = getColumnLabel(source.droppableId)
+        const toLabel = getColumnLabel(newStatus)
+        if (businessId && project) {
+          recordActivity({
+            businessId,
+            userId: user?.id,
+            activityType: "project_moved",
+            entityType: "project",
+            entityId: draggableId,
+            message: `"${project.title}" moved from ${fromLabel} to ${toLabel}`,
+            metadata: { fromStatus: source.droppableId, toStatus: newStatus },
+          }).catch(() => {})
+        }
       } catch (error) {
         console.error("❌ Error updating project status:", error)
         // Revert on error
@@ -1763,20 +1780,23 @@ export default function WorkflowPage() {
                 <List className="w-4 h-4" />
                 List
               </button>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleFullScreen}
-              className="h-9 w-9 p-0"
-              title={isFullScreen ? "Exit full screen" : "View full screen"}
-            >
-              {isFullScreen ? (
-                <Minimize2 className="w-4 h-4" />
-              ) : (
-                <Maximize2 className="w-4 h-4" />
+              {(viewMode === "board" || isFullScreen) && (
+                <>
+                  <div className="w-px h-5 bg-gray-200 dark:bg-gray-800" />
+                  <button
+                    onClick={toggleFullScreen}
+                    className="flex items-center justify-center p-1.5 rounded text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    title={isFullScreen ? "Exit full screen" : "View full screen"}
+                  >
+                    {isFullScreen ? (
+                      <Minimize2 className="w-4 h-4" />
+                    ) : (
+                      <Maximize2 className="w-4 h-4" />
+                    )}
+                  </button>
+                </>
               )}
-            </Button>
+            </div>
           </div>
         </div>
 
@@ -1971,33 +1991,6 @@ export default function WorkflowPage() {
     </Droppable>
   </DragDropContext>
             </div>
-
-            {/* Activity Sidebar */}
-            <aside className="hidden xl:block w-80 space-y-4">
-            <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
-              <h3 className="font-semibold mb-4">Recent Activity</h3>
-              <div className="space-y-4">
-                {activities.map((activity) => (
-                  <div key={activity.id} className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center flex-shrink-0">
-                      {activity.type === "note" && <StickyNote className="w-4 h-4" />}
-                      {activity.type === "payment" && <DollarSign className="w-4 h-4" />}
-                      {activity.type === "file" && <Paperclip className="w-4 h-4" />}
-                      {activity.type === "status" && <CheckCircle2 className="w-4 h-4" />}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900 dark:text-gray-100 line-clamp-2">
-                        {activity.message}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {activity.user} · {activity.time}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              </div>
-            </aside>
           </div>
           )
         )}

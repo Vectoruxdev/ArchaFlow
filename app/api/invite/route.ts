@@ -233,6 +233,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Record activity (non-blocking)
+    supabaseAdmin.from("workspace_activities").insert({
+      business_id: businessId,
+      user_id: user.id,
+      activity_type: "member_invited",
+      entity_type: "workspace_invitation",
+      entity_id: invitation.id,
+      message: `${email.trim()} invited to the workspace`,
+      metadata: { email: email.trim() },
+    }).then(({ error }) => { if (error) console.error("[Activity] member_invited:", error) })
+
     return NextResponse.json({
       invitation,
       emailSent: true,

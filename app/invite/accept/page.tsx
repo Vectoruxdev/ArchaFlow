@@ -3,6 +3,7 @@
 import { Suspense, useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase/client"
+import { recordActivity } from "@/lib/activity"
 import { useAuth } from "@/lib/auth/auth-context"
 import { Button } from "@/components/ui/button"
 import { CheckCircle2, XCircle, Loader2, LogIn } from "lucide-react"
@@ -130,6 +131,17 @@ function AcceptInviteContent() {
       } else {
         setStatus("success")
         setMessage(`You've joined ${workspaceName || "the workspace"} successfully!`)
+        if (result.business_id && user) {
+          const displayName = user.user_metadata?.full_name || user.email || "A new member"
+          recordActivity({
+            businessId: result.business_id,
+            userId: user.id,
+            activityType: "member_joined",
+            entityType: "user_role",
+            entityId: result.role_id,
+            message: `${displayName} joined the workspace`,
+          }).catch(() => {})
+        }
       }
 
       setTimeout(() => {

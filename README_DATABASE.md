@@ -19,6 +19,7 @@ Your Supabase database is structured as a **multi-tenant workspace system** wher
 | `supabase-auth-schema.sql` | User management and RLS policies |
 | `supabase-projects-schema.sql` | Project management features |
 | `supabase-settings-positions.sql` | Team positions (Settings CRUD) |
+| `supabase-workspace-activities.sql` | Recent activity feed (card moves, lead conversions, etc.) |
 
 ## 🚀 Setup Instructions
 
