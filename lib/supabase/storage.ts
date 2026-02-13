@@ -3,6 +3,44 @@
 import { supabase } from "./client"
 
 const BUCKET_NAME = "project-files"
+const AVATARS_BUCKET = "avatars"
+
+/**
+ * Upload an avatar image for a user
+ * Uses dedicated "avatars" bucket (run supabase-avatars-bucket.sql to create it)
+ * @param file - The image file to upload
+ * @param userId - The user's ID
+ * @returns The public URL of the uploaded avatar
+ */
+export async function uploadAvatar(
+  file: File,
+  userId: string
+): Promise<{ url: string; path: string }> {
+  const fileExt = file.name.split(".").pop()?.toLowerCase() || "jpg"
+  const validExts = ["jpg", "jpeg", "png", "gif", "webp"]
+  const ext = validExts.includes(fileExt) ? fileExt : "jpg"
+  const filePath = `${userId}/avatar.${ext}`
+
+  const { data, error } = await supabase.storage
+    .from(AVATARS_BUCKET)
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: true,
+    })
+
+  if (error) {
+    throw new Error(`Avatar upload failed: ${error.message}`)
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(AVATARS_BUCKET).getPublicUrl(filePath)
+
+  return {
+    url: publicUrl,
+    path: data.path,
+  }
+}
 
 /**
  * Upload a file to Supabase Storage

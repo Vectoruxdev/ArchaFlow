@@ -14,7 +14,7 @@ import {
   Plus,
   Check,
 } from "lucide-react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -31,7 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useAuth } from "@/lib/auth/auth-context"
-import { isSupabaseConfigured } from "@/lib/supabase/client"
+import { supabase, isSupabaseConfigured } from "@/lib/supabase/client"
 import { CreateWorkspaceDialog } from "@/components/workspace/create-workspace-dialog"
 import { ChangelogDialog } from "@/components/ui/changelog-dialog"
 import { GlobalSearch, useGlobalSearchHotkeys } from "@/components/search/global-search"
@@ -55,8 +55,34 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false)
   const [showChangelog, setShowChangelog] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState<string>("")
 
   const openSearch = useCallback(() => setSearchOpen(true), [])
+
+  useEffect(() => {
+    if (!user?.id || !isSupabaseConfigured()) return
+    const loadAvatar = async () => {
+      try {
+        const { data } = await supabase
+          .from("user_profiles")
+          .select("avatar_url")
+          .eq("id", user.id)
+          .single()
+        if (data?.avatar_url) setAvatarUrl(data.avatar_url)
+      } catch {
+        /* ignore */
+      }
+    }
+    loadAvatar()
+  }, [user?.id])
+
+  useEffect(() => {
+    const onAvatarUpdated = (e: CustomEvent<{ url: string }>) => {
+      setAvatarUrl(e.detail.url)
+    }
+    window.addEventListener("avatar-updated", onAvatarUpdated as EventListener)
+    return () => window.removeEventListener("avatar-updated", onAvatarUpdated as EventListener)
+  }, [])
   useGlobalSearchHotkeys(openSearch)
 
   // Show actual workspace data or a loading placeholder
@@ -176,6 +202,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg p-1.5">
                     <Avatar className="w-8 h-8">
+                      <AvatarImage src={avatarUrl} alt="" />
                       <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black text-xs">
                         {userInitials}
                       </AvatarFallback>
@@ -190,9 +217,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push("/settings")}>Settings</DropdownMenuItem>
-                  <DropdownMenuItem>Billing</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push("/profile")}>Profile</DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
                 </DropdownMenuContent>

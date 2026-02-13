@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Send } from "lucide-react"
@@ -38,6 +38,7 @@ export function CommentThread({ comments, onAddComment }: CommentThreadProps) {
         {comments.map((comment) => (
           <div key={comment.id} className="flex gap-3">
             <Avatar className="w-10 h-10 flex-shrink-0">
+              <AvatarImage src={comment.avatar} alt="" />
               <AvatarFallback className="bg-gray-200 dark:bg-gray-800 text-sm">
                 {comment.author.slice(0, 2).toUpperCase()}
               </AvatarFallback>

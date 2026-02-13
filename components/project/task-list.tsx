@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, ChevronDown, ChevronRight } from "lucide-react"
 
@@ -108,6 +108,7 @@ export function TaskList({ tasks, onToggleTask, onToggleSubtask }: TaskListProps
                   <div className="flex -space-x-2">
                     {task.assignees.map((assignee, i) => (
                       <Avatar key={i} className="w-6 h-6 border-2 border-white dark:border-black">
+                        <AvatarImage src={assignee.avatar} alt="" />
                         <AvatarFallback className="text-xs bg-gray-200 dark:bg-gray-800">
                           {assignee.name.slice(0, 2).toUpperCase()}
                         </AvatarFallback>

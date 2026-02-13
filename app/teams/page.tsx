@@ -1,5 +1,6 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { useState, useEffect, useMemo } from "react"
 import { AppLayout } from "@/components/layout/app-layout"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -52,9 +53,17 @@ import {
   Mail,
   Phone,
   Clock,
+  Upload,
 } from "lucide-react"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
+import { uploadAvatar } from "@/lib/supabase/storage"
+import { AvatarPickerDialog } from "@/components/profile/avatar-picker-dialog"
+
+const AvatarCropModal = dynamic(
+  () => import("@/components/profile/avatar-crop-modal").then((m) => ({ default: m.AvatarCropModal })),
+  { ssr: false }
+)
 
 // Types
 interface TeamMember {
@@ -146,6 +155,9 @@ export default function TeamsPage() {
   const [editRoleId, setEditRoleId] = useState("")
   const [isSavingEdit, setIsSavingEdit] = useState(false)
   const [editError, setEditError] = useState<string | null>(null)
+  const [avatarCropFile, setAvatarCropFile] = useState<File | null>(null)
+  const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false)
+  const [avatarUploading, setAvatarUploading] = useState(false)
 
   // Remove member / cancel invite
   const [removeConfirm, setRemoveConfirm] = useState<{ type: "member" | "invite"; id: string; name: string } | null>(null)
@@ -404,6 +416,36 @@ export default function TeamsPage() {
       setEditError(error.message)
     } finally {
       setIsSavingEdit(false)
+    }
+  }
+
+  const handlePresetSelect = (url: string) => {
+    setEditAvatarUrl(url)
+    setIsAvatarPickerOpen(false)
+  }
+
+  const handleFileSelected = (file: File) => {
+    setEditError(null)
+    setIsAvatarPickerOpen(false)
+    setAvatarCropFile(file)
+  }
+
+  const handleAvatarCropConfirm = async (croppedFile: File) => {
+    if (!editingMember?.userId) return
+    setAvatarCropFile(null)
+    setAvatarUploading(true)
+    setEditError(null)
+    try {
+      const { url } = await uploadAvatar(croppedFile, editingMember.userId)
+      const cacheBustedUrl = `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`
+      setEditAvatarUrl(cacheBustedUrl)
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("avatar-updated", { detail: { url: cacheBustedUrl } }))
+      }
+    } catch (err: unknown) {
+      setEditError(err instanceof Error ? err.message : "Failed to upload avatar")
+    } finally {
+      setAvatarUploading(false)
     }
   }
 
@@ -708,6 +750,20 @@ export default function TeamsPage() {
         {/* Invite Modal */}
         {renderInviteModal()}
 
+        <AvatarCropModal
+          file={avatarCropFile}
+          onConfirm={handleAvatarCropConfirm}
+          onCancel={() => setAvatarCropFile(null)}
+        />
+        <AvatarPickerDialog
+          open={isAvatarPickerOpen}
+          onOpenChange={setIsAvatarPickerOpen}
+          onSelectPreset={handlePresetSelect}
+          onFileSelected={handleFileSelected}
+          onValidationError={setEditError}
+          isUploading={avatarUploading}
+        />
+
         {/* Edit Member Modal */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogContent className="max-w-lg">
@@ -719,20 +775,36 @@ export default function TeamsPage() {
             </DialogHeader>
             <div className="space-y-4 py-2">
               <div className="flex items-center gap-4">
-                <Avatar className="w-16 h-16">
-                  <AvatarImage src={editAvatarUrl} />
-                  <AvatarFallback className="bg-gray-200 dark:bg-gray-800 text-lg">
-                    {`${editFirstName?.[0] || ""}${editLastName?.[0] || ""}`.toUpperCase() || "?"}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-2">
-                  <label className="text-sm font-medium">Photo URL</label>
-                  <Input
-                    placeholder="https://example.com/photo.jpg"
-                    value={editAvatarUrl}
-                    onChange={(e) => setEditAvatarUrl(e.target.value)}
-                  />
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsAvatarPickerOpen(true)}
+                    disabled={avatarUploading}
+                    className="block rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 focus:ring-offset-2"
+                  >
+                    <Avatar className="w-16 h-16 cursor-pointer hover:opacity-90 transition-opacity">
+                      <AvatarImage src={editAvatarUrl} />
+                      <AvatarFallback className="bg-gray-200 dark:bg-gray-800 text-lg">
+                        {`${editFirstName?.[0] || ""}${editLastName?.[0] || ""}`.toUpperCase() || "?"}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsAvatarPickerOpen(true)}
+                    disabled={avatarUploading}
+                    className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center hover:opacity-90 disabled:opacity-50"
+                  >
+                    {avatarUploading ? (
+                      <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5" />
+                    )}
+                  </button>
                 </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Click to change photo. Choose from presets or upload your own.
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

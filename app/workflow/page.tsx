@@ -33,6 +33,8 @@ import {
   MoreVertical,
   ExternalLink,
   ChevronDown,
+  Maximize2,
+  Minimize2,
 } from "lucide-react"
 import { AppLayout } from "@/components/layout/app-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
@@ -270,6 +272,8 @@ export default function WorkflowPage() {
 
   // View mode state
   const [viewMode, setViewMode] = useState<"board" | "list">("board")
+  const [isFullScreen, setIsFullScreen] = useState(false)
+  const fullscreenRef = useRef<HTMLDivElement>(null)
 
   // Loading state
   const [isLoading, setIsLoading] = useState(true)
@@ -450,10 +454,13 @@ export default function WorkflowPage() {
           budget: proj.budget?.toString(),
           description: proj.description,
           status: proj.status,
-          assignees: (proj.project_assignments || []).map((assignment: any) => ({
-            name: assignment.user_id, // TODO: Fetch actual user names
-            avatar: "",
-          })),
+          assignees: (proj.project_assignments || []).map((assignment: any) => {
+            const member = membersMap[assignment.user_id]
+            return {
+              name: member?.name || assignment.user_id || "?",
+              avatar: member?.avatar || "",
+            }
+          }),
           primaryOwner,
           secondaryOwner,
           businessId: proj.business_id,
@@ -1050,6 +1057,29 @@ export default function WorkflowPage() {
     // event.preventDefault() // Removed - causes passive event listener errors in console
   }
 
+  const toggleFullScreen = async () => {
+    if (!fullscreenRef.current) return
+    try {
+      if (!document.fullscreenElement) {
+        await fullscreenRef.current.requestFullscreen()
+        setIsFullScreen(true)
+      } else {
+        await document.exitFullscreen()
+        setIsFullScreen(false)
+      }
+    } catch {
+      setIsFullScreen(false)
+    }
+  }
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement)
+    }
+    document.addEventListener("fullscreenchange", handleFullScreenChange)
+    return () => document.removeEventListener("fullscreenchange", handleFullScreenChange)
+  }, [])
+
   // Time tracking functions
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60)
@@ -1498,6 +1528,11 @@ export default function WorkflowPage() {
           </div>
         </div>
 
+        {/* Board/List container - can be fullscreened */}
+        <div
+          ref={fullscreenRef}
+          className="space-y-6 bg-white dark:bg-black rounded-lg min-h-0 [&:fullscreen]:p-6"
+        >
         {/* Filter Bar */}
         <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-4">
           <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center">
@@ -1729,6 +1764,19 @@ export default function WorkflowPage() {
                 List
               </button>
             </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleFullScreen}
+              className="h-9 w-9 p-0"
+              title={isFullScreen ? "Exit full screen" : "View full screen"}
+            >
+              {isFullScreen ? (
+                <Minimize2 className="w-4 h-4" />
+              ) : (
+                <Maximize2 className="w-4 h-4" />
+              )}
+            </Button>
           </div>
         </div>
 
@@ -2080,6 +2128,8 @@ export default function WorkflowPage() {
             </div>
           )
         )}
+
+        </div>
 
         {/* Floating Action Button */}
       <button

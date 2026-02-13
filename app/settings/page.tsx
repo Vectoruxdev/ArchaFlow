@@ -19,10 +19,6 @@ import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd"
 import {
-  Bell,
-  Lock,
-  CreditCard,
-  Palette,
   Check,
   Briefcase,
   Plus,
@@ -38,7 +34,6 @@ import {
 export default function SettingsPage() {
   const router = useRouter()
   const { currentWorkspace, workspaces, user, deleteWorkspace, leaveWorkspace, renameWorkspace } = useAuth()
-  const [theme, setTheme] = useState<"light" | "dark">("dark")
   const [saved, setSaved] = useState(false)
 
   // Workspace action state
@@ -86,6 +81,7 @@ export default function SettingsPage() {
   }
 
   const featureList = [
+    { key: "dashboard", label: "Dashboard" },
     { key: "projects", label: "Projects" },
     { key: "leads", label: "Leads" },
     { key: "invoices", label: "Invoices" },
@@ -108,22 +104,6 @@ export default function SettingsPage() {
   const [editingRoleName, setEditingRoleName] = useState("")
   const [deletingRole, setDeletingRole] = useState<Role | null>(null)
   const [savingPermissions, setSavingPermissions] = useState(false)
-
-  useEffect(() => {
-    // Check current theme on mount
-    const isDark = document.documentElement.classList.contains("dark")
-    setTheme(isDark ? "dark" : "light")
-  }, [])
-
-  const handleThemeChange = (newTheme: "light" | "dark") => {
-    setTheme(newTheme)
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark")
-    } else {
-      document.documentElement.classList.remove("dark")
-    }
-    showSaved()
-  }
 
   const showSaved = () => {
     setSaved(true)
@@ -588,7 +568,7 @@ export default function SettingsPage() {
           <div>
             <h1 className="text-2xl font-semibold">Settings</h1>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Manage your account preferences and settings
+              Manage workspace settings, roles, and team configuration
             </p>
           </div>
           {saved && (
@@ -597,151 +577,6 @@ export default function SettingsPage() {
               Saved
             </Badge>
           )}
-        </div>
-
-        {/* Appearance Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Palette className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </div>
-              <div>
-                <h2 className="font-semibold">Appearance</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Customize how ArchaFlow looks
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="space-y-3">
-              <label className="text-sm font-medium">Theme</label>
-              <div className="grid grid-cols-2 gap-4">
-                {/* Light Theme Option */}
-                <button
-                  onClick={() => handleThemeChange("light")}
-                  className={`relative p-4 border-2 rounded-lg transition-all ${
-                    theme === "light"
-                      ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
-                      : "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-sm">Light</span>
-                      {theme === "light" && (
-                        <div className="w-5 h-5 rounded-full bg-black dark:bg-white flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white dark:text-black" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="bg-white border border-gray-200 rounded-md p-3 space-y-2">
-                      <div className="h-2 bg-gray-900 rounded w-1/2"></div>
-                      <div className="h-1.5 bg-gray-300 rounded w-3/4"></div>
-                      <div className="h-1.5 bg-gray-300 rounded w-2/3"></div>
-                    </div>
-                  </div>
-                </button>
-
-                {/* Dark Theme Option */}
-                <button
-                  onClick={() => handleThemeChange("dark")}
-                  className={`relative p-4 border-2 rounded-lg transition-all ${
-                    theme === "dark"
-                      ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
-                      : "border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-sm">Dark</span>
-                      {theme === "dark" && (
-                        <div className="w-5 h-5 rounded-full bg-black dark:bg-white flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white dark:text-black" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="bg-gray-900 border border-gray-800 rounded-md p-3 space-y-2">
-                      <div className="h-2 bg-gray-100 rounded w-1/2"></div>
-                      <div className="h-1.5 bg-gray-700 rounded w-3/4"></div>
-                      <div className="h-1.5 bg-gray-700 rounded w-2/3"></div>
-                    </div>
-                  </div>
-                </button>
-              </div>
-              <p className="text-xs text-gray-500">
-                Choose your preferred color scheme. Changes apply immediately.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Notifications Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </div>
-              <div>
-                <h2 className="font-semibold">Notifications</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Manage your notification preferences
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 space-y-4">
-            {[
-              {
-                title: "Email Notifications",
-                description: "Receive email updates about your projects",
-                enabled: true,
-              },
-              {
-                title: "Project Updates",
-                description: "Get notified when project status changes",
-                enabled: true,
-              },
-              {
-                title: "Payment Reminders",
-                description: "Receive reminders for pending invoices",
-                enabled: true,
-              },
-              {
-                title: "Team Activity",
-                description: "Get notified about team member actions",
-                enabled: false,
-              },
-            ].map((notification) => (
-              <div
-                key={notification.title}
-                className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-900 last:border-0"
-              >
-                <div className="flex-1">
-                  <p className="font-medium text-sm">{notification.title}</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                    {notification.description}
-                  </p>
-                </div>
-                <button
-                  onClick={showSaved}
-                  className={`relative w-11 h-6 rounded-full transition-colors ${
-                    notification.enabled
-                      ? "bg-black dark:bg-white"
-                      : "bg-gray-200 dark:bg-gray-800"
-                  }`}
-                >
-                  <div
-                    className={`absolute top-0.5 w-5 h-5 rounded-full bg-white dark:bg-black transition-transform ${
-                      notification.enabled ? "translate-x-5" : "translate-x-0.5"
-                    }`}
-                  />
-                </button>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Roles & Permissions Section */}
@@ -1120,80 +955,6 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Security Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </div>
-              <div>
-                <h2 className="font-semibold">Security</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Manage your password and security settings
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Current Password</label>
-              <Input type="password" placeholder="••••••••" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">New Password</label>
-              <Input type="password" placeholder="••••••••" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Confirm New Password</label>
-              <Input type="password" placeholder="••••••••" />
-            </div>
-            <div className="flex justify-end pt-2">
-              <Button variant="outline" onClick={showSaved}>
-                Update Password
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Billing Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </div>
-              <div>
-                <h2 className="font-semibold">Billing</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Manage your subscription and payment methods
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-              <div>
-                <p className="font-medium">Professional Plan</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
-                  $49/month • Renews on March 15, 2026
-                </p>
-              </div>
-              <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
-                Active
-              </Badge>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" className="flex-1">
-                Update Plan
-              </Button>
-              <Button variant="outline" className="flex-1">
-                Manage Payment
-              </Button>
-            </div>
-          </div>
-        </div>
-
         {/* Workspace Section */}
         {currentWorkspace && (
           <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
@@ -1291,28 +1052,6 @@ export default function SettingsPage() {
           </div>
         )}
 
-        {/* Danger Zone */}
-        <div className="border border-red-200 dark:border-red-900/30 rounded-lg">
-          <div className="p-6 border-b border-red-200 dark:border-red-900/30">
-            <h2 className="font-semibold text-red-600 dark:text-red-400">Danger Zone</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Irreversible actions
-            </p>
-          </div>
-          <div className="p-6 space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-sm">Delete Account</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
-                  Permanently delete your account and all data
-                </p>
-              </div>
-              <Button variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/10">
-                Delete
-              </Button>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* New Role Modal */}

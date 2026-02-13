@@ -23,9 +23,10 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
+import { authFetch } from "@/lib/auth/auth-fetch"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -174,12 +175,28 @@ export default function ProjectsPage() {
   }, [businessId])
 
   const loadProjects = async () => {
+    if (!businessId) return
     setIsLoading(true)
     setLoadError(null)
 
     try {
       console.log("🔄 [Projects Page] Loading projects for workspace:", businessId)
-      
+
+      let membersMap: Record<string, { name: string; avatar: string }> = {}
+      try {
+        const membersRes = await authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
+        if (membersRes.ok) {
+          const membersList: Array<{ userId: string; firstName: string; lastName: string; email?: string; avatarUrl?: string }> = await membersRes.json()
+          const displayName = (m: { firstName: string; lastName: string; email?: string }) =>
+            [m.firstName, m.lastName].filter(Boolean).join(" ").trim() || (m.email || "").trim() || "?"
+          for (const m of membersList || []) {
+            membersMap[m.userId] = { name: displayName(m), avatar: m.avatarUrl || "" }
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+
       const { data, error } = await supabase
         .from("projects")
         .select(`
@@ -204,10 +221,13 @@ export default function ProjectsPage() {
         startDate: proj.start_date || new Date().toISOString().split("T")[0],
         dueDate: proj.due_date || new Date().toISOString().split("T")[0],
         progress: Math.round(((proj.spent || 0) / (proj.budget || 1)) * 100),
-        assignees: (proj.project_assignments || []).map((assignment: any) => ({
-          name: assignment.user_id, // TODO: Fetch actual user names
-          avatar: "",
-        })),
+        assignees: (proj.project_assignments || []).map((assignment: any) => {
+          const member = membersMap[assignment.user_id]
+          return {
+            name: member?.name || assignment.user_id || "?",
+            avatar: member?.avatar || "",
+          }
+        }),
         priority: proj.priority,
         archivedAt: proj.archived_at,
       }))
@@ -632,6 +652,7 @@ export default function ProjectsPage() {
                       <div className="flex -space-x-2">
                         {project.assignees.map((assignee, i) => (
                           <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-black">
+                            <AvatarImage src={assignee.avatar} alt="" />
                             <AvatarFallback className="text-xs bg-gray-200 dark:bg-gray-800">
                               {assignee.name.slice(0, 2).toUpperCase()}
                             </AvatarFallback>
@@ -784,6 +805,7 @@ export default function ProjectsPage() {
                           <div className="flex -space-x-2">
                             {project.assignees.map((assignee, i) => (
                               <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-black">
+                                <AvatarImage src={assignee.avatar} alt="" />
                                 <AvatarFallback className="text-xs bg-gray-200 dark:bg-gray-800">
                                   {assignee.name.slice(0, 2).toUpperCase()}
                                 </AvatarFallback>
