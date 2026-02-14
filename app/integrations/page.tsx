@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -13,7 +14,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Check, Search, Settings, ExternalLink } from "lucide-react"
+import { ChannelSelectDialog } from "@/components/integrations/channel-select-dialog"
+import { MessageScanDialog } from "@/components/integrations/message-scan-dialog"
+import { useAuth } from "@/lib/auth/auth-context"
+import { Check, Search, Settings, ExternalLink, Loader2 } from "lucide-react"
+import type { Provider } from "@/lib/integrations/types"
 
 interface Integration {
   id: string
@@ -22,10 +27,12 @@ interface Integration {
   icon: string
   connected: boolean
   category: "payment" | "storage" | "design" | "communication"
+  provider?: Provider
+  connectionId?: string
+  providerMetadata?: Record<string, unknown>
 }
 
-// Available integrations (not connected by default - clean slate)
-const mockIntegrations: Integration[] = [
+const baseIntegrations: Integration[] = [
   {
     id: "1",
     name: "Stripe",
@@ -75,12 +82,13 @@ const mockIntegrations: Integration[] = [
     category: "storage",
   },
   {
-    id: "7",
+    id: "slack",
     name: "Slack",
-    description: "Get project notifications in Slack",
+    description: "Scan channels for tasks and action items",
     icon: "💬",
     connected: false,
     category: "communication",
+    provider: "slack",
   },
   {
     id: "8",
@@ -91,25 +99,156 @@ const mockIntegrations: Integration[] = [
     category: "design",
   },
   {
-    id: "9",
+    id: "discord",
     name: "Discord",
-    description: "Team communication and updates",
+    description: "Extract tasks from server conversations",
     icon: "🎮",
     connected: false,
     category: "communication",
+    provider: "discord",
   },
 ]
 
 export default function IntegrationsPage() {
-  const [integrations, setIntegrations] = useState(mockIntegrations)
+  const { currentWorkspace } = useAuth()
+  const searchParams = useSearchParams()
+  const businessId = currentWorkspace?.id || ""
+
+  const [integrations, setIntegrations] = useState<Integration[]>(baseIntegrations)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
   const [configureIntegration, setConfigureIntegration] = useState<Integration | null>(null)
+  const [loadingConnections, setLoadingConnections] = useState(false)
+  const [disconnecting, setDisconnecting] = useState<string | null>(null)
 
-  const toggleIntegration = (integrationId: string) => {
-    setIntegrations((prev) =>
-      prev.map((i) => (i.id === integrationId ? { ...i, connected: !i.connected } : i))
-    )
+  // Channel & scan dialog state
+  const [channelDialog, setChannelDialog] = useState<{
+    open: boolean
+    connectionId: string
+    provider: Provider
+    providerName: string
+  }>({ open: false, connectionId: "", provider: "slack", providerName: "" })
+
+  const [scanDialog, setScanDialog] = useState<{
+    open: boolean
+    connectionId: string
+    providerName: string
+  }>({ open: false, connectionId: "", providerName: "" })
+
+  // Load real connection state on mount
+  useEffect(() => {
+    if (businessId) loadConnections()
+  }, [businessId])
+
+  // Handle OAuth redirect params
+  useEffect(() => {
+    const connected = searchParams.get("connected")
+    const error = searchParams.get("error")
+    if (connected) {
+      // Refresh connections to show newly connected integration
+      loadConnections()
+    }
+    if (error) {
+      console.error("Integration OAuth error:", error)
+    }
+  }, [searchParams])
+
+  async function loadConnections() {
+    if (!businessId) return
+    setLoadingConnections(true)
+    try {
+      const res = await fetch(`/api/integrations/connections?businessId=${businessId}`)
+      const data = await res.json()
+      const connections = data.connections || []
+
+      setIntegrations((prev) =>
+        prev.map((integration) => {
+          if (!integration.provider) return integration
+          const conn = connections.find(
+            (c: any) => c.provider === integration.provider
+          )
+          if (conn) {
+            return {
+              ...integration,
+              connected: true,
+              connectionId: conn.id,
+              providerMetadata: conn.provider_metadata,
+            }
+          }
+          return { ...integration, connected: false, connectionId: undefined, providerMetadata: undefined }
+        })
+      )
+    } catch (err) {
+      console.error("Failed to load connections:", err)
+    } finally {
+      setLoadingConnections(false)
+    }
+  }
+
+  function handleConnect(integration: Integration) {
+    if (integration.provider === "slack" || integration.provider === "discord") {
+      // OAuth redirect
+      window.location.href = `/api/integrations/${integration.provider}/authorize?businessId=${businessId}`
+    } else {
+      // Mock toggle for non-implemented integrations
+      setIntegrations((prev) =>
+        prev.map((i) => (i.id === integration.id ? { ...i, connected: !i.connected } : i))
+      )
+    }
+  }
+
+  async function handleDisconnect(integration: Integration) {
+    if (integration.provider && integration.connectionId) {
+      setDisconnecting(integration.id)
+      try {
+        await fetch("/api/integrations/connections", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            connectionId: integration.connectionId,
+            businessId,
+          }),
+        })
+        setIntegrations((prev) =>
+          prev.map((i) =>
+            i.id === integration.id
+              ? { ...i, connected: false, connectionId: undefined, providerMetadata: undefined }
+              : i
+          )
+        )
+      } catch (err) {
+        console.error("Disconnect failed:", err)
+      } finally {
+        setDisconnecting(null)
+      }
+    } else {
+      // Mock toggle
+      setIntegrations((prev) =>
+        prev.map((i) => (i.id === integration.id ? { ...i, connected: false } : i))
+      )
+    }
+  }
+
+  function handleConfigure(integration: Integration) {
+    if (integration.provider && integration.connectionId) {
+      setChannelDialog({
+        open: true,
+        connectionId: integration.connectionId,
+        provider: integration.provider,
+        providerName: integration.name,
+      })
+    } else {
+      setConfigureIntegration(integration)
+    }
+  }
+
+  function handleScanMessages() {
+    setChannelDialog((prev) => ({ ...prev, open: false }))
+    setScanDialog({
+      open: true,
+      connectionId: channelDialog.connectionId,
+      providerName: channelDialog.providerName,
+    })
   }
 
   const filteredIntegrations = integrations.filter((integration) => {
@@ -186,6 +325,13 @@ export default function IntegrationsPage() {
                 <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
                   {integration.description}
                 </p>
+                {integration.connected && integration.providerMetadata && (
+                  <p className="text-[10px] text-gray-400 mt-1 truncate">
+                    {(integration.providerMetadata as any).team_name ||
+                      (integration.providerMetadata as any).guild_name ||
+                      "Connected"}
+                  </p>
+                )}
               </div>
 
               {/* Actions */}
@@ -196,24 +342,29 @@ export default function IntegrationsPage() {
                       variant="outline"
                       size="sm"
                       className="flex-1 h-8 text-xs"
-                      onClick={() => setConfigureIntegration(integration)}
+                      onClick={() => handleConfigure(integration)}
                     >
                       Configure
                     </Button>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => toggleIntegration(integration.id)}
+                      onClick={() => handleDisconnect(integration)}
+                      disabled={disconnecting === integration.id}
                       className="h-8 text-xs px-2 text-gray-600 dark:text-gray-400"
                     >
-                      Disconnect
+                      {disconnecting === integration.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        "Disconnect"
+                      )}
                     </Button>
                   </>
                 ) : (
                   <Button
                     size="sm"
                     className="w-full h-8 text-xs"
-                    onClick={() => toggleIntegration(integration.id)}
+                    onClick={() => handleConnect(integration)}
                   >
                     Connect
                   </Button>
@@ -239,9 +390,9 @@ export default function IntegrationsPage() {
           </div>
         )}
 
-        {/* Configure Integration Modal */}
+        {/* Generic Configure Dialog (for non-OAuth integrations) */}
         <Dialog
-          open={!!configureIntegration}
+          open={!!configureIntegration && !configureIntegration.provider}
           onOpenChange={() => setConfigureIntegration(null)}
         >
           <DialogContent className="max-w-lg">
@@ -305,6 +456,30 @@ export default function IntegrationsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Channel Select Dialog (for Slack/Discord) */}
+        <ChannelSelectDialog
+          open={channelDialog.open}
+          onOpenChange={(open) =>
+            setChannelDialog((prev) => ({ ...prev, open }))
+          }
+          connectionId={channelDialog.connectionId}
+          businessId={businessId}
+          provider={channelDialog.provider}
+          providerName={channelDialog.providerName}
+          onScanMessages={handleScanMessages}
+        />
+
+        {/* Message Scan Dialog */}
+        <MessageScanDialog
+          open={scanDialog.open}
+          onOpenChange={(open) =>
+            setScanDialog((prev) => ({ ...prev, open }))
+          }
+          connectionId={scanDialog.connectionId}
+          businessId={businessId}
+          providerName={scanDialog.providerName}
+        />
       </div>
     </AppLayout>
   )
