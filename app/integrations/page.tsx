@@ -187,6 +187,10 @@ export default function IntegrationsPage() {
 
   function handleConnect(integration: Integration) {
     if (integration.provider === "slack" || integration.provider === "discord") {
+      if (!businessId) {
+        alert("No workspace selected. Please select a workspace first.")
+        return
+      }
       // OAuth redirect
       window.location.href = `/api/integrations/${integration.provider}/authorize?businessId=${businessId}`
     } else {
