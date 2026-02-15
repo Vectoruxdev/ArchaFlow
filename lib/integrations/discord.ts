@@ -92,7 +92,8 @@ export async function fetchDiscordMessages(
   botToken: string,
   channelId: string,
   channelName: string,
-  limit = 200
+  limit = 200,
+  after?: string
 ): Promise<NormalizedMessage[]> {
   // Discord limits to 100 per request, so we may need multiple calls
   const messages: NormalizedMessage[] = []
@@ -102,7 +103,8 @@ export async function fetchDiscordMessages(
   while (remaining > 0) {
     const batchSize = Math.min(remaining, 100)
     let url = `${DISCORD_API}/channels/${channelId}/messages?limit=${batchSize}`
-    if (before) url += `&before=${before}`
+    if (after) url += `&after=${after}`
+    else if (before) url += `&before=${before}`
 
     const response = await fetch(url, {
       headers: { Authorization: `Bot ${botToken}` },

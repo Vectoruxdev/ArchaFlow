@@ -69,19 +69,32 @@ export async function POST(request: NextRequest) {
 
     if (sessionError) throw sessionError
 
-    // Fetch messages from all selected channels
+    // Fetch messages from all selected channels (only new messages since last scan)
     const allMessages: NormalizedMessage[] = []
     const token = connection.bot_token || connection.access_token
+    const channelLatestTs: Record<string, string> = {}
 
     for (const ch of selectedChannels) {
       try {
         let messages: NormalizedMessage[]
+        const after = ch.last_message_ts || undefined
         if (connection.provider === "slack") {
-          messages = await fetchSlackMessages(token, ch.channel_id, ch.channel_name, 200)
+          messages = await fetchSlackMessages(token, ch.channel_id, ch.channel_name, 200, after)
         } else {
-          messages = await fetchDiscordMessages(token, ch.channel_id, ch.channel_name, 200)
+          messages = await fetchDiscordMessages(token, ch.channel_id, ch.channel_name, 200, after)
         }
         allMessages.push(...messages)
+
+        // Track the latest message timestamp per channel for updating after import
+        if (messages.length > 0) {
+          if (connection.provider === "slack") {
+            // Slack messages are sorted newest-first, and the original ts is stored in id
+            channelLatestTs[ch.channel_id] = messages[0].id
+          } else {
+            // Discord messages are sorted newest-first, store the id (snowflake)
+            channelLatestTs[ch.channel_id] = messages[0].id
+          }
+        }
       } catch (chError) {
         console.error(`Failed to fetch messages from ${ch.channel_name}:`, chError)
       }
@@ -115,6 +128,15 @@ export async function POST(request: NextRequest) {
         updated_at: new Date().toISOString(),
       })
       .eq("id", session.id)
+
+    // Update last_message_ts on channels so next scan skips these messages
+    for (const [chId, latestTs] of Object.entries(channelLatestTs)) {
+      await supabaseAdmin
+        .from("integration_channels")
+        .update({ last_message_ts: latestTs })
+        .eq("connection_id", connectionId)
+        .eq("channel_id", chId)
+    }
 
     return NextResponse.json({
       sessionId: session.id,

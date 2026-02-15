@@ -86,14 +86,19 @@ export async function fetchSlackMessages(
   botToken: string,
   channelId: string,
   channelName: string,
-  limit = 200
+  limit = 200,
+  after?: string
 ): Promise<NormalizedMessage[]> {
   const client = new WebClient(botToken)
 
-  const result = await client.conversations.history({
+  const historyParams: Record<string, unknown> = {
     channel: channelId,
     limit,
-  })
+  }
+  // Slack uses the `oldest` param (a Slack ts like "1234567890.123456") to only fetch newer messages
+  if (after) historyParams.oldest = after
+
+  const result = await client.conversations.history(historyParams as any)
 
   // Build user cache for display names
   const userIds = new Set<string>()
