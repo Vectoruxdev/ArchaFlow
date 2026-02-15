@@ -12,10 +12,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { sessionId, businessId, tasks } = await request.json() as {
+    const { sessionId, businessId, tasks, projectName } = await request.json() as {
       sessionId: string
       businessId: string
       tasks: ExtractedTask[]
+      projectName?: string
     }
 
     if (!sessionId || !businessId || !tasks || tasks.length === 0) {
@@ -34,14 +35,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Not a workspace member" }, { status: 403 })
     }
 
-    // Get or create Inbox project
-    const inboxProject = await getOrCreateInboxProject(supabaseAdmin, businessId)
+    // Determine target project
+    let targetProject: { id: string; title: string }
+
+    if (projectName) {
+      // Create a new standalone project
+      const { data: created, error: createError } = await supabaseAdmin
+        .from("projects")
+        .insert({
+          business_id: businessId,
+          title: projectName.trim(),
+          description: `Tasks imported from integration scan`,
+        })
+        .select("id, title")
+        .single()
+
+      if (createError) throw new Error(`Failed to create project: ${createError.message}`)
+      targetProject = created
+    } else {
+      // Use or create Inbox project
+      targetProject = await getOrCreateInboxProject(supabaseAdmin, businessId)
+    }
 
     // Get current max order_index for the project
     const { data: existingTasks } = await supabaseAdmin
       .from("project_tasks")
       .select("order_index")
-      .eq("project_id", inboxProject.id)
+      .eq("project_id", targetProject.id)
       .order("order_index", { ascending: false })
       .limit(1)
 
@@ -49,7 +69,7 @@ export async function POST(request: NextRequest) {
 
     // Insert tasks
     const tasksInsert = tasks.map((task, index) => ({
-      project_id: inboxProject.id,
+      project_id: targetProject.id,
       title: task.title.trim(),
       order_index: startIndex + index,
     }))
@@ -73,7 +93,7 @@ export async function POST(request: NextRequest) {
       })
       .eq("id", sessionId)
 
-    // Record activity
+    // Record activity (non-blocking)
     supabaseAdmin
       .from("workspace_activities")
       .insert({
@@ -81,9 +101,9 @@ export async function POST(request: NextRequest) {
         user_id: user.id,
         activity_type: "tasks_imported",
         entity_type: "project",
-        entity_id: inboxProject.id,
-        message: `Imported ${importedIds.length} tasks from integration to Inbox`,
-        metadata: { task_count: importedIds.length, session_id: sessionId },
+        entity_id: targetProject.id,
+        message: `Imported ${importedIds.length} tasks to "${targetProject.title}"`,
+        metadata: { task_count: importedIds.length, session_id: sessionId, project_name: targetProject.title },
       })
       .then(({ error }) => {
         if (error) console.error("[Activity] tasks_imported:", error)
@@ -91,7 +111,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       imported: importedIds.length,
-      projectId: inboxProject.id,
+      projectId: targetProject.id,
+      projectTitle: targetProject.title,
       taskIds: importedIds,
     })
   } catch (error: any) {

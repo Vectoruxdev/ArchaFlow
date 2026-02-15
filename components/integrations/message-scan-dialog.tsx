@@ -27,10 +27,13 @@ import {
   CheckCircle2,
   AlertCircle,
   Import,
+  Inbox,
+  FolderPlus,
 } from "lucide-react"
 import type { ExtractedTask } from "@/lib/integrations/types"
 
 type ScanStatus = "idle" | "fetching" | "extracting" | "ready" | "importing" | "imported" | "error"
+type ImportDestination = "inbox" | "new_project"
 
 interface MessageScanDialogProps {
   open: boolean
@@ -54,6 +57,9 @@ export function MessageScanDialog({
   const [expandedTask, setExpandedTask] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState("")
   const [importedCount, setImportedCount] = useState(0)
+  const [importDestination, setImportDestination] = useState<ImportDestination>("inbox")
+  const [newProjectName, setNewProjectName] = useState("")
+  const [importedProjectId, setImportedProjectId] = useState<string | null>(null)
 
   const selectedTasks = tasks.filter((t) => t.selected)
 
@@ -89,17 +95,29 @@ export function MessageScanDialog({
   async function importTasks() {
     if (selectedTasks.length === 0 || !sessionId) return
 
+    if (importDestination === "new_project" && !newProjectName.trim()) {
+      setErrorMessage("Please enter a project name")
+      return
+    }
+
     setStatus("importing")
+    setErrorMessage("")
 
     try {
+      const body: Record<string, unknown> = {
+        sessionId,
+        businessId,
+        tasks: selectedTasks,
+      }
+
+      if (importDestination === "new_project") {
+        body.projectName = newProjectName.trim()
+      }
+
       const res = await fetch("/api/integrations/import", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          sessionId,
-          businessId,
-          tasks: selectedTasks,
-        }),
+        body: JSON.stringify(body),
       })
 
       const data = await res.json()
@@ -111,6 +129,7 @@ export function MessageScanDialog({
       }
 
       setImportedCount(data.imported)
+      setImportedProjectId(data.projectId)
       setStatus("imported")
 
       // Notify other pages
@@ -149,7 +168,6 @@ export function MessageScanDialog({
 
   function handleClose() {
     onOpenChange(false)
-    // Reset state after closing animation
     setTimeout(() => {
       setStatus("idle")
       setTasks([])
@@ -158,6 +176,9 @@ export function MessageScanDialog({
       setExpandedTask(null)
       setErrorMessage("")
       setImportedCount(0)
+      setImportDestination("inbox")
+      setNewProjectName("")
+      setImportedProjectId(null)
     }, 200)
   }
 
@@ -167,6 +188,10 @@ export function MessageScanDialog({
     high: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300",
     urgent: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300",
   }
+
+  const destinationLabel = importDestination === "inbox"
+    ? "Inbox"
+    : newProjectName.trim() || "New Project"
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -179,12 +204,12 @@ export function MessageScanDialog({
           <DialogDescription>
             {status === "idle" && "Ready to scan selected channels for actionable tasks."}
             {status === "fetching" && "Fetching messages from selected channels..."}
-            {status === "extracting" && "AI is analyzing messages for tasks..."}
+            {status === "extracting" && "Analyzing messages for tasks..."}
             {status === "ready" &&
               `Found ${tasks.length} tasks from ${messageCount} messages.`}
-            {status === "importing" && "Importing tasks to Inbox project..."}
+            {status === "importing" && `Importing tasks to ${destinationLabel}...`}
             {status === "imported" &&
-              `Successfully imported ${importedCount} tasks to your Inbox project.`}
+              `Successfully imported ${importedCount} tasks.`}
             {status === "error" && "Something went wrong."}
           </DialogDescription>
         </DialogHeader>
@@ -195,7 +220,7 @@ export function MessageScanDialog({
             <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
             <p className="text-sm text-gray-500">
               {status === "fetching" && "Fetching messages..."}
-              {status === "extracting" && "Extracting tasks with AI..."}
+              {status === "extracting" && "Extracting tasks..."}
               {status === "importing" && "Importing tasks..."}
             </p>
           </div>
@@ -206,8 +231,8 @@ export function MessageScanDialog({
           <div className="flex flex-col items-center justify-center py-8 gap-3">
             <AlertCircle className="w-8 h-8 text-red-500" />
             <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
-            <Button variant="outline" size="sm" onClick={startScan}>
-              Retry Scan
+            <Button variant="outline" size="sm" onClick={() => setStatus("ready")}>
+              Back to Tasks
             </Button>
           </div>
         )}
@@ -217,101 +242,150 @@ export function MessageScanDialog({
           <div className="flex flex-col items-center justify-center py-8 gap-3">
             <CheckCircle2 className="w-8 h-8 text-green-500" />
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {importedCount} tasks imported to your Inbox project.
+              {importedCount} tasks imported to <span className="font-medium">{destinationLabel}</span>.
             </p>
+            {importedProjectId && (
+              <a
+                href={`/projects/${importedProjectId}`}
+                className="text-sm text-black dark:text-white underline hover:no-underline"
+              >
+                View project
+              </a>
+            )}
           </div>
         )}
 
         {/* Task review list */}
         {status === "ready" && (
-          <div className="flex-1 overflow-y-auto min-h-0 max-h-[50vh] space-y-2 pr-1">
-            {tasks.length === 0 ? (
-              <div className="text-center py-8 text-sm text-gray-500">
-                No actionable tasks found in the messages.
-              </div>
-            ) : (
-              tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className="border rounded-lg p-3 space-y-2 bg-white dark:bg-gray-950"
-                >
-                  <div className="flex items-start gap-3">
-                    <Checkbox
-                      checked={task.selected}
-                      onCheckedChange={() => toggleTask(task.id)}
-                      className="mt-1"
-                    />
-                    <div className="flex-1 min-w-0 space-y-2">
-                      <Input
-                        value={task.title}
-                        onChange={(e) => updateTaskTitle(task.id, e.target.value)}
-                        className="h-8 text-sm font-medium"
-                      />
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Select
-                          value={task.priority}
-                          onValueChange={(v) =>
-                            updateTaskPriority(task.id, v as ExtractedTask["priority"])
-                          }
-                        >
-                          <SelectTrigger className="h-7 w-24 text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="low">Low</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="high">High</SelectItem>
-                            <SelectItem value="urgent">Urgent</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Input
-                          type="date"
-                          value={task.dueDate || ""}
-                          onChange={(e) => updateTaskDueDate(task.id, e.target.value)}
-                          className="h-7 w-36 text-xs"
-                        />
-                        <Badge
-                          className={`text-[10px] ${priorityColors[task.priority] || ""}`}
-                        >
-                          {Math.round(task.confidence * 100)}% confidence
-                        </Badge>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() =>
-                        setExpandedTask(expandedTask === task.id ? null : task.id)
-                      }
-                      className="p-1 text-gray-400 hover:text-gray-600"
-                    >
-                      {expandedTask === task.id ? (
-                        <ChevronUp className="w-4 h-4" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-
-                  {expandedTask === task.id && (
-                    <div className="ml-8 p-3 bg-gray-50 dark:bg-gray-900 rounded text-xs space-y-1">
-                      {task.description && (
-                        <p className="text-gray-600 dark:text-gray-400 mb-2">
-                          {task.description}
-                        </p>
-                      )}
-                      <p className="text-gray-500">
-                        <span className="font-medium">From:</span>{" "}
-                        #{task.sourceMessage.channelName} by {task.sourceMessage.author}
-                      </p>
-                      <p className="text-gray-500 italic">
-                        &ldquo;{task.sourceMessage.content.slice(0, 300)}
-                        {task.sourceMessage.content.length > 300 ? "..." : ""}&rdquo;
-                      </p>
-                    </div>
-                  )}
+          <>
+            <div className="flex-1 overflow-y-auto min-h-0 max-h-[40vh] space-y-2 pr-1">
+              {tasks.length === 0 ? (
+                <div className="text-center py-8 text-sm text-gray-500">
+                  No actionable tasks found in the messages.
                 </div>
-              ))
+              ) : (
+                tasks.map((task) => (
+                  <div
+                    key={task.id}
+                    className="border rounded-lg p-3 space-y-2 bg-white dark:bg-gray-950"
+                  >
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={task.selected}
+                        onCheckedChange={() => toggleTask(task.id)}
+                        className="mt-1"
+                      />
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <Input
+                          value={task.title}
+                          onChange={(e) => updateTaskTitle(task.id, e.target.value)}
+                          className="h-8 text-sm font-medium"
+                        />
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Select
+                            value={task.priority}
+                            onValueChange={(v) =>
+                              updateTaskPriority(task.id, v as ExtractedTask["priority"])
+                            }
+                          >
+                            <SelectTrigger className="h-7 w-24 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="low">Low</SelectItem>
+                              <SelectItem value="medium">Medium</SelectItem>
+                              <SelectItem value="high">High</SelectItem>
+                              <SelectItem value="urgent">Urgent</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Input
+                            type="date"
+                            value={task.dueDate || ""}
+                            onChange={(e) => updateTaskDueDate(task.id, e.target.value)}
+                            className="h-7 w-36 text-xs"
+                          />
+                          <Badge
+                            className={`text-[10px] ${priorityColors[task.priority] || ""}`}
+                          >
+                            {Math.round(task.confidence * 100)}% confidence
+                          </Badge>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() =>
+                          setExpandedTask(expandedTask === task.id ? null : task.id)
+                        }
+                        className="p-1 text-gray-400 hover:text-gray-600"
+                      >
+                        {expandedTask === task.id ? (
+                          <ChevronUp className="w-4 h-4" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4" />
+                        )}
+                      </button>
+                    </div>
+
+                    {expandedTask === task.id && (
+                      <div className="ml-8 p-3 bg-gray-50 dark:bg-gray-900 rounded text-xs space-y-1">
+                        {task.description && (
+                          <p className="text-gray-600 dark:text-gray-400 mb-2">
+                            {task.description}
+                          </p>
+                        )}
+                        <p className="text-gray-500">
+                          <span className="font-medium">From:</span>{" "}
+                          #{task.sourceMessage.channelName} by {task.sourceMessage.author}
+                        </p>
+                        <p className="text-gray-500 italic">
+                          &ldquo;{task.sourceMessage.content.slice(0, 300)}
+                          {task.sourceMessage.content.length > 300 ? "..." : ""}&rdquo;
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Import destination picker */}
+            {tasks.length > 0 && selectedTasks.length > 0 && (
+              <div className="border rounded-lg p-3 space-y-3 bg-gray-50 dark:bg-gray-900">
+                <p className="text-sm font-medium">Import destination</p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setImportDestination("inbox")}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm transition-colors flex-1 ${
+                      importDestination === "inbox"
+                        ? "border-black dark:border-white bg-white dark:bg-gray-950"
+                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                    }`}
+                  >
+                    <Inbox className="w-4 h-4" />
+                    Inbox project
+                  </button>
+                  <button
+                    onClick={() => setImportDestination("new_project")}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm transition-colors flex-1 ${
+                      importDestination === "new_project"
+                        ? "border-black dark:border-white bg-white dark:bg-gray-950"
+                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                    }`}
+                  >
+                    <FolderPlus className="w-4 h-4" />
+                    New project
+                  </button>
+                </div>
+                {importDestination === "new_project" && (
+                  <Input
+                    placeholder="Project name..."
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    className="h-9 text-sm"
+                  />
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
 
         <DialogFooter>
@@ -331,9 +405,11 @@ export function MessageScanDialog({
               <Button variant="outline" onClick={handleClose}>
                 Cancel
               </Button>
-              <Button onClick={importTasks} disabled={selectedTasks.length === 0}>
-                Import {selectedTasks.length} Task{selectedTasks.length !== 1 ? "s" : ""} to
-                Inbox
+              <Button
+                onClick={importTasks}
+                disabled={selectedTasks.length === 0 || (importDestination === "new_project" && !newProjectName.trim())}
+              >
+                Import {selectedTasks.length} Task{selectedTasks.length !== 1 ? "s" : ""}
               </Button>
             </>
           )}
