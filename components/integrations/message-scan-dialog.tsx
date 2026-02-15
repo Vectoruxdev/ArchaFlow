@@ -63,6 +63,55 @@ export function MessageScanDialog({
 
   const selectedTasks = tasks.filter((t) => t.selected)
 
+  function generateProjectName(taskList: ExtractedTask[]): string {
+    if (taskList.length === 0) return "Imported Tasks"
+
+    const STOP_WORDS = new Set([
+      "i", "me", "my", "we", "our", "you", "your", "the", "a", "an", "is", "are",
+      "was", "were", "be", "been", "being", "have", "has", "had", "do", "does",
+      "did", "will", "would", "could", "should", "can", "may", "might", "shall",
+      "to", "of", "in", "for", "on", "with", "at", "by", "from", "as", "into",
+      "about", "it", "its", "this", "that", "and", "or", "but", "if", "not", "no",
+      "so", "up", "out", "all", "just", "get", "got", "also", "than", "then",
+      "them", "they", "their", "there", "what", "when", "which", "who", "how",
+      "need", "needs", "please", "make", "sure", "don't", "want", "going",
+    ])
+
+    // Count word frequency across all task titles
+    const wordCount = new Map<string, number>()
+    for (const task of taskList) {
+      const words = task.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, "")
+        .split(/\s+/)
+        .filter((w) => w.length > 2 && !STOP_WORDS.has(w))
+
+      const seen = new Set<string>()
+      for (const word of words) {
+        if (!seen.has(word)) {
+          seen.add(word)
+          wordCount.set(word, (wordCount.get(word) || 0) + 1)
+        }
+      }
+    }
+
+    // Get top keywords
+    const sorted = [...wordCount.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([word]) => word.charAt(0).toUpperCase() + word.slice(1))
+
+    const today = new Date()
+    const month = today.toLocaleString("en", { month: "short" })
+    const day = today.getDate()
+
+    if (sorted.length > 0) {
+      return `${sorted.join(" & ")} — ${month} ${day}`
+    }
+
+    return `${providerName} Tasks — ${month} ${day}`
+  }
+
   async function startScan() {
     setStatus("fetching")
     setErrorMessage("")
@@ -364,7 +413,12 @@ export function MessageScanDialog({
                     Inbox project
                   </button>
                   <button
-                    onClick={() => setImportDestination("new_project")}
+                    onClick={() => {
+                      setImportDestination("new_project")
+                      if (!newProjectName.trim()) {
+                        setNewProjectName(generateProjectName(selectedTasks))
+                      }
+                    }}
                     className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm transition-colors flex-1 ${
                       importDestination === "new_project"
                         ? "border-black dark:border-white bg-white dark:bg-gray-950"
