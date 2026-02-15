@@ -15,27 +15,14 @@ export async function getOrCreateInboxProject(
 
   if (existing) return existing
 
-  // Get the first status for this workspace to use as default
-  const { data: statuses } = await adminClient
-    .from("project_statuses")
-    .select("id")
-    .eq("business_id", businessId)
-    .order("order_index", { ascending: true })
-    .limit(1)
-
-  const statusId = statuses?.[0]?.id
-
   // Create the Inbox project
-  const insertData: Record<string, unknown> = {
-    business_id: businessId,
-    title: "Inbox",
-    description: "Tasks imported from integrations (Slack, Discord)",
-  }
-  if (statusId) insertData.status_id = statusId
-
   const { data: created, error } = await adminClient
     .from("projects")
-    .insert(insertData)
+    .insert({
+      business_id: businessId,
+      title: "Inbox",
+      description: "Tasks imported from integrations (Slack, Discord)",
+    })
     .select("id, title")
     .single()
 
