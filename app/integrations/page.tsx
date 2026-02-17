@@ -34,54 +34,6 @@ interface Integration {
 
 const baseIntegrations: Integration[] = [
   {
-    id: "1",
-    name: "Stripe",
-    description: "Accept payments and manage invoicing",
-    icon: "💳",
-    connected: false,
-    category: "payment",
-  },
-  {
-    id: "2",
-    name: "Google Drive",
-    description: "Store and share project files",
-    icon: "📁",
-    connected: false,
-    category: "storage",
-  },
-  {
-    id: "3",
-    name: "Revit",
-    description: "Sync BIM models and collaborate",
-    icon: "🏗️",
-    connected: false,
-    category: "design",
-  },
-  {
-    id: "4",
-    name: "Resend",
-    description: "Send transactional emails",
-    icon: "✉️",
-    connected: false,
-    category: "communication",
-  },
-  {
-    id: "5",
-    name: "AutoCAD",
-    description: "Import and export CAD drawings",
-    icon: "📐",
-    connected: false,
-    category: "design",
-  },
-  {
-    id: "6",
-    name: "Dropbox",
-    description: "Cloud file storage and sync",
-    icon: "📦",
-    connected: false,
-    category: "storage",
-  },
-  {
     id: "slack",
     name: "Slack",
     description: "Scan channels for tasks and action items",
@@ -89,14 +41,6 @@ const baseIntegrations: Integration[] = [
     connected: false,
     category: "communication",
     provider: "slack",
-  },
-  {
-    id: "8",
-    name: "SketchUp",
-    description: "3D modeling and visualization",
-    icon: "🎨",
-    connected: false,
-    category: "design",
   },
   {
     id: "discord",
@@ -290,7 +234,7 @@ export default function IntegrationsPage() {
             />
           </div>
           <div className="flex gap-2 flex-wrap">
-            {["all", "payment", "storage", "design", "communication"].map((category) => (
+            {["all", "communication"].map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
