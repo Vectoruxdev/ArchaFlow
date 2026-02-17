@@ -6,6 +6,7 @@ import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { toast } from "sonner"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { uploadAvatar } from "@/lib/supabase/storage"
@@ -235,6 +236,7 @@ export default function ProfilePage() {
     value: boolean
   ) => {
     if (!user?.id) return
+    const prev = { ...notifPrefs }
     const next = { ...notifPrefs, [key]: value }
     setNotifPrefs(next)
     try {
@@ -247,7 +249,8 @@ export default function ProfilePage() {
       )
       showSaved()
     } catch {
-      /* table may not exist */
+      setNotifPrefs(prev)
+      toast.error("Failed to save preference")
     }
   }
 
@@ -307,8 +310,8 @@ export default function ProfilePage() {
                 <p className="text-sm text-red-600 dark:text-red-400">{profileError}</p>
               </div>
             )}
-            <div className="flex items-center gap-6">
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+              <div className="relative shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsAvatarPickerOpen(true)}
@@ -337,7 +340,7 @@ export default function ProfilePage() {
                   )}
                 </button>
               </div>
-              <div className="flex-1 space-y-3">
+              <div className="flex-1 w-full space-y-3">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-sm font-medium block mb-1">First name</label>

@@ -55,6 +55,7 @@ import {
   Clock,
   Upload,
 } from "lucide-react"
+import { toast } from "sonner"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { uploadAvatar } from "@/lib/supabase/storage"
@@ -322,9 +323,9 @@ export default function TeamsPage() {
         throw new Error(data.error || "Failed to resend invitation")
       }
 
-      alert("Invitation resent successfully!")
+      toast.success("Invitation resent successfully!")
     } catch (error: any) {
-      alert("Failed to resend: " + error.message)
+      toast.error("Failed to resend: " + error.message)
     }
   }
 
@@ -343,7 +344,7 @@ export default function TeamsPage() {
       await loadTeamData()
       setRemoveConfirm(null)
     } catch (error: any) {
-      alert("Failed to cancel invitation: " + error.message)
+      toast.error("Failed to cancel invitation: " + error.message)
     } finally {
       setIsRemoving(false)
     }
@@ -364,7 +365,7 @@ export default function TeamsPage() {
       await loadTeamData()
       setRemoveConfirm(null)
     } catch (error: any) {
-      alert("Failed to remove member: " + error.message)
+      toast.error("Failed to remove member: " + error.message)
     } finally {
       setIsRemoving(false)
     }
@@ -557,11 +558,11 @@ export default function TeamsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Member</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Position</TableHead>
+                <TableHead className="hidden sm:table-cell">Email</TableHead>
+                <TableHead className="hidden md:table-cell">Position</TableHead>
                 <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Joined</TableHead>
+                <TableHead className="hidden md:table-cell">Status</TableHead>
+                <TableHead className="hidden lg:table-cell">Joined</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -591,6 +592,9 @@ export default function TeamsPage() {
                                 <span className="text-xs text-gray-400 ml-1">(you)</span>
                               )}
                             </p>
+                            <p className="text-xs text-gray-400 sm:hidden">
+                              {member.email || member.userId.substring(0, 12) + "..."}
+                            </p>
                             {member.phone && (
                               <p className="text-xs text-gray-400 flex items-center gap-1">
                                 <Phone className="w-3 h-3" />
@@ -600,10 +604,10 @@ export default function TeamsPage() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600 dark:text-gray-400">
+                      <TableCell className="hidden sm:table-cell text-sm text-gray-600 dark:text-gray-400">
                         {member.email || member.userId.substring(0, 12) + "..."}
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600 dark:text-gray-400">
+                      <TableCell className="hidden md:table-cell text-sm text-gray-600 dark:text-gray-400">
                         {member.position || "---"}
                       </TableCell>
                       <TableCell>
@@ -611,12 +615,12 @@ export default function TeamsPage() {
                           {member.roleName}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden md:table-cell">
                         <Badge className="bg-green-500/10 text-green-600 border-green-500/20 border text-xs">
                           Active
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-500">
+                      <TableCell className="hidden lg:table-cell text-sm text-gray-500">
                         {new Date(member.assignedAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
@@ -671,11 +675,12 @@ export default function TeamsPage() {
                           </Avatar>
                           <div>
                             <p className="font-medium text-sm text-gray-500">Invited User</p>
+                            <p className="text-xs text-gray-400 sm:hidden">{invite.email}</p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm">{invite.email}</TableCell>
-                      <TableCell className="text-sm text-gray-600 dark:text-gray-400">
+                      <TableCell className="hidden sm:table-cell text-sm">{invite.email}</TableCell>
+                      <TableCell className="hidden md:table-cell text-sm text-gray-600 dark:text-gray-400">
                         {invite.position || "---"}
                       </TableCell>
                       <TableCell>
@@ -683,7 +688,7 @@ export default function TeamsPage() {
                           {invite.roleName}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden md:table-cell">
                         <Badge
                           className={`border text-xs ${
                             isExpired
@@ -694,7 +699,7 @@ export default function TeamsPage() {
                           {isExpired ? "Expired" : "Pending"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-500">
+                      <TableCell className="hidden lg:table-cell text-sm text-gray-500">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {new Date(invite.createdAt).toLocaleDateString()}

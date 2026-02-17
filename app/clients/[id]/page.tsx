@@ -13,6 +13,7 @@ import {
   User,
   Eye,
 } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -168,7 +169,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
       router.push("/clients")
     } catch (error: any) {
       console.error("Error archiving client:", error)
-      alert("Failed to archive client: " + error.message)
+      toast.error("Failed to archive client: " + error.message)
     }
   }
 

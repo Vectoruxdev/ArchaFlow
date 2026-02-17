@@ -26,7 +26,7 @@ function ResetPasswordContent() {
       } else {
         setError("Invalid or expired reset link. Please request a new one.")
       }
-    })
+    }).catch(() => setError("Unable to verify reset link. Please check your connection and try again."))
   }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {

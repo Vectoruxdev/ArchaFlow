@@ -57,6 +57,7 @@ import { AppLayout } from "@/components/layout/app-layout"
 import { LeadFormModal, type LeadFormData } from "@/components/leads/lead-form-modal"
 import { LogActivityModal, type ActivityFormData } from "@/components/leads/log-activity-modal"
 import { authFetch } from "@/lib/auth/auth-fetch"
+import { toast } from "sonner"
 import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
 import { useAuth } from "@/lib/auth/auth-context"
@@ -438,7 +439,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
       router.push("/leads")
     } catch (error: any) {
       console.error("Error archiving lead:", error)
-      alert("Failed to archive lead: " + error.message)
+      toast.error("Failed to archive lead: " + error.message)
     }
   }
 
@@ -508,7 +509,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
 
     if (error) {
       setLead((prev) => (prev ? { ...prev, [field]: prevValue } : prev))
-      alert("Failed to save: " + error.message)
+      toast.error("Failed to save: " + error.message)
     }
   }
 
@@ -561,7 +562,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
     }
     const { error } = await supabase.from("leads").update(payload).eq("id", params.id)
     if (error) {
-      alert("Failed to save: " + error.message)
+      toast.error("Failed to save: " + error.message)
       return
     }
     setLead((prev) =>
@@ -602,7 +603,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
     }
     const { error } = await supabase.from("leads").update(payload).eq("id", params.id)
     if (error) {
-      alert("Failed to save: " + error.message)
+      toast.error("Failed to save: " + error.message)
       return
     }
     setLead((prev) =>
@@ -766,7 +767,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
       router.push(`/projects/${newProject.id}`)
     } catch (error: any) {
       console.error("Error converting lead:", error)
-      alert("Failed to convert lead: " + error.message)
+      toast.error("Failed to convert lead: " + error.message)
     } finally {
       setIsConverting(false)
     }

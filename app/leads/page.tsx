@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/select"
 import { LeadFormModal, type LeadFormData } from "@/components/leads/lead-form-modal"
 import { authFetch } from "@/lib/auth/auth-fetch"
+import { toast } from "sonner"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import {
@@ -483,7 +484,7 @@ export default function LeadsPage() {
       await loadLeads()
     } catch (error: any) {
       console.error("Error archiving lead:", error)
-      alert("Failed to archive lead: " + error.message)
+      toast.error("Failed to archive lead: " + error.message)
     }
   }
 
@@ -498,7 +499,7 @@ export default function LeadsPage() {
       await loadLeads()
     } catch (error: any) {
       console.error("Error unarchiving lead:", error)
-      alert("Failed to unarchive lead: " + error.message)
+      toast.error("Failed to unarchive lead: " + error.message)
     }
   }
 
@@ -516,7 +517,7 @@ export default function LeadsPage() {
       setDeleteConfirm(null)
     } catch (error: any) {
       console.error("Error deleting lead:", error)
-      alert("Failed to delete lead: " + error.message)
+      toast.error("Failed to delete lead: " + error.message)
     } finally {
       setIsDeletingLead(false)
     }

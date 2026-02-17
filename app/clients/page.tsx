@@ -34,6 +34,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ClientFormModal, type ClientFormData } from "@/components/clients/client-form-modal"
 import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
+import { toast } from "sonner"
 import { useAuth } from "@/lib/auth/auth-context"
 import {
   Search,
@@ -286,7 +287,7 @@ export default function ClientsPage() {
       await loadClients()
     } catch (error: any) {
       console.error("Error archiving client:", error)
-      alert("Failed to archive client: " + error.message)
+      toast.error("Failed to archive client: " + error.message)
     }
   }
 
@@ -302,7 +303,7 @@ export default function ClientsPage() {
       await loadClients()
     } catch (error: any) {
       console.error("Error unarchiving client:", error)
-      alert("Failed to unarchive client: " + error.message)
+      toast.error("Failed to unarchive client: " + error.message)
     }
   }
 
@@ -323,7 +324,7 @@ export default function ClientsPage() {
       setDeleteConfirm(null)
     } catch (error: any) {
       console.error("Error deleting client:", error)
-      alert("Failed to delete client: " + error.message)
+      toast.error("Failed to delete client: " + error.message)
     } finally {
       setIsDeletingClient(false)
     }
@@ -582,10 +583,10 @@ export default function ClientsPage() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Contact</TableHead>
-              <TableHead>Address</TableHead>
-              <TableHead className="text-center">Projects</TableHead>
-              <TableHead className="text-center">Active</TableHead>
-              <TableHead>Added</TableHead>
+              <TableHead className="hidden md:table-cell">Address</TableHead>
+              <TableHead className="hidden sm:table-cell text-center">Projects</TableHead>
+              <TableHead className="hidden sm:table-cell text-center">Active</TableHead>
+              <TableHead className="hidden md:table-cell">Added</TableHead>
               <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
@@ -597,7 +598,12 @@ export default function ClientsPage() {
                 onClick={() => router.push(`/clients/${client.id}`)}
               >
                 <TableCell className="font-medium">
-                  {client.firstName} {client.lastName}
+                  <div>
+                    <p>{client.firstName} {client.lastName}</p>
+                    <p className="text-xs text-gray-500 font-normal sm:hidden">
+                      {client.email || client.phone || ""}
+                    </p>
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="space-y-1">
@@ -607,13 +613,13 @@ export default function ClientsPage() {
                     </p>
                   </div>
                 </TableCell>
-                <TableCell className="text-sm text-gray-600 dark:text-gray-400">
+                <TableCell className="hidden md:table-cell text-sm text-gray-600 dark:text-gray-400">
                   {client.address || "—"}
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="hidden sm:table-cell text-center">
                   {client.totalProjects}
                 </TableCell>
-                <TableCell className="text-center">
+                <TableCell className="hidden sm:table-cell text-center">
                   <Badge
                     className={
                       client.activeProjects > 0
@@ -624,7 +630,7 @@ export default function ClientsPage() {
                     {client.activeProjects}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-sm text-gray-500">
+                <TableCell className="hidden md:table-cell text-sm text-gray-500">
                   {new Date(client.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>

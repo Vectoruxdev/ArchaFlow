@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { ChannelSelectDialog } from "@/components/integrations/channel-select-dialog"
 import { MessageScanDialog } from "@/components/integrations/message-scan-dialog"
+import { toast } from "sonner"
 import { useAuth } from "@/lib/auth/auth-context"
 import { Check, Search, Settings, ExternalLink, Loader2 } from "lucide-react"
 import type { Provider } from "@/lib/integrations/types"
@@ -132,7 +133,7 @@ export default function IntegrationsPage() {
   function handleConnect(integration: Integration) {
     if (integration.provider === "slack" || integration.provider === "discord") {
       if (!businessId) {
-        alert("No workspace selected. Please select a workspace first.")
+        toast.error("No workspace selected. Please select a workspace first.")
         return
       }
       // OAuth redirect

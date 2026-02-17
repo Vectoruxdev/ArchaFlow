@@ -20,6 +20,7 @@ import {
 import { AppLayout } from "@/components/layout/app-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
 import { AssignTeamModal } from "@/components/project/assign-team-modal"
+import { toast } from "sonner"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 
@@ -130,7 +131,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
       router.push("/projects")
     } catch (error: any) {
       console.error("Error archiving project:", error)
-      alert("Failed to archive project: " + error.message)
+      toast.error("Failed to archive project: " + error.message)
     }
   }
 

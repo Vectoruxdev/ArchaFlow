@@ -74,6 +74,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { toast } from "sonner"
 import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
 import { ClientSelect } from "@/components/ui/client-select"
@@ -774,7 +775,7 @@ export default function WorkflowPage() {
       loadProjectsAndColumns()
     } catch (error: any) {
       console.error("Error archiving project:", error)
-      alert("Failed to archive project: " + error.message)
+      toast.error("Failed to archive project: " + error.message)
     }
   }
 
@@ -979,7 +980,7 @@ export default function WorkflowPage() {
 
       if (error) {
         console.error("Error updating column:", error)
-        // TODO: Show user-friendly error message
+        toast.error("Failed to update column")
         return
       }
 
@@ -995,7 +996,7 @@ export default function WorkflowPage() {
       setColumnDraft("")
     } catch (error) {
       console.error("Error updating column:", error)
-      // TODO: Show user-friendly error message
+      toast.error("Failed to update column")
     }
   }
 
@@ -1028,7 +1029,7 @@ export default function WorkflowPage() {
 
       if (error) {
         console.error("Error creating column:", error)
-        // TODO: Show user-friendly error message
+        toast.error("Failed to create column")
         return
       }
 
@@ -1049,7 +1050,7 @@ export default function WorkflowPage() {
       setNewColumnLabel("")
     } catch (error) {
       console.error("Error adding column:", error)
-      // TODO: Show user-friendly error message
+      toast.error("Failed to add column")
     }
   }
 
@@ -1315,13 +1316,13 @@ export default function WorkflowPage() {
         const hasErrors = results.some((result) => result.error)
         if (hasErrors) {
           console.error("Some column order updates failed:", results)
-          // TODO: Show user-friendly error message
+          toast.error("Failed to save column order")
         } else {
           console.log("✅ Column order updated in database")
         }
       } catch (error) {
         console.error("Error updating column order:", error)
-        // TODO: Show user-friendly error message
+        toast.error("Failed to save column order")
       }
       return
     }
@@ -1363,6 +1364,7 @@ export default function WorkflowPage() {
         }
       } catch (error) {
         console.error("❌ Error updating project status:", error)
+        toast.error("Failed to move project")
         // Revert on error
         await loadProjectsAndColumns()
       }
@@ -1569,7 +1571,7 @@ export default function WorkflowPage() {
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="w-[160px] h-9 text-sm justify-between font-normal"
+                    className="w-full sm:w-[160px] h-9 text-sm justify-between font-normal"
                   >
                     {filters.teamMemberIds.length === 0
                       ? "All Members"
@@ -1629,7 +1631,7 @@ export default function WorkflowPage() {
                   setFilters((prev) => ({ ...prev, dateRange: value }))
                 }
               >
-                <SelectTrigger className="w-[160px] h-9 text-sm">
+                <SelectTrigger className="w-full sm:w-[160px] h-9 text-sm">
                   <SelectValue placeholder="Date Range" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1648,7 +1650,7 @@ export default function WorkflowPage() {
                   setFilters((prev) => ({ ...prev, paymentStatus: value }))
                 }
               >
-                <SelectTrigger className="w-[160px] h-9 text-sm">
+                <SelectTrigger className="w-full sm:w-[160px] h-9 text-sm">
                   <SelectValue placeholder="Payment Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1666,7 +1668,7 @@ export default function WorkflowPage() {
                   setFilters((prev) => ({ ...prev, priority: value }))
                 }
               >
-                <SelectTrigger className="w-[160px] h-9 text-sm">
+                <SelectTrigger className="w-full sm:w-[160px] h-9 text-sm">
                   <SelectValue placeholder="Priority" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1678,12 +1680,12 @@ export default function WorkflowPage() {
               </Select>
 
               {/* Status Checkboxes */}
-              <div className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-800 rounded-md bg-white dark:bg-black">
+              <div className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-800 rounded-md bg-white dark:bg-black overflow-x-auto">
                 {columns.map((column) => (
                   <button
                     key={column.id}
                     onClick={() => toggleStatusFilter(column.id)}
-                    className={`px-2 py-1 text-xs rounded capitalize transition-colors ${
+                    className={`px-2 py-1 text-xs rounded capitalize transition-colors whitespace-nowrap ${
                       filters.statuses.includes(column.id)
                         ? "bg-black dark:bg-white text-white dark:text-black"
                         : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"

@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
+import { toast } from "sonner"
 import { useAuth } from "@/lib/auth/auth-context"
 import { authFetch } from "@/lib/auth/auth-fetch"
 import {
@@ -358,7 +359,7 @@ export default function ProjectsPage() {
       window.dispatchEvent(new Event('projectsUpdated'))
     } catch (error: any) {
       console.error("❌ [Projects Page] Error archiving project:", error)
-      alert("Failed to archive project: " + error.message)
+      toast.error("Failed to archive project: " + error.message)
     }
   }
 
@@ -383,7 +384,7 @@ export default function ProjectsPage() {
       window.dispatchEvent(new Event('projectsUpdated'))
     } catch (error: any) {
       console.error("❌ [Projects Page] Error unarchiving project:", error)
-      alert("Failed to unarchive project: " + error.message)
+      toast.error("Failed to unarchive project: " + error.message)
     }
   }
 
@@ -421,7 +422,7 @@ export default function ProjectsPage() {
       setProjectToDelete(null)
     } catch (error: any) {
       console.error("❌ [Projects Page] Error deleting project:", error)
-      alert("Failed to delete project: " + error.message)
+      toast.error("Failed to delete project: " + error.message)
     } finally {
       setIsDeletingProject(false)
     }
@@ -468,7 +469,7 @@ export default function ProjectsPage() {
     <AppLayout>
       <div className="p-4 lg:p-6 space-y-6">
         {/* Page Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold">All Projects</h1>
             <p className="text-sm text-gray-500 mt-1">
@@ -582,25 +583,25 @@ export default function ProjectsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Project
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Client
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Budget
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Progress
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Team
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Payment
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -619,13 +620,14 @@ export default function ProjectsPage() {
                       <div className="flex items-center gap-3">
                         <div>
                           <p className="text-sm font-medium">{project.title}</p>
+                          <p className="text-xs text-gray-500 sm:hidden">{project.client}</p>
                           <Badge className={`text-xs mt-1 ${priorityColors[project.priority]}`}>
                             {project.priority}
                           </Badge>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden sm:table-cell px-6 py-4">
                       <p className="text-sm text-gray-600 dark:text-gray-400">{project.client}</p>
                     </td>
                     <td className="px-6 py-4">
@@ -633,7 +635,7 @@ export default function ProjectsPage() {
                         {project.status}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden md:table-cell px-6 py-4">
                       <div className="text-sm">
                         <p className="font-medium">${(project.budget / 1000).toFixed(0)}k</p>
                         <p className="text-xs text-gray-500">
@@ -641,7 +643,7 @@ export default function ProjectsPage() {
                         </p>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden md:table-cell px-6 py-4">
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden min-w-[60px]">
                           <div
@@ -654,12 +656,12 @@ export default function ProjectsPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden lg:table-cell px-6 py-4">
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {new Date(project.dueDate).toLocaleDateString()}
                       </p>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden lg:table-cell px-6 py-4">
                       <div className="flex -space-x-2">
                         {project.assignees.map((assignee, i) => (
                           <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-black">
@@ -671,7 +673,7 @@ export default function ProjectsPage() {
                         ))}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden sm:table-cell px-6 py-4">
                       <Badge className={`text-xs ${paymentColors[project.paymentStatus]}`}>
                         {project.paymentStatus}
                       </Badge>
@@ -735,25 +737,25 @@ export default function ProjectsPage() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Project
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Client
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Budget
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Progress
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Due Date
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Team
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Payment
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -772,13 +774,14 @@ export default function ProjectsPage() {
                           <div className="flex items-center gap-3">
                             <div>
                               <p className="text-sm font-medium">{project.title}</p>
+                              <p className="text-xs text-gray-500 sm:hidden">{project.client}</p>
                               <Badge className={`text-xs mt-1 ${priorityColors[project.priority]}`}>
                                 {project.priority}
                               </Badge>
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="hidden sm:table-cell px-6 py-4">
                           <p className="text-sm text-gray-600 dark:text-gray-400">{project.client}</p>
                         </td>
                         <td className="px-6 py-4">
@@ -786,7 +789,7 @@ export default function ProjectsPage() {
                             {project.status}
                           </Badge>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="hidden md:table-cell px-6 py-4">
                           <div className="text-sm">
                             <p className="font-medium">${(project.budget / 1000).toFixed(0)}k</p>
                             <p className="text-xs text-gray-500">
@@ -794,7 +797,7 @@ export default function ProjectsPage() {
                             </p>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="hidden md:table-cell px-6 py-4">
                           <div className="flex items-center gap-2">
                             <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden min-w-[60px]">
                               <div
@@ -807,12 +810,12 @@ export default function ProjectsPage() {
                             </span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="hidden lg:table-cell px-6 py-4">
                           <p className="text-sm text-gray-600 dark:text-gray-400">
                             {new Date(project.dueDate).toLocaleDateString()}
                           </p>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="hidden lg:table-cell px-6 py-4">
                           <div className="flex -space-x-2">
                             {project.assignees.map((assignee, i) => (
                               <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-black">
@@ -824,7 +827,7 @@ export default function ProjectsPage() {
                             ))}
                           </div>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="hidden sm:table-cell px-6 py-4">
                           <Badge className={`text-xs ${paymentColors[project.paymentStatus]}`}>
                             {project.paymentStatus}
                           </Badge>
