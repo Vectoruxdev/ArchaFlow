@@ -14,10 +14,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const { connectionId, businessId } = await request.json()
+    const { connectionId, businessId, dateRange, userName } = await request.json()
     if (!connectionId || !businessId) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 })
     }
+
+    // Convert dateRange to a cutoff timestamp
+    const dateRangeCutoff = getDateRangeCutoff(dateRange)
 
     // Verify membership
     const { data: role } = await supabaseAdmin
@@ -69,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     if (sessionError) throw sessionError
 
-    // Fetch messages from all selected channels (only new messages since last scan)
+    // Fetch messages from all selected channels
     const allMessages: NormalizedMessage[] = []
     const token = connection.bot_token || connection.access_token
     const channelLatestTs: Record<string, string> = {}
@@ -77,7 +80,17 @@ export async function POST(request: NextRequest) {
     for (const ch of selectedChannels) {
       try {
         let messages: NormalizedMessage[]
-        const after = ch.last_message_ts || undefined
+        // Use the later of: last_message_ts (dedup) or dateRangeCutoff (user filter)
+        let after = ch.last_message_ts || undefined
+        if (dateRangeCutoff) {
+          const cutoffStr = connection.provider === "slack"
+            ? slackTsFromDate(dateRangeCutoff)
+            : discordSnowflakeFromDate(dateRangeCutoff)
+          // Use the later timestamp (more restrictive) between dedup and date range
+          if (!after || cutoffStr > after) {
+            after = cutoffStr
+          }
+        }
         if (connection.provider === "slack") {
           messages = await fetchSlackMessages(token, ch.channel_id, ch.channel_name, 200, after)
         } else {
@@ -106,10 +119,10 @@ export async function POST(request: NextRequest) {
       .update({ status: "extracting", raw_messages: allMessages })
       .eq("id", session.id)
 
-    // AI extraction
+    // Extract tasks (with optional userName for prioritization/filtering)
     let extractedTasks
     try {
-      extractedTasks = await extractTasksFromMessages(allMessages)
+      extractedTasks = await extractTasksFromMessages(allMessages, userName || undefined)
     } catch (aiError: any) {
       await supabaseAdmin
         .from("message_scan_sessions")
@@ -148,4 +161,38 @@ export async function POST(request: NextRequest) {
     console.error("Scan error:", error)
     return NextResponse.json({ error: error.message || "Internal error" }, { status: 500 })
   }
+}
+
+/** Convert a dateRange string to a Date cutoff, or null for "all" */
+function getDateRangeCutoff(dateRange?: string): Date | null {
+  if (!dateRange || dateRange === "all") return null
+  const now = new Date()
+  switch (dateRange) {
+    case "today":
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    case "2days":
+      return new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000)
+    case "week":
+      return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    case "2weeks":
+      return new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
+    case "month":
+      return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    default:
+      return null
+  }
+}
+
+/** Convert a Date to a Slack timestamp string (Unix seconds with microseconds) */
+function slackTsFromDate(date: Date): string {
+  return `${Math.floor(date.getTime() / 1000)}.000000`
+}
+
+/** Convert a Date to a Discord snowflake string (encodes timestamp) */
+function discordSnowflakeFromDate(date: Date): string {
+  // Discord epoch is 2015-01-01T00:00:00.000Z = 1420070400000
+  const DISCORD_EPOCH = BigInt("1420070400000")
+  const timestamp = BigInt(date.getTime()) - DISCORD_EPOCH
+  const snowflake = timestamp << BigInt("22")
+  return snowflake.toString()
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -29,11 +29,25 @@ import {
   Import,
   Inbox,
   FolderPlus,
+  User,
+  Calendar,
+  Filter,
 } from "lucide-react"
 import type { ExtractedTask } from "@/lib/integrations/types"
 
 type ScanStatus = "idle" | "fetching" | "extracting" | "ready" | "importing" | "imported" | "error"
 type ImportDestination = "inbox" | "new_project"
+type DateRange = "today" | "2days" | "week" | "2weeks" | "month" | "all"
+type NameFilter = "all" | "mentions_only"
+
+const DATE_RANGE_LABELS: Record<DateRange, string> = {
+  today: "Today",
+  "2days": "Last 2 days",
+  week: "Last week",
+  "2weeks": "Last 2 weeks",
+  month: "Last month",
+  all: "All messages",
+}
 
 interface MessageScanDialogProps {
   open: boolean
@@ -61,7 +75,27 @@ export function MessageScanDialog({
   const [newProjectName, setNewProjectName] = useState("")
   const [importedProjectId, setImportedProjectId] = useState<string | null>(null)
 
+  // Scan filters
+  const [dateRange, setDateRange] = useState<DateRange>("week")
+  const [userName, setUserName] = useState("")
+  const [nameFilter, setNameFilter] = useState<NameFilter>("all")
+
   const selectedTasks = tasks.filter((t) => t.selected)
+
+  // Load saved name from localStorage
+  useEffect(() => {
+    if (open) {
+      const saved = localStorage.getItem("archaflow_scan_name")
+      if (saved) setUserName(saved)
+    }
+  }, [open])
+
+  // Save name when it changes
+  useEffect(() => {
+    if (userName.trim()) {
+      localStorage.setItem("archaflow_scan_name", userName.trim())
+    }
+  }, [userName])
 
   function generateProjectName(taskList: ExtractedTask[]): string {
     if (taskList.length === 0) return "Imported Tasks"
@@ -77,7 +111,6 @@ export function MessageScanDialog({
       "need", "needs", "please", "make", "sure", "don't", "want", "going",
     ])
 
-    // Count word frequency across all task titles
     const wordCount = new Map<string, number>()
     for (const task of taskList) {
       const words = task.title
@@ -95,7 +128,6 @@ export function MessageScanDialog({
       }
     }
 
-    // Get top keywords
     const sorted = [...wordCount.entries()]
       .sort((a, b) => b[1] - a[1])
       .slice(0, 2)
@@ -117,10 +149,15 @@ export function MessageScanDialog({
     setErrorMessage("")
 
     try {
+      const body: Record<string, unknown> = { connectionId, businessId, dateRange }
+      if (nameFilter === "mentions_only" && userName.trim()) {
+        body.userName = userName.trim()
+      }
+
       const res = await fetch("/api/integrations/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ connectionId, businessId }),
+        body: JSON.stringify(body),
       })
 
       const data = await res.json()
@@ -181,7 +218,6 @@ export function MessageScanDialog({
       setImportedProjectId(data.projectId)
       setStatus("imported")
 
-      // Notify other pages
       window.dispatchEvent(new Event("projectsUpdated"))
     } catch (err: any) {
       setStatus("error")
@@ -191,9 +227,7 @@ export function MessageScanDialog({
 
   function toggleTask(taskId: string) {
     setTasks((prev) =>
-      prev.map((t) =>
-        t.id === taskId ? { ...t, selected: !t.selected } : t
-      )
+      prev.map((t) => (t.id === taskId ? { ...t, selected: !t.selected } : t))
     )
   }
 
@@ -251,7 +285,7 @@ export function MessageScanDialog({
             Scan {providerName} Messages
           </DialogTitle>
           <DialogDescription>
-            {status === "idle" && "Ready to scan selected channels for actionable tasks."}
+            {status === "idle" && "Configure your scan filters, then start scanning."}
             {status === "fetching" && "Fetching messages from selected channels..."}
             {status === "extracting" && "Analyzing messages for tasks..."}
             {status === "ready" &&
@@ -262,6 +296,78 @@ export function MessageScanDialog({
             {status === "error" && "Something went wrong."}
           </DialogDescription>
         </DialogHeader>
+
+        {/* Scan configuration (idle state) */}
+        {status === "idle" && (
+          <div className="space-y-4 py-2">
+            {/* Date Range */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                Time range
+              </label>
+              <div className="flex gap-1.5 flex-wrap">
+                {(Object.entries(DATE_RANGE_LABELS) as [DateRange, string][]).map(
+                  ([value, label]) => (
+                    <button
+                      key={value}
+                      onClick={() => setDateRange(value)}
+                      className={`px-3 py-1.5 text-xs rounded-md border transition-colors ${
+                        dateRange === value
+                          ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
+                          : "bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* Name filter */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium flex items-center gap-2">
+                <User className="w-4 h-4 text-gray-500" />
+                Your name
+              </label>
+              <Input
+                placeholder="e.g. Jared"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                className="h-9 text-sm"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setNameFilter("all")}
+                  className={`px-3 py-1.5 text-xs rounded-md border transition-colors flex-1 ${
+                    nameFilter === "all"
+                      ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
+                      : "bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500"
+                  }`}
+                >
+                  All messages
+                </button>
+                <button
+                  onClick={() => setNameFilter("mentions_only")}
+                  disabled={!userName.trim()}
+                  className={`px-3 py-1.5 text-xs rounded-md border transition-colors flex-1 ${
+                    nameFilter === "mentions_only"
+                      ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
+                      : "bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                  }`}
+                >
+                  Only mentioning me
+                </button>
+              </div>
+              {userName.trim() && nameFilter === "all" && (
+                <p className="text-[11px] text-gray-500">
+                  Tasks mentioning &ldquo;{userName.trim()}&rdquo; will be prioritized
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Progress states */}
         {(status === "fetching" || status === "extracting" || status === "importing") && (
@@ -280,8 +386,8 @@ export function MessageScanDialog({
           <div className="flex flex-col items-center justify-center py-8 gap-3">
             <AlertCircle className="w-8 h-8 text-red-500" />
             <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
-            <Button variant="outline" size="sm" onClick={() => setStatus("ready")}>
-              Back to Tasks
+            <Button variant="outline" size="sm" onClick={() => setStatus(tasks.length > 0 ? "ready" : "idle")}>
+              {tasks.length > 0 ? "Back to Tasks" : "Back to Settings"}
             </Button>
           </div>
         )}
@@ -448,7 +554,10 @@ export function MessageScanDialog({
               <Button variant="outline" onClick={handleClose}>
                 Cancel
               </Button>
-              <Button onClick={startScan}>Start Scan</Button>
+              <Button onClick={startScan}>
+                <Filter className="w-4 h-4 mr-1.5" />
+                Start Scan
+              </Button>
             </>
           )}
           {status === "ready" && tasks.length > 0 && (

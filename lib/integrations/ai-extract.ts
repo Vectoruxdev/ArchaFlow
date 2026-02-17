@@ -92,11 +92,15 @@ function generateTitle(content: string): string {
 }
 
 export async function extractTasksFromMessages(
-  messages: NormalizedMessage[]
+  messages: NormalizedMessage[],
+  userName?: string
 ): Promise<ExtractedTask[]> {
   if (messages.length === 0) return []
 
   const tasks: ExtractedTask[] = []
+  const nameLower = userName?.toLowerCase().trim() || ""
+  // Build regex for matching user name in content (word boundary)
+  const nameRegex = nameLower ? new RegExp(`\\b${escapeRegex(nameLower)}\\b`, "i") : null
 
   for (const message of messages) {
     const content = message.content.trim()
@@ -117,14 +121,26 @@ export async function extractTasksFromMessages(
     }
 
     if (bestMatch) {
+      let { confidence, priority } = bestMatch
+
+      // Boost confidence and priority for messages mentioning the user
+      if (nameRegex) {
+        const mentionsUser = nameRegex.test(content) || nameRegex.test(message.author)
+        if (mentionsUser) {
+          confidence = Math.min(confidence + 0.15, 1.0)
+          if (priority === "low") priority = "medium"
+          else if (priority === "medium") priority = "high"
+        }
+      }
+
       tasks.push({
         id: crypto.randomUUID(),
         title: generateTitle(content),
         description: `From #${message.channelName} by ${message.author}`,
-        priority: bestMatch.priority,
+        priority,
         dueDate: extractDueDate(content),
-        confidence: bestMatch.confidence,
-        selected: bestMatch.confidence >= 0.7,
+        confidence,
+        selected: confidence >= 0.7,
         sourceMessage: message,
       })
     }
@@ -134,4 +150,8 @@ export async function extractTasksFromMessages(
   tasks.sort((a, b) => b.confidence - a.confidence)
 
   return tasks
+}
+
+function escapeRegex(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
