@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth/auth-context"
 import { authFetch } from "@/lib/auth/auth-fetch"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Clock, Building2, RefreshCw } from "lucide-react"
+import { Clock, Building2, RefreshCw, LogOut } from "lucide-react"
 
 interface JoinRequest {
   id: string
@@ -17,7 +17,7 @@ interface JoinRequest {
 
 export default function WaitingPage() {
   const router = useRouter()
-  const { refreshWorkspaces, workspaces } = useAuth()
+  const { refreshWorkspaces, workspaces, signOut } = useAuth()
   const [requests, setRequests] = useState<JoinRequest[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -126,6 +126,16 @@ export default function WaitingPage() {
         >
           Create workspace instead
         </Button>
+      </div>
+
+      <div className="mt-6 text-center">
+        <button
+          onClick={() => signOut()}
+          className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          Sign out
+        </button>
       </div>
     </div>
   )

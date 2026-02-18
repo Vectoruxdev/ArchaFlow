@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Building2, Users } from "lucide-react"
+import { Building2, Users, LogOut } from "lucide-react"
 
 export default function OnboardingPage() {
   const router = useRouter()
-  const { user, createWorkspace } = useAuth()
+  const { user, createWorkspace, signOut } = useAuth()
   const [creating, setCreating] = useState(false)
   const [workspaceName, setWorkspaceName] = useState("")
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -120,6 +120,16 @@ export default function OnboardingPage() {
               Request to join a workspace that&apos;s already set up.
             </p>
           </div>
+        </button>
+      </div>
+
+      <div className="mt-6 text-center">
+        <button
+          onClick={() => signOut()}
+          className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5"
+        >
+          <LogOut className="w-3.5 h-3.5" />
+          Sign out
         </button>
       </div>
     </div>
