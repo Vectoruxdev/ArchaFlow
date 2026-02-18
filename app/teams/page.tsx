@@ -95,6 +95,18 @@ interface PendingInvite {
   type: "pending"
 }
 
+interface JoinRequest {
+  id: string
+  userId: string
+  email: string
+  fullName: string
+  avatarUrl: string
+  message: string | null
+  roleName: string
+  status: string
+  createdAt: string
+}
+
 type TeamRow = TeamMember | PendingInvite
 
 interface WorkspaceRole {
@@ -129,11 +141,13 @@ export default function TeamsPage() {
   // Data state
   const [members, setMembers] = useState<TeamMember[]>([])
   const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([])
+  const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([])
   const [roles, setRoles] = useState<WorkspaceRole[]>([])
   const [positions, setPositions] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const [respondingTo, setRespondingTo] = useState<string | null>(null)
 
   // Invite modal state
   const [isInviteOpen, setIsInviteOpen] = useState(false)
@@ -247,6 +261,17 @@ export default function TeamsPage() {
           type: "pending" as const,
         }))
         setPendingInvites(invites)
+      }
+
+      // 5. Load pending join requests
+      if (isOwnerOrAdmin) {
+        const jrRes = await authFetch(`/api/teams/join-requests?businessId=${encodeURIComponent(businessId)}`)
+        if (jrRes.ok) {
+          const jrData = await jrRes.json()
+          setJoinRequests(jrData.joinRequests || [])
+        } else {
+          setJoinRequests([])
+        }
       }
     } catch (error: any) {
       console.error("Error loading team data:", error)
@@ -368,6 +393,30 @@ export default function TeamsPage() {
       toast.error("Failed to remove member: " + error.message)
     } finally {
       setIsRemoving(false)
+    }
+  }
+
+  // Respond to join request (accept/decline)
+  const handleRespondJoinRequest = async (requestId: string, action: "accept" | "decline") => {
+    setRespondingTo(requestId)
+    try {
+      const res = await authFetch("/api/join-request/respond", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId, action }),
+      })
+
+      const data = await res.json()
+      if (!res.ok) {
+        throw new Error(data.error || `Failed to ${action} request`)
+      }
+
+      toast.success(action === "accept" ? "Join request accepted!" : "Join request declined.")
+      await loadTeamData()
+    } catch (error: any) {
+      toast.error(error.message)
+    } finally {
+      setRespondingTo(null)
     }
   }
 
@@ -530,6 +579,7 @@ export default function TeamsPage() {
             <p className="text-sm text-gray-500 mt-1">
               {members.length} member{members.length !== 1 ? "s" : ""}
               {pendingInvites.length > 0 && `, ${pendingInvites.length} pending`}
+              {joinRequests.length > 0 && `, ${joinRequests.length} join request${joinRequests.length !== 1 ? "s" : ""}`}
             </p>
           </div>
           {isOwnerOrAdmin && (
@@ -539,6 +589,70 @@ export default function TeamsPage() {
             </Button>
           )}
         </div>
+
+        {/* Join Requests */}
+        {isOwnerOrAdmin && joinRequests.length > 0 && (
+          <div className="border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/10 rounded-lg p-4">
+            <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
+              <UserPlus className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+              Pending Join Requests ({joinRequests.length})
+            </h2>
+            <div className="space-y-2">
+              {joinRequests.map((req) => {
+                const initials = req.fullName
+                  ? req.fullName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+                  : req.email?.[0]?.toUpperCase() || "?"
+                const isResponding = respondingTo === req.id
+
+                return (
+                  <div
+                    key={req.id}
+                    className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200 dark:border-gray-800"
+                  >
+                    <Avatar className="w-9 h-9">
+                      <AvatarImage src={req.avatarUrl} />
+                      <AvatarFallback className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 text-xs">
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">
+                        {req.fullName || req.email}
+                      </p>
+                      {req.fullName && (
+                        <p className="text-xs text-gray-500 truncate">{req.email}</p>
+                      )}
+                      {req.message && (
+                        <p className="text-xs text-gray-400 mt-0.5 italic truncate">
+                          &ldquo;{req.message}&rdquo;
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleRespondJoinRequest(req.id, "decline")}
+                        disabled={isResponding}
+                        className="text-xs"
+                      >
+                        Decline
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleRespondJoinRequest(req.id, "accept")}
+                        disabled={isResponding}
+                        className="text-xs"
+                      >
+                        {isResponding ? "..." : "Accept"}
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Search */}
         <div className="relative max-w-md">

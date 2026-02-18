@@ -33,6 +33,7 @@ interface AuthContextType {
   pendingInvitations: PendingInvitation[]
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string, fullName: string, workspaceName: string) => Promise<void>
+  signUpWithoutWorkspace: (email: string, password: string, fullName: string) => Promise<void>
   signOut: () => Promise<void>
   switchWorkspace: (workspaceId: string) => void
   createWorkspace: (name: string, icon: string) => Promise<Workspace>
@@ -383,6 +384,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await loadWorkspaces(data.user.id)
   }
 
+  // Sign up without creating a workspace (for onboarding flow)
+  const signUpWithoutWorkspace = async (
+    email: string,
+    password: string,
+    fullName: string
+  ) => {
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    })
+
+    if (signUpError) throw signUpError
+    if (!data.user) throw new Error("User creation failed")
+
+    // Create user profile only (no workspace)
+    const { error: profileError } = await supabase
+      .from("user_profiles")
+      .upsert({ id: data.user.id, full_name: fullName })
+
+    if (profileError) {
+      console.error("Profile creation error:", profileError)
+      throw profileError
+    }
+  }
+
   // Sign out
   const signOut = async () => {
     try {
@@ -522,6 +548,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     pendingInvitations,
     signIn,
     signUp,
+    signUpWithoutWorkspace,
     signOut,
     switchWorkspace,
     createWorkspace,

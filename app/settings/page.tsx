@@ -29,7 +29,9 @@ import {
   Building2,
   LogOut,
   Target,
+  Globe,
 } from "lucide-react"
+import { toast } from "sonner"
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -105,6 +107,12 @@ export default function SettingsPage() {
   const [deletingRole, setDeletingRole] = useState<Role | null>(null)
   const [savingPermissions, setSavingPermissions] = useState(false)
 
+  // Workspace Access (domain auto-add) state
+  const [allowedDomains, setAllowedDomains] = useState("")
+  const [autoAddByDomain, setAutoAddByDomain] = useState(false)
+  const [domainSettingsLoading, setDomainSettingsLoading] = useState(true)
+  const [savingDomainSettings, setSavingDomainSettings] = useState(false)
+
   const showSaved = () => {
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
@@ -136,6 +144,61 @@ export default function SettingsPage() {
     loadPositions()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessId])
+
+  // Load domain settings from businesses table
+  const loadDomainSettings = async () => {
+    if (!businessId) return
+    setDomainSettingsLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from("businesses")
+        .select("allowed_email_domains, auto_add_by_domain")
+        .eq("id", businessId)
+        .single()
+
+      if (error) throw error
+      const domains: string[] = Array.isArray(data?.allowed_email_domains)
+        ? data.allowed_email_domains
+        : []
+      setAllowedDomains(domains.join(", "))
+      setAutoAddByDomain(data?.auto_add_by_domain || false)
+    } catch {
+      // ignore - columns may not exist yet
+    } finally {
+      setDomainSettingsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadDomainSettings()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessId])
+
+  const handleSaveDomainSettings = async () => {
+    if (!businessId) return
+    setSavingDomainSettings(true)
+    try {
+      const domains = allowedDomains
+        .split(/[,\n]/)
+        .map((d) => d.trim().toLowerCase())
+        .filter((d) => d.length > 0)
+
+      const { error } = await supabase
+        .from("businesses")
+        .update({
+          allowed_email_domains: domains,
+          auto_add_by_domain: autoAddByDomain,
+        })
+        .eq("id", businessId)
+
+      if (error) throw error
+      showSaved()
+    } catch (err: any) {
+      toast.error(err.message || "Failed to save domain settings")
+    } finally {
+      setSavingDomainSettings(false)
+    }
+  }
 
   const handleAddPosition = async () => {
     const label = newPosition.trim()
@@ -955,6 +1018,70 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Workspace Access Section (Owner/Admin only) */}
+        {isOwner && (
+          <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+                  <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                </div>
+                <div>
+                  <h2 className="font-semibold">Workspace Access</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Control how new users can join this workspace
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              {domainSettingsLoading ? (
+                <div className="text-sm text-gray-500">Loading...</div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Allowed Email Domains</label>
+                    <Input
+                      placeholder="e.g., acme.com, vectorux.com"
+                      value={allowedDomains}
+                      onChange={(e) => setAllowedDomains(e.target.value)}
+                    />
+                    <p className="text-xs text-gray-500">
+                      Comma-separated list of email domains. Users with matching domains will see this workspace as &quot;Recommended&quot; when searching.
+                    </p>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                    <Checkbox
+                      id="autoAddByDomain"
+                      checked={autoAddByDomain}
+                      onCheckedChange={(checked) => setAutoAddByDomain(checked as boolean)}
+                    />
+                    <div>
+                      <label htmlFor="autoAddByDomain" className="text-sm font-medium cursor-pointer">
+                        Auto-add users with matching email domain
+                      </label>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        When enabled, users with a matching email domain will be automatically added to the workspace when they send a join request, without requiring manual approval.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end">
+                    <Button
+                      size="sm"
+                      onClick={handleSaveDomainSettings}
+                      disabled={savingDomainSettings}
+                    >
+                      {savingDomainSettings ? "Saving..." : "Save Access Settings"}
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Workspace Section */}
         {currentWorkspace && (
           <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
@@ -973,7 +1100,7 @@ export default function SettingsPage() {
             </div>
             <div className="p-6 space-y-4">
               {/* Workspace info */}
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
                 <div className="flex items-center gap-2">
                   <div>
                     <p className="font-medium">{currentWorkspace.name}</p>
@@ -1003,7 +1130,7 @@ export default function SettingsPage() {
 
               {/* Owner: Delete workspace */}
               {isOwner && (
-                <div className="flex items-center justify-between p-4 border border-red-200 dark:border-red-900/30 rounded-lg">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 border border-red-200 dark:border-red-900/30 rounded-lg">
                   <div>
                     <p className="font-medium text-sm text-red-600 dark:text-red-400">Delete Workspace</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
@@ -1013,7 +1140,7 @@ export default function SettingsPage() {
                   </div>
                   <Button
                     variant="outline"
-                    className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/10 shrink-0 ml-4"
+                    className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/10 shrink-0"
                     onClick={() => {
                       setIsDeleteWorkspaceOpen(true)
                       setDeleteConfirmName("")
@@ -1028,7 +1155,7 @@ export default function SettingsPage() {
 
               {/* Non-owner: Leave workspace */}
               {!isOwner && (
-                <div className="flex items-center justify-between p-4 border border-orange-200 dark:border-orange-900/30 rounded-lg">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 border border-orange-200 dark:border-orange-900/30 rounded-lg">
                   <div>
                     <p className="font-medium text-sm text-orange-600 dark:text-orange-400">Leave Workspace</p>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
@@ -1037,7 +1164,7 @@ export default function SettingsPage() {
                   </div>
                   <Button
                     variant="outline"
-                    className="text-orange-600 border-orange-200 hover:bg-orange-50 dark:border-orange-900/30 dark:hover:bg-orange-900/10 shrink-0 ml-4"
+                    className="text-orange-600 border-orange-200 hover:bg-orange-50 dark:border-orange-900/30 dark:hover:bg-orange-900/10 shrink-0"
                     onClick={() => {
                       setIsLeaveWorkspaceOpen(true)
                       setWorkspaceActionError(null)

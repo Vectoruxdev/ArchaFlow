@@ -11,15 +11,18 @@ function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get("redirect")
-  const { signIn, user, loading: authLoading } = useAuth()
+  const { signIn, user, loading: authLoading, workspacesLoaded, workspaces } = useAuth()
   const [email, setEmail] = useState("")
 
-  // Redirect authenticated users to workflow
+  // Redirect authenticated users
   useEffect(() => {
-    if (!authLoading && user) {
-      router.push(redirect ?? "/workflow")
+    if (authLoading || !user) return
+    if (redirect) {
+      router.push(redirect)
+    } else if (workspacesLoaded) {
+      router.push(workspaces && workspaces.length > 0 ? "/workflow" : "/onboarding")
     }
-  }, [authLoading, user, router, redirect])
+  }, [authLoading, user, workspacesLoaded, workspaces, router, redirect])
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)

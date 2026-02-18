@@ -122,7 +122,7 @@ export default function DashboardPage() {
         const weekAgoStr = weekAgo.toISOString().split("T")[0]
 
         if (isCompanyView) {
-          const [projectsRes, overdueInvoicesRes, pendingInvoicesRes, membersRes] = await Promise.all([
+          const [projectsRes, overdueInvoicesRes, pendingInvoicesRes] = await Promise.all([
             supabase
               .from("projects")
               .select("id, status, due_date, payment_status")
@@ -139,10 +139,6 @@ export default function DashboardPage() {
               .select("amount")
               .eq("business_id", businessId)
               .in("status", ["draft", "sent", "overdue"]),
-            supabase
-              .from("user_roles")
-              .select("id")
-              .eq("business_id", businessId),
           ])
 
           const projects = (projectsRes.data || []) as { id: string; status: string; due_date: string | null; payment_status: string }[]
@@ -151,13 +147,12 @@ export default function DashboardPage() {
           const overdueProjects = projects.filter((p) => p.due_date && p.due_date < today).length
           const overdueInvoices = (overdueInvoicesRes.data || []).length
           const pendingTotal = (pendingInvoicesRes.data || []).reduce((sum, inv) => sum + Number((inv as { amount: number }).amount || 0), 0)
-          const memberCount = Math.max(1, (membersRes.data || []).length)
-          const teamWorkload = Math.min(100, Math.round((activeProjects / (memberCount * 2)) * 100))
 
           let newLeads = 0
           let overdueTasks = 0
+          let teamWorkload = 0
           try {
-            const [{ count: leadsCount }, tasksRes] = await Promise.all([
+            const [{ count: leadsCount }, overdueTasksRes, allTasksRes] = await Promise.all([
               supabase
                 .from("leads")
                 .select("*", { count: "exact", head: true })
@@ -172,9 +167,22 @@ export default function DashboardPage() {
                     .eq("completed", false)
                     .lt("due_date", today)
                 : Promise.resolve({ data: [] }),
+              projectIds.length > 0
+                ? supabase
+                    .from("project_tasks")
+                    .select("id, completed")
+                    .in("project_id", projectIds)
+                : Promise.resolve({ data: [] }),
             ])
             newLeads = leadsCount ?? 0
-            overdueTasks = (tasksRes.data || []).length
+            overdueTasks = (overdueTasksRes.data || []).length
+
+            const totalProjects = projects.length
+            const completedProjects = projects.filter((p) => p.status === "completed").length
+            const allTasks = (allTasksRes.data || []) as { id: string; completed: boolean }[]
+            const totalTasks = allTasks.length
+            const completedTasks = allTasks.filter((t) => t.completed).length
+            teamWorkload = Math.round(((completedTasks + completedProjects) / Math.max(1, totalTasks + totalProjects)) * 100)
           } catch {
             /* leads table may not exist */
           }

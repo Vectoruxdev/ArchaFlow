@@ -42,15 +42,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const authContext = useAuth()
-  const { user, workspaces, currentWorkspace, switchWorkspace, signOut, loading: authLoading } = authContext || {}
+  const { user, workspaces, workspacesLoaded, currentWorkspace, switchWorkspace, signOut, loading: authLoading } = authContext || {}
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // Redirect unauthenticated users to login
+  // Redirect unauthenticated users to login, workspaceless users to onboarding
   useEffect(() => {
-    if (!authLoading && isSupabaseConfigured() && !user) {
+    if (authLoading || !isSupabaseConfigured()) return
+    if (!user) {
       router.push("/login")
+    } else if (workspacesLoaded && workspaces && workspaces.length === 0) {
+      router.push("/onboarding")
     }
-  }, [authLoading, user, router])
+  }, [authLoading, user, workspacesLoaded, workspaces, router])
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false)
   const [showChangelog, setShowChangelog] = useState(false)

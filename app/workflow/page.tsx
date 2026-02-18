@@ -1400,10 +1400,12 @@ export default function WorkflowPage() {
       return due < today
     }).length
 
-    // Team workload: % of incomplete tasks (0 if no tasks)
+    // Team workload: completion percentage across tasks and projects
     const totalTasks = allTasks.length
     const completedTasks = allTasks.filter((t: any) => t.completed).length
-    const teamWorkload = totalTasks > 0 ? Math.round(((totalTasks - completedTasks) / totalTasks) * 100) : 0
+    const totalProjects = projects.length
+    const completedProjects = projects.filter((p: any) => p.status === "completed").length
+    const teamWorkload = Math.round(((completedTasks + completedProjects) / Math.max(1, totalTasks + totalProjects)) * 100)
 
     // Projects created this week
     const newThisWeek = projects.filter((p: any) => {

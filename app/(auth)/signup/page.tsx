@@ -15,7 +15,7 @@ function SignupContent() {
   const emailParam = searchParams.get("email")
   const isInviteFlow = redirect?.includes("/invite/accept") ?? false
 
-  const { signUp } = useAuth()
+  const { signUp, signUpWithoutWorkspace } = useAuth()
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -52,8 +52,15 @@ function SignupContent() {
     setLoading(true)
 
     try {
-      await signUp(email, password, fullName, workspaceName || `${fullName}'s Workspace`)
-      router.push(redirect ?? "/workflow")
+      if (isInviteFlow) {
+        // Invite flow: create user + workspace, then redirect to invite accept
+        await signUp(email, password, fullName, workspaceName || `${fullName}'s Workspace`)
+        router.push(redirect ?? "/workflow")
+      } else {
+        // Normal signup: create user only, then go to onboarding
+        await signUpWithoutWorkspace(email, password, fullName)
+        router.push("/onboarding")
+      }
     } catch (err: any) {
       setError(err.message || "Failed to create account")
     } finally {
@@ -107,24 +114,24 @@ function SignupContent() {
           />
         </div>
 
-        <div>
-          <label htmlFor="workspaceName" className="block text-sm font-medium mb-2">
-            Workspace Name <span className="text-gray-500">(Optional)</span>
-          </label>
-          <Input
-            id="workspaceName"
-            type="text"
-            value={workspaceName}
-            onChange={(e) => setWorkspaceName(e.target.value)}
-            placeholder={isInviteFlow ? "" : "Acme Architecture"}
-            disabled={loading}
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            {isInviteFlow
-              ? "You're joining an existing workspace — leave blank."
-              : `Leave blank to use "${fullName}'s Workspace"`}
-          </p>
-        </div>
+        {isInviteFlow && (
+          <div>
+            <label htmlFor="workspaceName" className="block text-sm font-medium mb-2">
+              Workspace Name <span className="text-gray-500">(Optional)</span>
+            </label>
+            <Input
+              id="workspaceName"
+              type="text"
+              value={workspaceName}
+              onChange={(e) => setWorkspaceName(e.target.value)}
+              placeholder=""
+              disabled={loading}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              You&apos;re joining an existing workspace — leave blank.
+            </p>
+          </div>
+        )}
 
         <div>
           <label htmlFor="password" className="block text-sm font-medium mb-2">
