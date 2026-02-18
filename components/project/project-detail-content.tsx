@@ -287,6 +287,9 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
   const [newTodoPriority, setNewTodoPriority] = useState<"high" | "medium" | "low">("medium")
   const [newNote, setNewNote] = useState("")
   
+  // Workspace members for assignment dropdowns
+  const [workspaceMembers, setWorkspaceMembers] = useState<Array<{ userId: string; name: string; avatar: string }>>([])
+
   // Loading state
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -406,19 +409,30 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
           leadId: projectData.lead_id || null,
         })
 
-        // Resolve Primary and Secondary owners from workspace members API
+        // Load all workspace members for assignment dropdowns + resolve owners
         let teamMembers: Array<{ name: string; avatar: string; role: string }> = []
         const businessId = projectData.business_id
         const primaryId = projectData.primary_owner_id
         const secondaryId = projectData.secondary_owner_id
-        if (businessId && (primaryId || secondaryId)) {
+        if (businessId) {
           try {
             const res = await authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
             if (res.ok) {
               const membersList: Array<{ userId: string; firstName: string; lastName: string; email: string; avatarUrl?: string }> = await res.json()
-              const byId = Object.fromEntries((membersList || []).map((m: any) => [m.userId, m]))
               const displayName = (m: { firstName?: string; lastName?: string; email?: string; userId?: string }) =>
                 [m.firstName, m.lastName].filter(Boolean).join(" ").trim() || m.email || m.userId || "Unknown"
+
+              // Store all members for task assignment dropdown
+              setWorkspaceMembers(
+                (membersList || []).map((m: any) => ({
+                  userId: m.userId,
+                  name: displayName(m),
+                  avatar: m.avatarUrl || "",
+                }))
+              )
+
+              // Resolve primary/secondary owners for team display
+              const byId = Object.fromEntries((membersList || []).map((m: any) => [m.userId, m]))
               if (primaryId && byId[primaryId]) {
                 teamMembers.push({ name: displayName(byId[primaryId]), avatar: byId[primaryId].avatarUrl || "", role: "Primary owner" })
               }
@@ -1012,7 +1026,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                               )}
                               {todo.assignedTo && (
                                 <span className="text-xs text-gray-500">
-                                  Assigned to {todo.assignedTo}
+                                  Assigned to {workspaceMembers.find(m => m.userId === todo.assignedTo)?.name || todo.assignedTo}
                                 </span>
                               )}
                               {todo.dueDate && (
@@ -1421,9 +1435,17 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                   <SelectValue placeholder="Select team member" />
                 </SelectTrigger>
                 <SelectContent>
-                  {project.assignedTeam.map((member) => (
-                    <SelectItem key={member.name} value={member.name}>
-                      {member.name}
+                  {workspaceMembers.map((member) => (
+                    <SelectItem key={member.userId} value={member.userId}>
+                      <div className="flex items-center gap-2">
+                        <Avatar className="w-5 h-5">
+                          <AvatarImage src={member.avatar} />
+                          <AvatarFallback className="text-[10px]">
+                            {member.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
+                          </AvatarFallback>
+                        </Avatar>
+                        {member.name}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
