@@ -136,6 +136,8 @@ interface Project {
   businessId?: string
   primaryOwnerId?: string | null
   secondaryOwnerId?: string | null
+  tasks?: Array<{ id: string; dueDate?: string; completed: boolean }>
+  createdAt?: string
 }
 
 // No mock data - application starts clean
@@ -387,7 +389,8 @@ export default function WorkflowPage() {
             *,
             project_assignments(user_id),
             project_time_entries(*),
-            project_files(*)
+            project_files(*),
+            project_tasks(id, due_date, completed)
           `)
           .eq("business_id", businessId)
           .is("archived_at", null)
@@ -478,10 +481,16 @@ export default function WorkflowPage() {
             name: file.name,
             size: file.size,
             type: file.type,
-            uploadedBy: file.uploaded_by, // TODO: Fetch actual user names
+            uploadedBy: file.uploaded_by,
             uploadedAt: file.uploaded_at,
             url: file.url,
           })),
+          tasks: (proj.project_tasks || []).map((task: any) => ({
+            id: task.id,
+            dueDate: task.due_date || undefined,
+            completed: task.completed,
+          })),
+          createdAt: proj.created_at,
           }
         })
 
@@ -1374,12 +1383,37 @@ export default function WorkflowPage() {
   const getProjectsByStatus = (status: ProjectStatus) =>
     filteredProjects.filter((p) => p.status === status)
 
-  const stats = {
-    activeProjects: filteredProjects.filter((p) => p.status !== "completed").length,
-    pendingInvoices: filteredProjects.filter((p) => p.paymentStatus === "pending").length * 5000,
-    overdueTasks: 3,
-    teamWorkload: 78,
-  }
+  const stats = useMemo(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const weekAgo = new Date(today)
+    weekAgo.setDate(weekAgo.getDate() - 7)
+
+    const activeProjects = filteredProjects.filter((p) => p.status !== "completed").length
+
+    // Count overdue tasks across all projects
+    const allTasks = projects.flatMap((p: any) => p.tasks || [])
+    const overdueTasks = allTasks.filter((t: any) => {
+      if (!t.dueDate || t.completed) return false
+      const due = new Date(t.dueDate)
+      due.setHours(0, 0, 0, 0)
+      return due < today
+    }).length
+
+    // Team workload: % of incomplete tasks (0 if no tasks)
+    const totalTasks = allTasks.length
+    const completedTasks = allTasks.filter((t: any) => t.completed).length
+    const teamWorkload = totalTasks > 0 ? Math.round(((totalTasks - completedTasks) / totalTasks) * 100) : 0
+
+    // Projects created this week
+    const newThisWeek = projects.filter((p: any) => {
+      if (!p.createdAt) return false
+      const created = new Date(p.createdAt)
+      return created >= weekAgo
+    }).length
+
+    return { activeProjects, pendingInvoices: 0, overdueTasks, teamWorkload, newThisWeek }
+  }, [filteredProjects, projects])
   
   const hasActiveFilters = activeFilterCount > 0
 
@@ -1504,7 +1538,9 @@ export default function WorkflowPage() {
                   <span className="text-xs text-gray-500 ml-2">(filtered)</span>
                 )}
               </div>
-              <p className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 mt-1">+2 this week</p>
+              {stats.newThisWeek > 0 && (
+                <p className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 mt-1">+{stats.newThisWeek} this week</p>
+              )}
             </div>
 
             <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0">
@@ -1513,7 +1549,7 @@ export default function WorkflowPage() {
                 <DollarSign className="w-3.5 h-3.5 text-gray-400 shrink-0" />
               </div>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">
-                ${stats.pendingInvoices.toLocaleString()}
+                {filteredProjects.filter((p) => p.paymentStatus === "pending").length}
                 {hasActiveFilters && (
                   <span className="text-xs text-gray-500 ml-2">(filtered)</span>
                 )}
@@ -1529,7 +1565,9 @@ export default function WorkflowPage() {
                 <AlertCircle className="w-3.5 h-3.5 text-gray-400 shrink-0" />
               </div>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{stats.overdueTasks}</div>
-              <p className="text-[10px] sm:text-xs text-red-600 dark:text-red-400 mt-1">Needs attention</p>
+              <p className="text-[10px] sm:text-xs text-red-600 dark:text-red-400 mt-1">
+                {stats.overdueTasks > 0 ? "Needs attention" : "All on track"}
+              </p>
             </div>
 
             <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0">
