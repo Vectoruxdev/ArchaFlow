@@ -94,16 +94,16 @@ export default function JoinWorkspacePage() {
       <div>
         <button
           onClick={() => setSelectedWorkspace(null)}
-          className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 mb-4"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to search
         </button>
 
-        <h1 className="text-2xl font-semibold mb-2">Request to join</h1>
+        <h1 className="text-2xl font-semibold mb-2 text-card-foreground">Request to join</h1>
         <div className="flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-            <Building2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+          <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
           </div>
           <span className="font-medium">{selectedWorkspace.name}</span>
           {selectedWorkspace.isRecommended && (
@@ -149,14 +149,14 @@ export default function JoinWorkspacePage() {
     <div>
       <button
         onClick={() => router.push("/onboarding")}
-        className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 mb-4"
+        className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4"
       >
         <ArrowLeft className="w-4 h-4" />
         Back
       </button>
 
-      <h1 className="text-2xl font-semibold mb-2">Join a workspace</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-6">
+      <h1 className="text-2xl font-semibold mb-2 text-card-foreground">Join a workspace</h1>
+      <p className="text-muted-foreground mb-6">
         Search for the workspace you&apos;d like to join.
       </p>
 
@@ -177,25 +177,25 @@ export default function JoinWorkspacePage() {
 
       {!searching && query.trim().length >= 2 && results.length === 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500 dark:text-gray-400">No workspaces found</p>
-          <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
+          <p className="text-muted-foreground">No workspaces found</p>
+          <p className="text-[13px] text-muted-foreground mt-2">
             Try a different search term, or create your own workspace.
           </p>
         </div>
       )}
 
       {results.length > 0 && (
-        <div className="space-y-2">
-          {results.map((ws) => (
+        <div className="border border-border rounded-md overflow-hidden">
+          {results.map((ws, idx) => (
             <button
               key={ws.id}
               onClick={() => setSelectedWorkspace(ws)}
-              className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors text-left"
+              className={`w-full flex items-center gap-3 p-3 hover:bg-accent transition-colors text-left ${
+                idx > 0 ? "border-t border-border" : ""
+              }`}
             >
-              <div className="w-8 h-8 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-              </div>
-              <span className="font-medium flex-1">{ws.name}</span>
+              <Building2 className="w-5 h-5 text-muted-foreground flex-shrink-0" />
+              <span className="font-medium text-sm flex-1">{ws.name}</span>
               {ws.isRecommended && (
                 <Badge variant="secondary" className="text-xs">Recommended</Badge>
               )}

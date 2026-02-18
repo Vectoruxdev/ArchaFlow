@@ -78,7 +78,7 @@ export default function WaitingPage() {
         </div>
         <h1 className="text-2xl font-semibold">Waiting for approval</h1>
       </div>
-      <p className="text-gray-600 dark:text-gray-400 mb-6">
+      <p className="text-muted-foreground mb-6">
         Your join request has been sent. The workspace owner will review it shortly.
       </p>
 
@@ -93,14 +93,14 @@ export default function WaitingPage() {
           {requests.map((req) => (
             <div
               key={req.id}
-              className="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800"
+              className="flex items-center gap-3 p-3 rounded-lg border border-border"
             >
-              <div className="w-8 h-8 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+              <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-4 h-4 text-muted-foreground" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{req.businessName}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-muted-foreground">
                   Requested {new Date(req.createdAt).toLocaleDateString()}
                 </p>
               </div>

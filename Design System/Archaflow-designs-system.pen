@@ -1,5 +1,5 @@
 {
-  "version": "2.6",
+  "version": "2.8",
   "children": [
     {
       "type": "frame",
@@ -54,7 +54,8 @@
           "fill": "$--foreground",
           "content": "Body text — 14px regular for paragraphs and descriptions",
           "fontFamily": "$--font-secondary",
-          "fontSize": 14
+          "fontSize": 14,
+          "fontWeight": "normal"
         },
         {
           "type": "text",
@@ -64,7 +65,8 @@
           "fill": "$--foreground",
           "content": "Body Small — 12px regular for secondary text",
           "fontFamily": "$--font-secondary",
-          "fontSize": 12
+          "fontSize": 12,
+          "fontWeight": "normal"
         },
         {
           "type": "text",
@@ -74,7 +76,8 @@
           "fill": "$--muted-foreground",
           "content": "Caption — 11px regular muted helper text",
           "fontFamily": "$--font-secondary",
-          "fontSize": 11
+          "fontSize": 11,
+          "fontWeight": "normal"
         },
         {
           "type": "text",
@@ -4037,6 +4040,2084 @@
               ]
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "AhxBD",
+      "x": -38,
+      "y": 4260,
+      "name": "Screen: Signup",
+      "width": 480,
+      "fill": "$--accent",
+      "layout": "vertical",
+      "padding": [
+        48,
+        16
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "uJr9a",
+          "name": "logo1",
+          "width": "fill_container",
+          "gap": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "qORtf",
+              "name": "logoBg1",
+              "width": 40,
+              "height": 40,
+              "fill": "$--primary",
+              "cornerRadius": "$--radius-lg",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qNiEk",
+                  "name": "logoDiamond1",
+                  "rotation": 45,
+                  "width": 18,
+                  "height": 18,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$--primary-foreground"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "gMCzo",
+              "name": "logoText1",
+              "fill": "$--foreground",
+              "content": "ArchaFlow",
+              "fontFamily": "$--font-primary",
+              "fontSize": 22,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "EfLBB",
+          "name": "spacer1",
+          "width": 1,
+          "height": 32
+        },
+        {
+          "type": "frame",
+          "id": "MOtEv",
+          "name": "card1",
+          "width": 448,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000D",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 16
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 32,
+          "children": [
+            {
+              "type": "text",
+              "id": "xH32y",
+              "name": "heading1",
+              "fill": "$--card-foreground",
+              "content": "Create your account",
+              "fontFamily": "$--font-primary",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "DfXQd",
+              "name": "subtitle1",
+              "fill": "$--muted-foreground",
+              "content": "Get started with ArchaFlow today",
+              "fontFamily": "$--font-secondary",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "B2l17",
+              "name": "spacer1b",
+              "width": 1,
+              "height": 4
+            },
+            {
+              "type": "frame",
+              "id": "gZpaF",
+              "name": "nameGroup",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "F1EQW",
+                  "name": "nameLabel",
+                  "fill": "$--foreground",
+                  "content": "Full Name",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "Mm3Y5",
+                  "type": "ref",
+                  "ref": "K09ou",
+                  "width": "fill_container",
+                  "name": "nameInput",
+                  "descendants": {
+                    "3QZXa": {
+                      "content": "John Doe"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MW3o2",
+              "name": "emailGroup",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "6ikmQ",
+                  "name": "emailLabel",
+                  "fill": "$--foreground",
+                  "content": "Email",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "wndr5",
+                  "type": "ref",
+                  "ref": "K09ou",
+                  "width": "fill_container",
+                  "name": "emailInput",
+                  "descendants": {
+                    "3QZXa": {
+                      "content": "you@example.com"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "8i2Wf",
+              "name": "pwGroup",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MFoAn",
+                  "name": "pwLabel",
+                  "fill": "$--foreground",
+                  "content": "Password",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "gdnZj",
+                  "type": "ref",
+                  "ref": "K09ou",
+                  "width": "fill_container",
+                  "name": "pwInput",
+                  "descendants": {
+                    "3QZXa": {
+                      "content": "••••••••"
+                    }
+                  }
+                },
+                {
+                  "type": "text",
+                  "id": "i7mqd",
+                  "name": "pwHelper",
+                  "fill": "$--muted-foreground",
+                  "content": "Must be at least 8 characters",
+                  "fontFamily": "Inter",
+                  "fontSize": 12,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oeUcb",
+              "name": "cpwGroup",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "3fF8w",
+                  "name": "cpwLabel",
+                  "fill": "$--foreground",
+                  "content": "Confirm Password",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "54QRo",
+                  "type": "ref",
+                  "ref": "K09ou",
+                  "width": "fill_container",
+                  "name": "cpwInput",
+                  "descendants": {
+                    "3QZXa": {
+                      "content": "••••••••"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qins2",
+              "name": "termsRow",
+              "width": "fill_container",
+              "gap": 8,
+              "children": [
+                {
+                  "id": "8MpAf",
+                  "type": "ref",
+                  "ref": "zeB2T",
+                  "name": "termsCheck"
+                },
+                {
+                  "type": "text",
+                  "id": "FBCF3",
+                  "name": "termsText",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "I agree to the Terms of Service and Privacy Policy",
+                  "lineHeight": 1.4,
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "id": "n25kL",
+              "type": "ref",
+              "ref": "nJk7i",
+              "width": "fill_container",
+              "name": "submitBtn",
+              "descendants": {
+                "J8v5E": {
+                  "enabled": false
+                },
+                "WXo12": {
+                  "content": "Create account"
+                }
+              }
+            },
+            {
+              "type": "frame",
+              "id": "wjaTb",
+              "name": "signinRow",
+              "width": "fill_container",
+              "gap": 4,
+              "padding": [
+                8,
+                0,
+                0,
+                0
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "196wx",
+                  "name": "signinText",
+                  "fill": "$--muted-foreground",
+                  "content": "Already have an account?",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "ogfMi",
+                  "name": "signinLink",
+                  "fill": "$--foreground",
+                  "content": "Sign in",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "nJCbV",
+          "name": "footer1",
+          "width": 1,
+          "height": 24
+        },
+        {
+          "type": "text",
+          "id": "V8Zt3",
+          "name": "footerText1",
+          "fill": "$--muted-foreground",
+          "content": "© 2026 ArchaFlow. All rights reserved.",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Oq7bS",
+      "x": 542,
+      "y": 4260,
+      "name": "Screen: Onboarding Choice",
+      "width": 480,
+      "fill": "$--accent",
+      "layout": "vertical",
+      "padding": [
+        48,
+        16
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "4Djf2",
+          "name": "logo2",
+          "width": "fill_container",
+          "gap": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "CrQeK",
+              "name": "logoBg2",
+              "width": 40,
+              "height": 40,
+              "fill": "$--primary",
+              "cornerRadius": "$--radius-lg",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Wgrnl",
+                  "name": "logoDiamond2",
+                  "rotation": 45,
+                  "width": 18,
+                  "height": 18,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$--primary-foreground"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "N7qI4",
+              "name": "logoTxt2",
+              "fill": "$--foreground",
+              "content": "ArchaFlow",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "RIr6K",
+          "name": "sp2",
+          "width": 1,
+          "height": 32
+        },
+        {
+          "type": "frame",
+          "id": "usAjH",
+          "name": "card2",
+          "width": 448,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000D",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 16
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 32,
+          "children": [
+            {
+              "type": "text",
+              "id": "leZWB",
+              "name": "h2",
+              "fill": "$--card-foreground",
+              "content": "Welcome to ArchaFlow",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "5q2ku",
+              "name": "sub2",
+              "fill": "$--muted-foreground",
+              "content": "How would you like to get started?",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "5Yrkw",
+              "name": "sp2b",
+              "width": 1,
+              "height": 4
+            },
+            {
+              "type": "frame",
+              "id": "akM2C",
+              "name": "btn1",
+              "width": "fill_container",
+              "cornerRadius": "$--radius-lg",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "gap": 16,
+              "padding": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dn2RT",
+                  "name": "iconBg1",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$--primary",
+                  "cornerRadius": "$--radius-lg",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "XpIos",
+                      "name": "icon1",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "building-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--primary-foreground"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "cdjto",
+                  "name": "textCol1",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MLgSN",
+                      "name": "title1",
+                      "fill": "$--foreground",
+                      "content": "Create a workspace",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "bT71v",
+                      "name": "desc1",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Start fresh with your own workspace for your team.",
+                      "lineHeight": 1.3,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "tJTVu",
+              "name": "btn2",
+              "width": "fill_container",
+              "cornerRadius": "$--radius-lg",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "gap": 16,
+              "padding": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "faIzM",
+                  "name": "iconBg2",
+                  "width": 44,
+                  "height": 44,
+                  "fill": "$--secondary",
+                  "cornerRadius": "$--radius-lg",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "ifS3l",
+                      "name": "icon2",
+                      "width": 22,
+                      "height": 22,
+                      "iconFontName": "users",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--secondary-foreground"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "VV6Aq",
+                  "name": "textCol2",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 2,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "sEMl5",
+                      "name": "title2",
+                      "fill": "$--foreground",
+                      "content": "Join an existing workspace",
+                      "fontFamily": "Inter",
+                      "fontSize": 15,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "text",
+                      "id": "WdPQs",
+                      "name": "desc2",
+                      "fill": "$--muted-foreground",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Request to join a workspace that's already set up.",
+                      "lineHeight": 1.3,
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "uRsAj",
+          "name": "ft2a",
+          "width": 1,
+          "height": 24
+        },
+        {
+          "type": "text",
+          "id": "70RN4",
+          "name": "ft2b",
+          "fill": "$--muted-foreground",
+          "content": "© 2026 ArchaFlow. All rights reserved.",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "DKqZW",
+      "x": 1122,
+      "y": 4260,
+      "name": "Screen: Create Workspace",
+      "width": 480,
+      "fill": "$--accent",
+      "layout": "vertical",
+      "padding": [
+        48,
+        16
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "dT1zZ",
+          "name": "logo3",
+          "width": "fill_container",
+          "gap": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "MEpNC",
+              "name": "logoBg3",
+              "width": 40,
+              "height": 40,
+              "fill": "$--primary",
+              "cornerRadius": "$--radius-lg",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nQ8Rd",
+                  "name": "logoDia3",
+                  "rotation": 45,
+                  "width": 18,
+                  "height": 18,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$--primary-foreground"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "bgwow",
+              "name": "logoTx3",
+              "fill": "$--foreground",
+              "content": "ArchaFlow",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "iNfjI",
+          "name": "sp3",
+          "width": 1,
+          "height": 32
+        },
+        {
+          "type": "frame",
+          "id": "ljH0c",
+          "name": "card3",
+          "width": 448,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000D",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 16
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 32,
+          "children": [
+            {
+              "type": "text",
+              "id": "yxTZ8",
+              "name": "h3",
+              "fill": "$--card-foreground",
+              "content": "Create your workspace",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "k5Mgc",
+              "name": "sub3",
+              "fill": "$--muted-foreground",
+              "content": "Give your workspace a name to get started.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "Qkjhx",
+              "name": "sp3b",
+              "width": 1,
+              "height": 4
+            },
+            {
+              "type": "frame",
+              "id": "CxECL",
+              "name": "wsGroup",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qBbnv",
+                  "name": "wsLabel",
+                  "fill": "$--foreground",
+                  "content": "Workspace Name",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "22gyn",
+                  "type": "ref",
+                  "ref": "K09ou",
+                  "width": "fill_container",
+                  "name": "wsInput",
+                  "descendants": {
+                    "3QZXa": {
+                      "content": "Acme Architecture"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fwJU6",
+              "name": "sp3c",
+              "width": 1,
+              "height": 4
+            },
+            {
+              "type": "frame",
+              "id": "ECY91",
+              "name": "btnRow3",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "id": "DSmbw",
+                  "type": "ref",
+                  "ref": "3gU1B",
+                  "width": "fill_container",
+                  "name": "backBtn3",
+                  "descendants": {
+                    "1lFXL": {
+                      "enabled": false
+                    },
+                    "cA5MR": {
+                      "content": "Back"
+                    }
+                  }
+                },
+                {
+                  "id": "1nf4z",
+                  "type": "ref",
+                  "ref": "nJk7i",
+                  "width": "fill_container",
+                  "name": "createBtn3",
+                  "descendants": {
+                    "J8v5E": {
+                      "enabled": false
+                    },
+                    "WXo12": {
+                      "content": "Create workspace"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "b69qf",
+          "name": "ft3a",
+          "width": 1,
+          "height": 24
+        },
+        {
+          "type": "text",
+          "id": "Q08Sp",
+          "name": "ft3b",
+          "fill": "$--muted-foreground",
+          "content": "© 2026 ArchaFlow. All rights reserved.",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "xD0eI",
+      "x": 1702,
+      "y": 4260,
+      "name": "Screen: Join Search Empty",
+      "width": 480,
+      "fill": "$--accent",
+      "layout": "vertical",
+      "padding": [
+        48,
+        16
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "pXCTC",
+          "name": "logo4",
+          "width": "fill_container",
+          "gap": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "3Xc3J",
+              "name": "logoBg4",
+              "width": 40,
+              "height": 40,
+              "fill": "$--primary",
+              "cornerRadius": "$--radius-lg",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "RupCa",
+                  "name": "logoDia4",
+                  "rotation": 45,
+                  "width": 18,
+                  "height": 18,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$--primary-foreground"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "FwMjl",
+              "name": "logoTx4",
+              "fill": "$--foreground",
+              "content": "ArchaFlow",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "hyHfm",
+          "name": "sp4",
+          "width": 1,
+          "height": 32
+        },
+        {
+          "type": "frame",
+          "id": "A0EyN",
+          "name": "card4",
+          "width": 448,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000D",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 16
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "mIxlu",
+              "name": "backRow4",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "MrbfY",
+                  "name": "backIcon4",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-left",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "hBO5O",
+                  "name": "backTxt4",
+                  "fill": "$--muted-foreground",
+                  "content": "Back",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "fFW9x",
+              "name": "h4",
+              "fill": "$--card-foreground",
+              "content": "Join a workspace",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "NlLRJ",
+              "name": "sub4",
+              "fill": "$--muted-foreground",
+              "content": "Search for the workspace you'd like to join.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "44a48",
+              "name": "searchBox4",
+              "width": "fill_container",
+              "height": 40,
+              "fill": "$--background",
+              "cornerRadius": "$--radius-m",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "gap": 8,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "fKaqt",
+                  "name": "searchIcon4",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "search",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "bqKgc",
+                  "name": "searchTxt4",
+                  "fill": "$--muted-foreground",
+                  "content": "Search workspaces by name...",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eMgTS",
+              "name": "emptyArea4",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "padding": [
+                32,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "WSHVZ",
+                  "name": "emptyTxt4",
+                  "fill": "$--muted-foreground",
+                  "content": "No workspaces found",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                },
+                {
+                  "type": "text",
+                  "id": "vrM6E",
+                  "name": "emptyHelp4",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": 280,
+                  "content": "Try a different search term, or create your own workspace.",
+                  "lineHeight": 1.4,
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "1IMgp",
+          "name": "ft4a",
+          "width": 1,
+          "height": 24
+        },
+        {
+          "type": "text",
+          "id": "fNiQp",
+          "name": "ft4b",
+          "fill": "$--muted-foreground",
+          "content": "© 2026 ArchaFlow. All rights reserved.",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "GVa83",
+      "x": 2282,
+      "y": 4260,
+      "name": "Screen: Join Search Results",
+      "width": 480,
+      "fill": "$--accent",
+      "layout": "vertical",
+      "padding": [
+        48,
+        16
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "naMUP",
+          "name": "logo5",
+          "width": "fill_container",
+          "gap": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "8yJsw",
+              "name": "logoBg5",
+              "width": 40,
+              "height": 40,
+              "fill": "$--primary",
+              "cornerRadius": "$--radius-lg",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zvbjV",
+                  "name": "logoDia5",
+                  "rotation": 45,
+                  "width": 18,
+                  "height": 18,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$--primary-foreground"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ry0kS",
+              "name": "logoTx5",
+              "fill": "$--foreground",
+              "content": "ArchaFlow",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "kTe1g",
+          "name": "sp5",
+          "width": 1,
+          "height": 32
+        },
+        {
+          "type": "frame",
+          "id": "Fej7v",
+          "name": "card5",
+          "width": 448,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000D",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 16
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "jfRKx",
+              "name": "backRow5",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "MUsI0",
+                  "name": "backIcon5",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-left",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "7R9rM",
+                  "name": "backTxt5",
+                  "fill": "$--muted-foreground",
+                  "content": "Back",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "tW6oe",
+              "name": "h5",
+              "fill": "$--card-foreground",
+              "content": "Join a workspace",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "96iqR",
+              "name": "sub5",
+              "fill": "$--muted-foreground",
+              "content": "Search for the workspace you'd like to join.",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "frame",
+              "id": "ghvgH",
+              "name": "searchBox5",
+              "width": "fill_container",
+              "height": 40,
+              "fill": "$--background",
+              "cornerRadius": "$--radius-m",
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "$--border"
+              },
+              "gap": 8,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "N8d2X",
+                  "name": "searchIcon5",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "search",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "mOXOS",
+                  "name": "searchTxt5",
+                  "fill": "$--foreground",
+                  "content": "Acme",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HFNcq",
+              "name": "resultsList",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "96X38",
+                  "name": "r1",
+                  "width": "fill_container",
+                  "cornerRadius": "$--radius-m",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "Jye7L",
+                      "name": "r1icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "building-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "text",
+                      "id": "j3LZm",
+                      "name": "r1name",
+                      "fill": "$--foreground",
+                      "content": "Acme Architecture",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "id": "yXVTP",
+                      "type": "ref",
+                      "ref": "3zgDA",
+                      "name": "r1badge",
+                      "descendants": {
+                        "pKn4G": {
+                          "content": "Recommended"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pyJnC",
+                  "name": "r2",
+                  "width": "fill_container",
+                  "cornerRadius": "$--radius-m",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "zwkYe",
+                      "name": "r2icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "building-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kh9gH",
+                      "name": "r2name",
+                      "fill": "$--foreground",
+                      "content": "Acme Design Studio",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "71UnG",
+                  "name": "r3",
+                  "width": "fill_container",
+                  "cornerRadius": "$--radius-m",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "xVvno",
+                      "name": "r3icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "building-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "text",
+                      "id": "HGKQj",
+                      "name": "r3name",
+                      "fill": "$--foreground",
+                      "content": "Acme Builders Group",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "arfvt",
+          "name": "ft5a",
+          "width": 1,
+          "height": 24
+        },
+        {
+          "type": "text",
+          "id": "zS7pI",
+          "name": "ft5b",
+          "fill": "$--muted-foreground",
+          "content": "© 2026 ArchaFlow. All rights reserved.",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "9NQkb",
+      "x": 2862,
+      "y": 4260,
+      "name": "Screen: Join Request Form",
+      "width": 480,
+      "fill": "$--accent",
+      "layout": "vertical",
+      "padding": [
+        48,
+        16
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "F8esw",
+          "name": "logo6",
+          "width": "fill_container",
+          "gap": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "ePxyO",
+              "name": "logoBg6",
+              "width": 40,
+              "height": 40,
+              "fill": "$--primary",
+              "cornerRadius": "$--radius-lg",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JkzTm",
+                  "name": "logoDia6",
+                  "rotation": 45,
+                  "width": 18,
+                  "height": 18,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$--primary-foreground"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "RZZgX",
+              "name": "logoTx6",
+              "fill": "$--foreground",
+              "content": "ArchaFlow",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "euHAO",
+          "name": "sp6",
+          "width": 1,
+          "height": 32
+        },
+        {
+          "type": "frame",
+          "id": "G24ZF",
+          "name": "card6",
+          "width": 448,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000D",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 16
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "2ncEW",
+              "name": "backRow6",
+              "gap": 4,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "5LYcp",
+                  "name": "backIcon6",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "arrow-left",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "nH6Yo",
+                  "name": "backTxt6",
+                  "fill": "$--muted-foreground",
+                  "content": "Back to search",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ZEPqM",
+              "name": "h6",
+              "fill": "$--card-foreground",
+              "content": "Request to join",
+              "fontFamily": "Inter",
+              "fontSize": 24,
+              "fontWeight": "600"
+            },
+            {
+              "type": "frame",
+              "id": "Q6Mp9",
+              "name": "wsInfo6",
+              "width": "fill_container",
+              "fill": "$--accent",
+              "cornerRadius": "$--radius-m",
+              "gap": 12,
+              "padding": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "NQ80Z",
+                  "name": "wsIcon6",
+                  "width": 20,
+                  "height": 20,
+                  "iconFontName": "building-2",
+                  "iconFontFamily": "lucide",
+                  "fill": "$--muted-foreground"
+                },
+                {
+                  "type": "text",
+                  "id": "5mcfE",
+                  "name": "wsName6",
+                  "fill": "$--foreground",
+                  "content": "Acme Architecture",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "IQbpo",
+                  "type": "ref",
+                  "ref": "3zgDA",
+                  "name": "wsBadge6",
+                  "descendants": {
+                    "pKn4G": {
+                      "content": "Recommended"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qSZhg",
+              "name": "msgGroup6",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Plx5w",
+                  "name": "msgLabel6",
+                  "fill": "$--foreground",
+                  "content": "Message (optional)",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "tC7k2",
+                  "type": "ref",
+                  "ref": "BdJXy",
+                  "width": "fill_container",
+                  "name": "msgInput6",
+                  "descendants": {
+                    "yVkbe": {
+                      "content": "Hi, I'd like to join your workspace..."
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "wSL85",
+              "type": "ref",
+              "ref": "nJk7i",
+              "width": "fill_container",
+              "name": "sendBtn6",
+              "descendants": {
+                "J8v5E": {
+                  "iconFontName": "send"
+                },
+                "WXo12": {
+                  "content": "Send join request"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "nliaL",
+          "name": "ft6a",
+          "width": 1,
+          "height": 24
+        },
+        {
+          "type": "text",
+          "id": "hP5dL",
+          "name": "ft6b",
+          "fill": "$--muted-foreground",
+          "content": "© 2026 ArchaFlow. All rights reserved.",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "TqVjQ",
+      "x": 3442,
+      "y": 4260,
+      "name": "Screen: Waiting for Approval",
+      "width": 480,
+      "fill": "$--accent",
+      "layout": "vertical",
+      "padding": [
+        48,
+        16
+      ],
+      "alignItems": "center",
+      "children": [
+        {
+          "type": "frame",
+          "id": "uBvEN",
+          "name": "logo7",
+          "width": "fill_container",
+          "gap": 8,
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "F3eDP",
+              "name": "logoBg7",
+              "width": 40,
+              "height": 40,
+              "fill": "$--primary",
+              "cornerRadius": "$--radius-lg",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "LUP6a",
+                  "name": "logoDia7",
+                  "rotation": 45,
+                  "width": 18,
+                  "height": 18,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$--primary-foreground"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "zhvCP",
+              "name": "logoTx7",
+              "fill": "$--foreground",
+              "content": "ArchaFlow",
+              "fontFamily": "Inter",
+              "fontSize": 22,
+              "fontWeight": "600"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "n19xe",
+          "name": "sp7",
+          "width": 1,
+          "height": 32
+        },
+        {
+          "type": "frame",
+          "id": "4S4jv",
+          "name": "card7",
+          "width": 448,
+          "fill": "$--card",
+          "cornerRadius": "$--radius-lg",
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "$--border"
+          },
+          "effect": {
+            "type": "shadow",
+            "shadowType": "outer",
+            "color": "#0000000D",
+            "offset": {
+              "x": 0,
+              "y": 4
+            },
+            "blur": 16
+          },
+          "layout": "vertical",
+          "gap": 16,
+          "padding": 32,
+          "children": [
+            {
+              "type": "frame",
+              "id": "8AB4d",
+              "name": "headerArea7",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "60HI3",
+                  "name": "clockBg7",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#fef9c3",
+                  "cornerRadius": 9999,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "zEWoi",
+                      "name": "clockIcon7",
+                      "width": 24,
+                      "height": 24,
+                      "iconFontName": "timer",
+                      "iconFontFamily": "lucide",
+                      "fill": "#854d0e"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "8Eqd1",
+                  "name": "h7",
+                  "fill": "$--card-foreground",
+                  "content": "Waiting for approval",
+                  "fontFamily": "Inter",
+                  "fontSize": 24,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "qPs5V",
+                  "name": "sub7",
+                  "fill": "$--muted-foreground",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Your join request has been sent. The workspace owner will review it shortly.",
+                  "lineHeight": 1.4,
+                  "textAlign": "center",
+                  "fontFamily": "Inter",
+                  "fontSize": 14,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qNv78",
+              "name": "sp7b",
+              "width": 1,
+              "height": 4
+            },
+            {
+              "type": "frame",
+              "id": "dcefM",
+              "name": "reqList7",
+              "width": "fill_container",
+              "layout": "vertical",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "3hzV3",
+                  "name": "req1",
+                  "width": "fill_container",
+                  "cornerRadius": "$--radius-m",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "$--border"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "ppCXd",
+                      "name": "req1icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "building-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fNHbD",
+                      "name": "req1col",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "B9erh",
+                          "name": "req1name",
+                          "fill": "$--foreground",
+                          "content": "Acme Architecture",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "6afjm",
+                          "name": "req1date",
+                          "fill": "$--muted-foreground",
+                          "content": "Requested Feb 17, 2026",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "iqwJD",
+                      "type": "ref",
+                      "ref": "C7MFD",
+                      "name": "req1badge",
+                      "descendants": {
+                        "evxVw": {
+                          "content": "Pending"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "6rvQe",
+                  "name": "req2",
+                  "width": "fill_container",
+                  "cornerRadius": "$--radius-m",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "right": 1,
+                      "bottom": 1,
+                      "left": 1
+                    },
+                    "fill": "$--border"
+                  },
+                  "gap": 12,
+                  "padding": 12,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "pS9vC",
+                      "name": "req2icon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "building-2",
+                      "iconFontFamily": "lucide",
+                      "fill": "$--muted-foreground"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ChO7e",
+                      "name": "req2col",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "nFhhc",
+                          "name": "req2name",
+                          "fill": "$--foreground",
+                          "content": "Skyline Partners",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        },
+                        {
+                          "type": "text",
+                          "id": "kdLae",
+                          "name": "req2date",
+                          "fill": "$--muted-foreground",
+                          "content": "Requested Feb 15, 2026",
+                          "fontFamily": "Inter",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "qT551",
+                      "type": "ref",
+                      "ref": "m624z",
+                      "name": "req2badge",
+                      "descendants": {
+                        "iCqMO": {
+                          "content": "Declined"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "nlWA9",
+              "name": "btnRow7",
+              "width": "fill_container",
+              "gap": 12,
+              "children": [
+                {
+                  "id": "4VUwA",
+                  "type": "ref",
+                  "ref": "3gU1B",
+                  "width": "fill_container",
+                  "name": "refreshBtn7",
+                  "descendants": {
+                    "1lFXL": {
+                      "iconFontName": "refresh-cw"
+                    },
+                    "cA5MR": {
+                      "content": "Refresh"
+                    }
+                  }
+                },
+                {
+                  "id": "e2lg5",
+                  "type": "ref",
+                  "ref": "3gU1B",
+                  "width": "fill_container",
+                  "name": "createBtn7",
+                  "descendants": {
+                    "1lFXL": {
+                      "enabled": false
+                    },
+                    "cA5MR": {
+                      "content": "Create workspace instead"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "iNle4",
+          "name": "ft7a",
+          "width": 1,
+          "height": 24
+        },
+        {
+          "type": "text",
+          "id": "9E70E",
+          "name": "ft7b",
+          "fill": "$--muted-foreground",
+          "content": "© 2026 ArchaFlow. All rights reserved.",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
         }
       ]
     }

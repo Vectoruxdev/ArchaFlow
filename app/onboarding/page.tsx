@@ -35,8 +35,8 @@ export default function OnboardingPage() {
   if (showCreateForm) {
     return (
       <div>
-        <h1 className="text-2xl font-semibold mb-2">Create your workspace</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <h1 className="text-2xl font-semibold mb-2 text-card-foreground">Create your workspace</h1>
+        <p className="text-muted-foreground mb-6">
           Give your workspace a name to get started.
         </p>
 
@@ -86,22 +86,22 @@ export default function OnboardingPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-2">Welcome to ArchaFlow</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-6">
+      <h1 className="text-2xl font-semibold mb-2 text-card-foreground">Welcome to ArchaFlow</h1>
+      <p className="text-muted-foreground mb-6">
         How would you like to get started?
       </p>
 
       <div className="space-y-3">
         <button
           onClick={() => setShowCreateForm(true)}
-          className="w-full flex items-start gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors text-left"
+          className="w-full flex items-start gap-4 p-4 rounded-lg border border-border hover:bg-accent transition-colors text-left"
         >
-          <div className="w-10 h-10 rounded-lg bg-black dark:bg-white flex items-center justify-center flex-shrink-0">
-            <Building2 className="w-5 h-5 text-white dark:text-black" />
+          <div className="w-11 h-11 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+            <Building2 className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <p className="font-medium">Create a workspace</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="font-medium text-[15px]">Create a workspace</p>
+            <p className="text-[13px] text-muted-foreground mt-0.5 leading-[1.3]">
               Start fresh with your own workspace for your team.
             </p>
           </div>
@@ -109,14 +109,14 @@ export default function OnboardingPage() {
 
         <button
           onClick={() => router.push("/onboarding/join")}
-          className="w-full flex items-start gap-4 p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors text-left"
+          className="w-full flex items-start gap-4 p-4 rounded-lg border border-border hover:bg-accent transition-colors text-left"
         >
-          <div className="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
-            <Users className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          <div className="w-11 h-11 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
+            <Users className="w-5 h-5 text-secondary-foreground" />
           </div>
           <div>
-            <p className="font-medium">Join an existing workspace</p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="font-medium text-[15px]">Join an existing workspace</p>
+            <p className="text-[13px] text-muted-foreground mt-0.5 leading-[1.3]">
               Request to join a workspace that&apos;s already set up.
             </p>
           </div>
