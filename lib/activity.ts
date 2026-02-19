@@ -15,6 +15,10 @@ export type ActivityType =
   | "client_created"
   | "integration_connected"
   | "tasks_imported"
+  | "contract_created"
+  | "contract_sent"
+  | "contract_signed"
+  | "contract_voided"
 
 export interface RecordActivityParams {
   businessId: string

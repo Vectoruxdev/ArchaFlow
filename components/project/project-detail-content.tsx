@@ -53,6 +53,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { ProjectContractsSection } from "./project-contracts-section"
 
 // Types
 interface TaskNote {
@@ -1338,6 +1339,9 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                 </>
               )}
             </div>
+
+            {/* Contracts Section */}
+            <ProjectContractsSection projectId={projectId} />
           </div>
 
           {/* Right Sidebar */}

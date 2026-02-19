@@ -12,6 +12,7 @@ import {
   MapPin,
   User,
   Eye,
+  FileSignature,
 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -34,6 +35,7 @@ import {
 } from "@/components/ui/table"
 import { AppLayout } from "@/components/layout/app-layout"
 import { ClientFormModal, type ClientFormData } from "@/components/clients/client-form-modal"
+import { ContractStatusBadge } from "@/components/contracts/contract-status-badge"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 
@@ -67,6 +69,14 @@ interface LinkedProject {
   archivedAt: string | null
 }
 
+interface LinkedContract {
+  id: string
+  name: string
+  status: string
+  sentAt: string | null
+  signedAt: string | null
+}
+
 const statusColors: Record<string, string> = {
   lead: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
   sale: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
@@ -79,6 +89,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
   const { currentWorkspace } = useAuth()
   const [client, setClient] = useState<ClientDetail | null>(null)
   const [projects, setProjects] = useState<LinkedProject[]>([])
+  const [contracts, setContracts] = useState<LinkedContract[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [isEditOpen, setIsEditOpen] = useState(false)
@@ -86,6 +97,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
   useEffect(() => {
     loadClient()
     loadLinkedProjects()
+    loadLinkedContracts()
   }, [params.id])
 
   const loadClient = async () => {
@@ -153,6 +165,30 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
       )
     } catch (error: any) {
       console.error("Error loading linked projects:", error)
+    }
+  }
+
+  const loadLinkedContracts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("contracts")
+        .select("id, name, status, sent_at, signed_at")
+        .eq("client_id", params.id)
+        .order("created_at", { ascending: false })
+
+      if (error) throw error
+
+      setContracts(
+        (data || []).map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          status: c.status,
+          sentAt: c.sent_at,
+          signedAt: c.signed_at,
+        }))
+      )
+    } catch (error: any) {
+      console.error("Error loading linked contracts:", error)
     }
   }
 
@@ -477,6 +513,69 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
                             onClick={(e) => {
                               e.stopPropagation()
                               router.push(`/projects/${project.id}`)
+                            }}
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+
+            {/* Linked Contracts Card */}
+            <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <FileSignature className="w-5 h-5 text-gray-400" />
+                <h2 className="text-lg font-semibold">Contracts</h2>
+              </div>
+              {contracts.length === 0 ? (
+                <p className="text-sm text-gray-400 italic py-4">
+                  No contracts sent to this client yet.
+                </p>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Contract</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Sent</TableHead>
+                      <TableHead>Signed</TableHead>
+                      <TableHead className="w-12"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {contracts.map((contract) => (
+                      <TableRow
+                        key={contract.id}
+                        className="cursor-pointer"
+                        onClick={() => router.push(`/contracts/${contract.id}`)}
+                      >
+                        <TableCell className="font-medium text-sm">
+                          {contract.name}
+                        </TableCell>
+                        <TableCell>
+                          <ContractStatusBadge status={contract.status} />
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-500">
+                          {contract.sentAt
+                            ? new Date(contract.sentAt).toLocaleDateString()
+                            : "—"}
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-500">
+                          {contract.signedAt
+                            ? new Date(contract.signedAt).toLocaleDateString()
+                            : "—"}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              router.push(`/contracts/${contract.id}`)
                             }}
                           >
                             <Eye className="w-4 h-4" />
