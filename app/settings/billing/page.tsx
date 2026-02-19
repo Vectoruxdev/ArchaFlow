@@ -19,6 +19,9 @@ import {
   ChevronLeft,
   AlertCircle,
   CheckCircle,
+  Download,
+  Calendar,
+  Receipt,
 } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
@@ -30,12 +33,39 @@ interface SubscriptionEvent {
   metadata: Record<string, unknown>
 }
 
+interface PaymentMethod {
+  brand: string
+  last4: string
+  expMonth: number
+  expYear: number
+}
+
+interface Invoice {
+  id: string
+  date: string | null
+  amountDue: number
+  amountPaid: number
+  currency: string
+  status: string | null
+  invoicePdf: string | null
+}
+
+interface SubscriptionInfo {
+  currentPeriodEnd: string | null
+  status: string
+}
+
 export default function BillingPage() {
   const { currentWorkspace, user, refreshWorkspaces } = useAuth()
   const searchParams = useSearchParams()
   const [loading, setLoading] = useState<string | null>(null)
   const [events, setEvents] = useState<SubscriptionEvent[]>([])
   const [eventsLoading, setEventsLoading] = useState(true)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null)
+  const [pmLoading, setPmLoading] = useState(true)
+  const [invoices, setInvoices] = useState<Invoice[]>([])
+  const [invoicesLoading, setInvoicesLoading] = useState(true)
+  const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo | null>(null)
 
   const workspace = currentWorkspace
   const isOwner = workspace?.role === "owner"
@@ -68,6 +98,40 @@ export default function BillingPage() {
         setEventsLoading(false)
       })
   }, [workspace?.id])
+
+  // Load payment method
+  useEffect(() => {
+    if (!workspace?.id || tier === "free") {
+      setPmLoading(false)
+      return
+    }
+    setPmLoading(true)
+    fetch(`/api/stripe/payment-method?businessId=${workspace.id}`)
+      .then((res) => res.json())
+      .then((data) => setPaymentMethod(data.paymentMethod || null))
+      .catch(() => setPaymentMethod(null))
+      .finally(() => setPmLoading(false))
+  }, [workspace?.id, tier])
+
+  // Load invoices and subscription info
+  useEffect(() => {
+    if (!workspace?.id || tier === "free") {
+      setInvoicesLoading(false)
+      return
+    }
+    setInvoicesLoading(true)
+    fetch(`/api/stripe/invoices?businessId=${workspace.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setInvoices(data.invoices || [])
+        setSubscriptionInfo(data.subscription || null)
+      })
+      .catch(() => {
+        setInvoices([])
+        setSubscriptionInfo(null)
+      })
+      .finally(() => setInvoicesLoading(false))
+  }, [workspace?.id, tier])
 
   async function handleCheckout(planTier: PlanTier) {
     if (!workspace?.id) return
@@ -125,6 +189,33 @@ export default function BillingPage() {
     } finally {
       setLoading(null)
     }
+  }
+
+  // Compute seat breakdown and estimated charge
+  const seatCount = workspace?.seatCount || 1
+  const includedSeats = workspace?.includedSeats || 1
+  const extraSeats = Math.max(0, seatCount - includedSeats)
+  const extraSeatCost = extraSeats * config.seatPrice
+  const estimatedCharge = config.basePrice + extraSeatCost
+
+  function formatCurrency(cents: number, currency: string = "usd") {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency.toUpperCase(),
+    }).format(cents / 100)
+  }
+
+  function formatCardBrand(brand: string) {
+    const brands: Record<string, string> = {
+      visa: "Visa",
+      mastercard: "Mastercard",
+      amex: "Amex",
+      discover: "Discover",
+      diners: "Diners Club",
+      jcb: "JCB",
+      unionpay: "UnionPay",
+    }
+    return brands[brand] || brand.charAt(0).toUpperCase() + brand.slice(1)
   }
 
   function formatEventType(type: string) {
@@ -316,7 +407,7 @@ export default function BillingPage() {
             </div>
           </div>
 
-          {/* Usage Section */}
+          {/* Usage Section with Seat Breakdown */}
           <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
             <div className="p-6 border-b border-gray-200 dark:border-gray-800">
               <h2 className="font-semibold">Usage</h2>
@@ -330,22 +421,25 @@ export default function BillingPage() {
                     <span className="text-sm font-medium">Seats</span>
                   </div>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {workspace?.seatCount || 1} / {workspace?.includedSeats || 1} included
-                    {(workspace?.seatCount || 1) > (workspace?.includedSeats || 1) && (
-                      <span className="text-xs ml-1">
-                        (+{(workspace?.seatCount || 1) - (workspace?.includedSeats || 1)} extra)
-                      </span>
-                    )}
+                    {seatCount} / {includedSeats} included
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
                   <div
                     className="bg-blue-500 h-2 rounded-full transition-all"
                     style={{
-                      width: `${Math.min(100, ((workspace?.seatCount || 1) / Math.max(workspace?.includedSeats || 1, 1)) * 100)}%`,
+                      width: `${Math.min(100, (seatCount / Math.max(includedSeats, 1)) * 100)}%`,
                     }}
                   />
                 </div>
+                {/* Seat breakdown detail */}
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                  {includedSeats} included
+                  {extraSeats > 0 && (
+                    <> + {extraSeats} extra (${extraSeatCost}/mo)</>
+                  )}
+                  {" "}= {seatCount} total
+                </p>
               </div>
 
               {/* AI Credits */}
@@ -376,6 +470,167 @@ export default function BillingPage() {
               )}
             </div>
           </div>
+
+          {/* Next Billing Date + Estimated Charge (paid plans only) */}
+          {tier !== "free" && subscriptionInfo?.currentPeriodEnd && (
+            <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+                    <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <h2 className="font-semibold">Next Billing</h2>
+                </div>
+              </div>
+              <div className="p-6 space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Next billing date</span>
+                  <span className="font-medium">
+                    {new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600 dark:text-gray-400">Estimated charge</span>
+                  <span className="font-medium">
+                    ${estimatedCharge}/mo
+                    {extraSeats > 0 && (
+                      <span className="text-xs text-gray-500 ml-1">
+                        (${config.basePrice} base + ${extraSeatCost} seats)
+                      </span>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Payment Method (paid plans only) */}
+          {tier !== "free" && (
+            <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <h2 className="font-semibold">Payment Method</h2>
+                </div>
+              </div>
+              <div className="p-6">
+                {pmLoading ? (
+                  <p className="text-sm text-gray-500">Loading...</p>
+                ) : paymentMethod ? (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-7 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300">
+                        {formatCardBrand(paymentMethod.brand).slice(0, 4)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium">
+                          {formatCardBrand(paymentMethod.brand)} ending in {paymentMethod.last4}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Expires {String(paymentMethod.expMonth).padStart(2, "0")}/{paymentMethod.expYear}
+                        </p>
+                      </div>
+                    </div>
+                    {isOwner && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handlePortal}
+                        disabled={!!loading}
+                      >
+                        Update
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-500">No payment method on file.</p>
+                    {isOwner && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={handlePortal}
+                        disabled={!!loading}
+                      >
+                        Add Payment Method
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Invoice History (paid plans only) */}
+          {tier !== "free" && (
+            <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+                    <Receipt className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <h2 className="font-semibold">Invoice History</h2>
+                </div>
+              </div>
+              <div className="divide-y divide-gray-200 dark:divide-gray-800">
+                {invoicesLoading ? (
+                  <div className="p-6 text-sm text-gray-500">Loading...</div>
+                ) : invoices.length === 0 ? (
+                  <div className="p-6 text-sm text-gray-500">No invoices yet.</div>
+                ) : (
+                  invoices.map((inv) => (
+                    <div key={inv.id} className="p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <p className="text-sm font-medium">
+                            {inv.date
+                              ? new Date(inv.date).toLocaleDateString("en-US", {
+                                  month: "short",
+                                  day: "numeric",
+                                  year: "numeric",
+                                })
+                              : "—"}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {formatCurrency(inv.amountPaid || inv.amountDue, inv.currency)}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge
+                          className={
+                            inv.status === "paid"
+                              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                              : inv.status === "open"
+                                ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                          }
+                        >
+                          {inv.status || "unknown"}
+                        </Badge>
+                        {inv.invoicePdf && (
+                          <a
+                            href={inv.invoicePdf}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                          >
+                            <Download className="w-4 h-4" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Recent Billing Events */}
           <div className="border border-gray-200 dark:border-gray-800 rounded-lg">

@@ -26,6 +26,7 @@ export default function JoinWorkspacePage() {
   const [message, setMessage] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState("")
+  const [searchError, setSearchError] = useState("")
 
   // Search workspaces with debounce
   useEffect(() => {
@@ -36,14 +37,19 @@ export default function JoinWorkspacePage() {
 
     const timer = setTimeout(async () => {
       setSearching(true)
+      setSearchError("")
       try {
         const res = await authFetch(`/api/workspaces/search?q=${encodeURIComponent(query.trim())}`)
         if (res.ok) {
           const data = await res.json()
           setResults(data.workspaces || [])
+        } else {
+          setSearchError("Search failed. Please try again.")
+          setResults([])
         }
       } catch {
-        // ignore search errors
+        setSearchError("Could not reach the server. Please check your connection.")
+        setResults([])
       } finally {
         setSearching(false)
       }
@@ -170,6 +176,12 @@ export default function JoinWorkspacePage() {
           className="pl-10"
         />
       </div>
+
+      {searchError && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3 mb-4">
+          <p className="text-sm text-red-600 dark:text-red-400">{searchError}</p>
+        </div>
+      )}
 
       {searching && (
         <p className="text-sm text-gray-500 py-2">Searching...</p>

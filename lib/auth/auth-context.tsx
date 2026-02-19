@@ -127,15 +127,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const businessIds = [...new Set(userRolesData.map(ur => ur.business_id))]
       console.log("Business IDs:", businessIds)
 
-      // Fetch businesses (including billing fields)
-      const { data: businessesData, error: businessesError } = await supabase
+      // Fetch businesses (including billing fields) with fallback
+      let businessesData: any[] | null = null
+      let usedFallback = false
+
+      const { data: fullData, error: fullError } = await supabase
         .from("businesses")
         .select("id, name, plan_tier, subscription_status, seat_count, included_seats, ai_credits_used, ai_credits_limit, is_founding_member")
         .in("id", businessIds)
 
-      console.log("Businesses query result:", { data: businessesData, error: businessesError })
+      if (fullError) {
+        // Billing columns may not be visible yet (PostgREST schema cache stale).
+        // Fall back to core columns so login still works.
+        console.warn("⚠️ Full businesses query failed, falling back to core columns:", fullError.message)
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from("businesses")
+          .select("id, name")
+          .in("id", businessIds)
 
-      if (businessesError) throw businessesError
+        if (fallbackError) throw fallbackError
+        businessesData = fallbackData
+        usedFallback = true
+      } else {
+        businessesData = fullData
+      }
+
+      console.log("Businesses query result:", { data: businessesData, usedFallback })
 
       // Fetch roles
       const roleIds = userRolesData.map(ur => ur.role_id)
