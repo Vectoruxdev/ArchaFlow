@@ -135,7 +135,12 @@ export function SendContractModal({ open, onOpenChange, template, onSent }: Prop
         throw new Error(body.error || "Failed to send contract")
       }
 
-      toast.success("Contract sent!")
+      const result = await res.json()
+      if (result.emailWarning) {
+        toast.warning("Contract created but email failed: " + result.emailWarning)
+      } else {
+        toast.success("Contract sent!")
+      }
       onOpenChange(false)
       onSent()
 

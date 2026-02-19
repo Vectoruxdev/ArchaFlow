@@ -134,6 +134,7 @@ export async function POST(request: NextRequest) {
       : "Your team"
 
     // Send email
+    let emailWarning: string | null = null
     try {
       await sendContractEmail({
         to: signerEmail.trim(),
@@ -142,9 +143,9 @@ export async function POST(request: NextRequest) {
         senderName,
         signingToken,
       })
-    } catch (emailErr) {
+    } catch (emailErr: any) {
       console.error("Email send error:", emailErr)
-      // Contract was created — don't fail the whole request
+      emailWarning = emailErr.message || "Failed to send email"
     }
 
     // Record activity
@@ -162,7 +163,7 @@ export async function POST(request: NextRequest) {
       // Non-critical
     }
 
-    return NextResponse.json({ id: contract.id, signingToken })
+    return NextResponse.json({ id: contract.id, signingToken, emailWarning })
   } catch (err: any) {
     console.error("Send contract API error:", err)
     return NextResponse.json(

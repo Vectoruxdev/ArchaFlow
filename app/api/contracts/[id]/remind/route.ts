@@ -75,13 +75,21 @@ export async function POST(
         "Your team"
       : "Your team"
 
-    await sendContractEmail({
-      to: contract.signer_email,
-      signerName: contract.signer_name,
-      contractName: contract.name,
-      senderName,
-      signingToken: contract.signing_token,
-    })
+    try {
+      await sendContractEmail({
+        to: contract.signer_email,
+        signerName: contract.signer_name,
+        contractName: contract.name,
+        senderName,
+        signingToken: contract.signing_token,
+      })
+    } catch (emailErr: any) {
+      console.error("Remind email error:", emailErr)
+      return NextResponse.json(
+        { error: "Failed to send reminder email: " + (emailErr.message || "Unknown error") },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({ success: true })
   } catch (err: any) {

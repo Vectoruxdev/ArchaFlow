@@ -1,16 +1,20 @@
 import { Resend } from "resend"
 
-let _resend: Resend | null = null
-
 function getResend(): Resend {
-  if (!_resend) {
-    _resend = new Resend(process.env.RESEND_API_KEY)
+  const key = process.env.RESEND_API_KEY
+  if (!key) {
+    throw new Error(
+      "RESEND_API_KEY is not set. Add it to .env.local (local) or Vercel Environment Variables (deployed)."
+    )
   }
-  return _resend
+  return new Resend(key)
 }
 
 const FROM_EMAIL = "ArchaFlow <noreply@archaflow.com>"
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+
+function getSiteUrl(): string {
+  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+}
 
 export async function sendContractEmail({
   to,
@@ -25,7 +29,7 @@ export async function sendContractEmail({
   senderName: string
   signingToken: string
 }) {
-  const signingUrl = `${SITE_URL}/sign/${signingToken}`
+  const signingUrl = `${getSiteUrl()}/sign/${signingToken}`
 
   const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
