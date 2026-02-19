@@ -53,6 +53,9 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -67,4 +70,51 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* Landing page animations */
+
+/* Signal pulse on badges */
+@keyframes signal-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.75; }
+  50% { transform: scale(2); opacity: 0; }
+}
+.animate-signal-pulse {
+  animation: signal-pulse 2s ease-in-out infinite;
+}
+
+/* 3D cube rotation */
+@keyframes spinCube {
+  0% { transform: rotateX(-15deg) rotateY(0deg); }
+  100% { transform: rotateX(-15deg) rotateY(360deg); }
+}
+
+/* SVG dash flow */
+@keyframes dash-flow {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
+}
+.animate-dash-flow {
+  animation: dash-flow 2s linear infinite;
+}
+
+/* Floating pills */
+@keyframes floatA {
+  0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.7; }
+  25% { transform: translateY(-8px) translateX(4px); opacity: 1; }
+  75% { transform: translateY(4px) translateX(-4px); opacity: 0.5; }
+}
+@keyframes floatB {
+  0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.6; }
+  33% { transform: translateY(6px) translateX(-6px); opacity: 1; }
+  66% { transform: translateY(-4px) translateX(3px); opacity: 0.5; }
+}
+
+/* Marquee scroll */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }
