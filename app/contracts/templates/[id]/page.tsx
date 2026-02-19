@@ -53,6 +53,21 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
     return [...new Set(matches.map((m: string) => m.replace(/\{\{|\}\}/g, "")))]
   }, [])
 
+  const saveName = async (newName: string) => {
+    const trimmed = newName.trim() || "Untitled Template"
+    try {
+      const { error } = await supabase
+        .from("contract_templates")
+        .update({ name: trimmed, updated_at: new Date().toISOString() })
+        .eq("id", params.id)
+
+      if (error) throw error
+      setName(trimmed)
+    } catch (err: any) {
+      toast.error("Failed to save name: " + err.message)
+    }
+  }
+
   const save = async () => {
     setSaving(true)
     try {
@@ -118,6 +133,18 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
             <div className="h-96 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
           ) : type === "rich_text" ? (
             <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground mb-1 block">
+                  Template Name
+                </label>
+                <Input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onBlur={(e) => saveName(e.target.value)}
+                  placeholder="Template name"
+                  className="text-lg font-semibold"
+                />
+              </div>
               <Input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
