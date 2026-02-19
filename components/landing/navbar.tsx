@@ -54,10 +54,16 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* CTA */}
+        {/* CTAs */}
+        <Link
+          href="/login"
+          className="hidden md:flex items-center px-3.5 py-1.5 ml-2 text-sm text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/[0.05]"
+        >
+          Log In
+        </Link>
         <Link
           href="/signup"
-          className="hidden md:flex items-center gap-1.5 ml-2 px-4 py-1.5 bg-white text-black text-sm font-medium rounded-full hover:bg-gray-200 transition-colors"
+          className="hidden md:flex items-center gap-1.5 px-4 py-1.5 bg-white text-black text-sm font-medium rounded-full hover:bg-gray-200 transition-colors"
         >
           Start Free
           <ArrowRight className="w-3.5 h-3.5" />
@@ -87,9 +93,16 @@ export function Navbar() {
               </a>
             ))}
             <Link
+              href="/login"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center justify-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/[0.05] mt-2"
+            >
+              Log In
+            </Link>
+            <Link
               href="/signup"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center gap-1.5 px-4 py-2 bg-white text-black text-sm font-medium rounded-full hover:bg-gray-200 transition-colors mt-2"
+              className="flex items-center justify-center gap-1.5 px-4 py-2 bg-white text-black text-sm font-medium rounded-full hover:bg-gray-200 transition-colors"
             >
               Start Free
               <ArrowRight className="w-3.5 h-3.5" />
