@@ -1,9 +1,23 @@
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
+
 export const dynamic = "force-dynamic"
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-accent flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Back to home */}
+        <div className="mb-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to home
+          </Link>
+        </div>
+
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-2">
