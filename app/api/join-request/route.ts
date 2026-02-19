@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { getSupabaseAdmin } from "@/lib/supabase/admin"
+import { canAddUser } from "@/lib/billing/feature-gates"
+import { syncSeatsToStripe } from "@/lib/stripe/sync-seats"
+import type { PlanTier } from "@/lib/stripe/config"
 
 export const dynamic = "force-dynamic"
 
@@ -78,7 +81,7 @@ export async function POST(request: NextRequest) {
     // Check for auto-add by domain
     const { data: business } = await admin
       .from("businesses")
-      .select("id, name, allowed_email_domains, auto_add_by_domain")
+      .select("id, name, allowed_email_domains, auto_add_by_domain, plan_tier, seat_count")
       .eq("id", businessId)
       .single()
 
@@ -97,6 +100,16 @@ export async function POST(request: NextRequest) {
       !!userDomain && allowedDomains.some((d: string) => d.toLowerCase() === userDomain)
 
     if (business.auto_add_by_domain && domainMatches) {
+      // Check seat limits before auto-adding
+      const tier = (business.plan_tier || "free") as PlanTier
+      const seats = business.seat_count || 1
+      if (!canAddUser(tier, seats)) {
+        return NextResponse.json(
+          { error: "This workspace has reached its seat limit. Please ask the owner to upgrade." },
+          { status: 403 }
+        )
+      }
+
       // Auto-add: get default Editor role
       const { data: editorRole } = await admin
         .from("roles")
@@ -126,6 +139,11 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         )
       }
+
+      // Sync seats to Stripe (non-blocking)
+      syncSeatsToStripe(businessId).catch((err) =>
+        console.error("[join-request] Seat sync error:", err)
+      )
 
       // Record activity
       await admin.from("workspace_activities").insert({

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { getSupabaseAdmin } from "@/lib/supabase/admin"
+import { canAddUser } from "@/lib/billing/feature-gates"
+import { syncSeatsToStripe } from "@/lib/stripe/sync-seats"
+import type { PlanTier } from "@/lib/stripe/config"
 
 export const dynamic = "force-dynamic"
 
@@ -65,6 +68,24 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === "accept") {
+      // Check seat limits
+      const { data: business } = await admin
+        .from("businesses")
+        .select("plan_tier, seat_count")
+        .eq("id", joinRequest.business_id)
+        .single()
+
+      if (business) {
+        const tier = (business.plan_tier || "free") as PlanTier
+        const seats = business.seat_count || 1
+        if (!canAddUser(tier, seats)) {
+          return NextResponse.json(
+            { error: "Seat limit reached. Please upgrade your plan to add more team members." },
+            { status: 403 }
+          )
+        }
+      }
+
       // Get a role for the new member (use request's role or default to Editor)
       let targetRoleId = joinRequest.role_id
       if (!targetRoleId) {
@@ -97,6 +118,11 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         )
       }
+
+      // Sync seats to Stripe (non-blocking)
+      syncSeatsToStripe(joinRequest.business_id).catch((err) =>
+        console.error("[join-respond] Seat sync error:", err)
+      )
 
       // Record activity
       // Get requester email for the activity message

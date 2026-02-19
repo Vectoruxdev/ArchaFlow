@@ -9,58 +9,64 @@ const plans = [
     name: "Free",
     price: "$0",
     period: "/month",
-    description: "Perfect for small firms getting started.",
+    description: "Perfect for solo architects getting started.",
     highlighted: false,
     badge: null,
     href: "/signup",
     features: [
-      "Up to 3 projects",
-      "5 team members",
+      "1 user",
+      "Up to 50 projects",
       "Basic task management",
       "Document storage (1 GB)",
+      "Core workflow tools",
       "Email support",
     ],
-    cta: "Get Started",
+    cta: "Get Started Free",
+    extraNote: null,
   },
   {
     name: "Pro",
     price: "$29",
-    period: "/month per user",
+    period: "/month base",
     description: "For growing firms that need more power.",
     highlighted: true,
     badge: "Most Popular",
-    href: "/signup",
+    href: "/signup?plan=pro",
     features: [
+      "3 users included",
+      "+$12/user/mo for extra seats",
       "Unlimited projects",
-      "Unlimited team members",
-      "AI-powered insights",
+      "AI-powered insights (500 credits/mo)",
       "Advanced analytics & reports",
       "Budget tracking & alerts",
       "Custom workflows",
       "Document storage (100 GB)",
       "Priority support",
     ],
-    cta: "Start Free Trial",
+    cta: "Start Pro",
+    extraNote: "Extra AI credits: $15 per 1,000",
   },
   {
-    name: "Teams",
-    price: "$59",
-    period: "/month per user",
+    name: "Enterprise",
+    price: "$79",
+    period: "/month base",
     description: "For large firms with advanced needs.",
     highlighted: false,
     badge: null,
-    href: "#pricing",
+    href: "/signup?plan=enterprise",
     features: [
+      "10 users included",
+      "+$10/user/mo for extra seats",
       "Everything in Pro",
+      "AI-powered insights (2,000 credits/mo)",
       "SSO / SAML authentication",
       "API access",
       "Custom integrations",
-      "Dedicated account manager",
-      "Advanced permissions",
       "Unlimited storage",
-      "SLA guarantee",
+      "Dedicated account manager",
     ],
-    cta: "Contact Sales",
+    cta: "Start Enterprise",
+    extraNote: "Extra AI credits: $12 per 1,000",
   },
 ]
 
@@ -152,6 +158,18 @@ export function Pricing() {
                     </li>
                   ))}
                 </ul>
+
+                {plan.extraNote && (
+                  <p
+                    className={`text-xs mt-4 pt-4 border-t ${
+                      plan.highlighted
+                        ? "text-gray-500 border-gray-200"
+                        : "text-gray-500 border-white/[0.08]"
+                    }`}
+                  >
+                    {plan.extraNote}
+                  </p>
+                )}
               </div>
             </StaggerItem>
           ))}

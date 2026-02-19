@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { supabaseAdmin } from "@/lib/supabase/admin"
+import { canAddUser } from "@/lib/billing/feature-gates"
+import type { PlanTier } from "@/lib/stripe/config"
 
 export async function POST(request: NextRequest) {
   try {
@@ -50,7 +52,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 4. Check if there's already an invitation for this email in this workspace
+    // 4. Check seat limits based on plan tier
+    const { data: business } = await supabaseAdmin
+      .from("businesses")
+      .select("plan_tier, seat_count")
+      .eq("id", businessId)
+      .single()
+
+    if (business) {
+      const tier = (business.plan_tier || "free") as PlanTier
+      const seats = business.seat_count || 1
+      if (!canAddUser(tier, seats)) {
+        return NextResponse.json(
+          { error: "Your plan's seat limit has been reached. Please upgrade to add more team members." },
+          { status: 403 }
+        )
+      }
+    }
+
+    // 5. Check if there's already an invitation for this email in this workspace
     const { data: existingInvite } = await supabaseAdmin
       .from("workspace_invitations")
       .select("id, status, token")

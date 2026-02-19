@@ -11,6 +11,13 @@ interface Workspace {
   name: string
   icon: string
   role: "owner" | "admin" | "editor" | "viewer"
+  planTier: "free" | "pro" | "enterprise"
+  subscriptionStatus: string
+  seatCount: number
+  includedSeats: number
+  aiCreditsUsed: number
+  aiCreditsLimit: number
+  isFoundingMember: boolean
 }
 
 interface PendingInvitation {
@@ -120,10 +127,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const businessIds = [...new Set(userRolesData.map(ur => ur.business_id))]
       console.log("Business IDs:", businessIds)
 
-      // Fetch businesses
+      // Fetch businesses (including billing fields)
       const { data: businessesData, error: businessesError } = await supabase
         .from("businesses")
-        .select("id, name")
+        .select("id, name, plan_tier, subscription_status, seat_count, included_seats, ai_credits_used, ai_credits_limit, is_founding_member")
         .in("id", businessIds)
 
       console.log("Businesses query result:", { data: businessesData, error: businessesError })
@@ -145,12 +152,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const workspaceList: Workspace[] = userRolesData.map((ur) => {
         const business = businessesData?.find(b => b.id === ur.business_id)
         const role = rolesData?.find(r => r.id === ur.role_id)
-        
+
         return {
           id: ur.business_id,
           name: business?.name || "Unknown",
           icon: "🏢",
           role: (role?.name?.toLowerCase() || "viewer") as "owner" | "admin" | "editor" | "viewer",
+          planTier: (business?.plan_tier || "free") as "free" | "pro" | "enterprise",
+          subscriptionStatus: business?.subscription_status || "none",
+          seatCount: business?.seat_count || 1,
+          includedSeats: business?.included_seats || 1,
+          aiCreditsUsed: business?.ai_credits_used || 0,
+          aiCreditsLimit: business?.ai_credits_limit || 0,
+          isFoundingMember: business?.is_founding_member || false,
         }
       })
 
@@ -465,7 +479,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       id: newBusinessId,
       name: name,
       icon: icon,
-      role: "owner", // User who creates workspace is always owner
+      role: "owner",
+      planTier: "free",
+      subscriptionStatus: "none",
+      seatCount: 1,
+      includedSeats: 1,
+      aiCreditsUsed: 0,
+      aiCreditsLimit: 0,
+      isFoundingMember: false,
     }
 
     return newWorkspace

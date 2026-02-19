@@ -30,7 +30,11 @@ import {
   LogOut,
   Target,
   Globe,
+  CreditCard,
+  ArrowRight,
 } from "lucide-react"
+import { PlanBadge } from "@/components/billing/plan-badge"
+import Link from "next/link"
 import { toast } from "sonner"
 
 export default function SettingsPage() {
@@ -1078,6 +1082,36 @@ export default function SettingsPage() {
                   </div>
                 </>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* Billing & Plan Section */}
+        {currentWorkspace && (
+          <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
+            <div className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </div>
+                  <div>
+                    <h2 className="font-semibold">Billing & Plan</h2>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Manage your subscription and billing details
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <PlanBadge tier={currentWorkspace.planTier} />
+                  <Button asChild size="sm" variant="outline">
+                    <Link href="/settings/billing">
+                      Manage
+                      <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         )}
