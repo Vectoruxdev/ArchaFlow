@@ -16,10 +16,21 @@ import {
   AlertTriangle,
   Settings,
   Loader2,
+  MoreHorizontal,
+  Eye,
+  Pencil,
+  Trash2,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth/auth-context"
 import { InvoiceDetailPanel } from "@/components/invoices/invoice-detail-panel"
 import { InvoiceSettingsForm } from "@/components/invoices/invoice-settings-form"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { toast } from "sonner"
 
 interface Invoice {
   id: string
@@ -102,6 +113,25 @@ export default function InvoicesPage() {
     .filter((i) => i.status === "paid")
     .reduce((sum, i) => sum + parseFloat(String(i.total)), 0)
   const draftCount = invoices.filter((i) => i.status === "draft").length
+
+  const handleDelete = async (inv: Invoice) => {
+    if (inv.status !== "draft") {
+      toast.error("Only draft invoices can be deleted")
+      return
+    }
+    if (!confirm(`Delete ${inv.invoice_number}? This cannot be undone.`)) return
+    try {
+      const res = await fetch(`/api/invoices/${inv.id}`, { method: "DELETE" })
+      if (!res.ok) {
+        const body = await res.json()
+        throw new Error(body.error || "Failed to delete")
+      }
+      toast.success(`${inv.invoice_number} deleted`)
+      loadInvoices()
+    } catch (err: any) {
+      toast.error(err.message)
+    }
+  }
 
   if (showSettings) {
     return (
@@ -224,6 +254,7 @@ export default function InvoicesPage() {
                     <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
                     <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                    <th className="px-4 py-3 w-10"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
@@ -266,6 +297,30 @@ export default function InvoicesPage() {
                           {inv.due_date
                             ? new Date(inv.due_date).toLocaleDateString()
                             : "—"}
+                        </td>
+                        <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                                <MoreHorizontal className="w-4 h-4" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onClick={() => { setSelectedInvoiceId(inv.id); setDetailOpen(true) }}>
+                                <Eye className="w-4 h-4 mr-2" /> View
+                              </DropdownMenuItem>
+                              {inv.status === "draft" && (
+                                <DropdownMenuItem onClick={() => router.push(`/invoices/${inv.id}/edit`)}>
+                                  <Pencil className="w-4 h-4 mr-2" /> Edit
+                                </DropdownMenuItem>
+                              )}
+                              {inv.status === "draft" && (
+                                <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDelete(inv)}>
+                                  <Trash2 className="w-4 h-4 mr-2" /> Delete
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </td>
                       </tr>
                     )
