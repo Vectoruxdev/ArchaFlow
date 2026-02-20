@@ -9,6 +9,7 @@ import { ArrowLeft, Plus, Trash2, Loader2, Send } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from "@/lib/auth/auth-context"
 import { supabase } from "@/lib/supabase/client"
+import { ClientSelect } from "@/components/ui/client-select"
 
 interface LineItem {
   description: string
@@ -23,13 +24,11 @@ export default function NewInvoicePage() {
   const [savingAndSending, setSavingAndSending] = useState(false)
 
   // Options
-  const [clients, setClients] = useState<any[]>([])
   const [projects, setProjects] = useState<any[]>([])
   const [settings, setSettings] = useState<any>(null)
-  const [loadingOptions, setLoadingOptions] = useState(true)
 
   // Form state
-  const [clientId, setClientId] = useState("")
+  const [clientValue, setClientValue] = useState<{ clientId: string | null; displayName: string }>({ clientId: null, displayName: "" })
   const [projectId, setProjectId] = useState("")
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split("T")[0])
   const [dueDate, setDueDate] = useState("")
@@ -60,48 +59,29 @@ export default function NewInvoicePage() {
 
   const loadOptions = async () => {
     if (!currentWorkspace) return
-    setLoadingOptions(true)
     try {
-      const [clientsRes, projectsRes, settingsRes] = await Promise.all([
-        supabase
-          .from("clients")
-          .select("*")
-          .eq("business_id", currentWorkspace.id)
-          .order("first_name", { ascending: true }),
-        supabase
-          .from("projects")
-          .select("id, name")
-          .eq("business_id", currentWorkspace.id)
-          .order("name", { ascending: true }),
-        fetch(`/api/invoices/settings?businessId=${currentWorkspace.id}`),
-      ])
-      if (clientsRes.error) console.error("Clients fetch error:", clientsRes.error)
-      if (clientsRes.data) {
-        setClients(
-          clientsRes.data
-            .filter((c: any) => !c.archived_at)
-            .map((c: any) => ({
-              id: c.id,
-              first_name: c.first_name,
-              last_name: c.last_name,
-              email: c.email,
-              description: c.description,
-              name: `${c.first_name || ""} ${c.last_name || ""}`.trim() || c.email || "Unnamed",
-            }))
-        )
-      }
-      if (projectsRes.error) console.error("Projects fetch error:", projectsRes.error)
-      if (projectsRes.data) setProjects(projectsRes.data)
+      // Load projects
+      const { data: projectsData } = await supabase
+        .from("projects")
+        .select("id, name")
+        .eq("business_id", currentWorkspace.id)
+        .order("name", { ascending: true })
+      if (projectsData) setProjects(projectsData)
+    } catch (err) {
+      console.error("Projects fetch error:", err)
+    }
+
+    try {
+      // Load invoice settings
+      const settingsRes = await fetch(`/api/invoices/settings?businessId=${currentWorkspace.id}`)
       if (settingsRes.ok) {
         const s = await settingsRes.json()
         setSettings(s)
         setPaymentTerms(s.default_payment_terms || "Net 30")
         setTaxRate(String(s.default_tax_rate || 0))
       }
-    } catch {
-      // Continue with empty options
-    } finally {
-      setLoadingOptions(false)
+    } catch (err) {
+      console.error("Settings fetch error:", err)
     }
   }
 
@@ -128,8 +108,6 @@ export default function NewInvoicePage() {
   const taxAmount = subtotal * (parseFloat(taxRate) || 0) / 100
   const total = subtotal + taxAmount
 
-  const selectedClient = clients.find((c) => c.id === clientId)
-
   const handleSave = async (andSend = false) => {
     if (!currentWorkspace) return
 
@@ -146,7 +124,7 @@ export default function NewInvoicePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           businessId: currentWorkspace.id,
-          clientId: clientId || null,
+          clientId: clientValue.clientId || null,
           projectId: projectId || null,
           lineItems: validItems,
           issueDate,
@@ -170,8 +148,7 @@ export default function NewInvoicePage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: selectedClient?.email || "",
-            recipientName: selectedClient?.name || "",
+            recipientName: clientValue.displayName || "",
           }),
         })
         if (sendRes.ok) {
@@ -222,7 +199,7 @@ export default function NewInvoicePage() {
                 {saving && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
                 Save Draft
               </Button>
-              {selectedClient?.email && (
+              {clientValue.clientId && (
                 <Button
                   onClick={() => handleSave(true)}
                   disabled={saving || savingAndSending}
@@ -276,23 +253,11 @@ export default function NewInvoicePage() {
               {/* Bill To */}
               <div>
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">Bill To</p>
-                <select
-                  className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 mb-2"
-                  value={clientId}
-                  onChange={(e) => setClientId(e.target.value)}
-                >
-                  <option value="">Select a client...</option>
-                  {clients.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                {selectedClient && (
-                  <div className="text-sm space-y-0.5 text-gray-500">
-                    {selectedClient.email && <p>{selectedClient.email}</p>}
-                  </div>
-                )}
+                <ClientSelect
+                  value={clientValue}
+                  onChange={setClientValue}
+                  placeholder="Search for a client..."
+                />
               </div>
             </div>
 
@@ -468,7 +433,7 @@ export default function NewInvoicePage() {
               {saving && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
               Save Draft
             </Button>
-            {selectedClient?.email && (
+            {clientValue.clientId && (
               <Button
                 onClick={() => handleSave(true)}
                 disabled={saving || savingAndSending}
