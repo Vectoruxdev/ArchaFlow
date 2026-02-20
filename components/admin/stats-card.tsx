@@ -58,10 +58,10 @@ export function StatsCard({
   const card = (
     <div
       className={cn(
-        "bg-[--af-bg-surface] border border-[--af-border-default] rounded-card shadow-af-card relative overflow-hidden",
+        "bg-[--af-bg-surface] border border-[--af-border-default] rounded-card shadow-af-card relative overflow-hidden min-w-0",
         isCompact ? "p-5" : "p-3 sm:p-4 lg:p-5",
         href && "hover:border-[--af-border-strong] transition-colors cursor-pointer",
-        className,
+        !href && className,
       )}
     >
       {blob && (
@@ -114,7 +114,7 @@ export function StatsCard({
 
   if (href) {
     return (
-      <Link href={href} className={className ? undefined : undefined}>
+      <Link href={href} className={className}>
         {card}
       </Link>
     )
