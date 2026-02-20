@@ -35,7 +35,7 @@ const valueColorMap = {
 }
 
 function isLucideIcon(icon: LucideIcon | React.ReactNode): icon is LucideIcon {
-  return typeof icon === "function"
+  return typeof icon === "function" || (typeof icon === "object" && icon !== null && "render" in icon)
 }
 
 export function StatsCard({
