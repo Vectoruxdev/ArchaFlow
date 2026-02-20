@@ -194,7 +194,7 @@ export function InvoiceDetailPanel({
                       </div>
                       <p className="text-sm text-gray-500">
                         {clientName(invoice.client) || "No client"}
-                        {invoice.project?.name && ` · ${invoice.project.name}`}
+                        {invoice.project?.title && ` · ${invoice.project.title}`}
                       </p>
                     </div>
                   </div>

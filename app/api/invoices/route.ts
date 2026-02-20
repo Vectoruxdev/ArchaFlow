@@ -97,10 +97,10 @@ export async function GET(request: NextRequest) {
     if (projectIds.length > 0) {
       const { data: projects } = await admin
         .from("projects")
-        .select("id, name")
+        .select("id, title")
         .in("id", projectIds)
       for (const p of projects || []) {
-        projectMap[p.id] = { id: p.id, name: p.name }
+        projectMap[p.id] = { id: p.id, title: p.title }
       }
     }
 

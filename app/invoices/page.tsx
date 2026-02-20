@@ -32,7 +32,7 @@ interface Invoice {
   due_date: string | null
   created_at: string
   client: { id: string; first_name: string; last_name: string; email: string } | null
-  project: { id: string; name: string } | null
+  project: { id: string; title: string } | null
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
@@ -87,7 +87,7 @@ export default function InvoicesPage() {
     return (
       inv.invoice_number.toLowerCase().includes(q) ||
       `${inv.client?.first_name || ""} ${inv.client?.last_name || ""}`.toLowerCase().includes(q) ||
-      inv.project?.name?.toLowerCase().includes(q)
+      inv.project?.title?.toLowerCase().includes(q)
     )
   })
 
@@ -241,7 +241,7 @@ export default function InvoicesPage() {
                         <td className="px-4 py-3">
                           <p className="text-sm font-medium">{inv.invoice_number}</p>
                           {inv.project && (
-                            <p className="text-xs text-gray-400">{inv.project.name}</p>
+                            <p className="text-xs text-gray-400">{inv.project.title}</p>
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">

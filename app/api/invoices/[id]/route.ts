@@ -65,7 +65,7 @@ export async function GET(
         ? admin.from("clients").select("id, first_name, last_name, email, phone").eq("id", invoice.client_id).single()
         : Promise.resolve({ data: null }),
       invoice.project_id
-        ? admin.from("projects").select("id, name").eq("id", invoice.project_id).single()
+        ? admin.from("projects").select("id, title").eq("id", invoice.project_id).single()
         : Promise.resolve({ data: null }),
     ])
 

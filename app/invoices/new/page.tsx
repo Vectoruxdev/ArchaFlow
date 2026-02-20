@@ -63,9 +63,9 @@ export default function NewInvoicePage() {
       // Load projects
       const { data: projectsData } = await supabase
         .from("projects")
-        .select("id, name")
+        .select("id, title")
         .eq("business_id", currentWorkspace.id)
-        .order("name", { ascending: true })
+        .order("title", { ascending: true })
       if (projectsData) setProjects(projectsData)
     } catch (err) {
       console.error("Projects fetch error:", err)
@@ -305,7 +305,7 @@ export default function NewInvoicePage() {
                   <option value="">None</option>
                   {projects.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.name}
+                      {p.title}
                     </option>
                   ))}
                 </select>

@@ -99,9 +99,9 @@ export default function EditInvoicePage() {
     try {
       const { data } = await supabase
         .from("projects")
-        .select("id, name")
+        .select("id, title")
         .eq("business_id", currentWorkspace.id)
-        .order("name", { ascending: true })
+        .order("title", { ascending: true })
       if (data) setProjects(data)
     } catch {}
   }
@@ -258,7 +258,7 @@ export default function EditInvoicePage() {
                 >
                   <option value="">None</option>
                   {projects.map((p) => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
+                    <option key={p.id} value={p.id}>{p.title}</option>
                   ))}
                 </select>
               </div>
