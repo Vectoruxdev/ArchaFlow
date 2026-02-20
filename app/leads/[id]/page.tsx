@@ -189,12 +189,12 @@ const activityIcons: Record<string, any> = {
 
 function TemperatureBadge({ temperature }: { temperature: string }) {
   const styles: Record<string, string> = {
-    cold: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-    warm: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-    hot: "bg-red-500/10 text-red-600 border-red-500/20",
+    cold: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
+    warm: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+    hot: "bg-[--af-danger-bg]0/10 text-[--af-danger-text] border-[--af-danger-border]/20",
   }
   return (
-    <Badge className={`${styles[temperature] || "bg-gray-100 text-gray-600"} border`}>
+    <Badge className={`${styles[temperature] || "bg-[--af-bg-surface-alt] text-[--af-text-secondary]"} border`}>
       {temperature.charAt(0).toUpperCase() + temperature.slice(1)}
     </Badge>
   )
@@ -203,15 +203,15 @@ function TemperatureBadge({ temperature }: { temperature: string }) {
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
     new: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-    contacted: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-    qualified: "bg-green-500/10 text-green-600 border-green-500/20",
+    contacted: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
+    qualified: "bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20",
     proposal: "bg-orange-500/10 text-orange-600 border-orange-500/20",
-    negotiation: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+    negotiation: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
     won: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-    lost: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+    lost: "bg-[--af-bg-canvas]0/10 text-[--af-text-muted] border-[--af-border-default]",
   }
   return (
-    <Badge className={`${styles[status] || "bg-gray-100 text-gray-600"} border`}>
+    <Badge className={`${styles[status] || "bg-[--af-bg-surface-alt] text-[--af-text-secondary]"} border`}>
       {statusLabels[status] || status}
     </Badge>
   )
@@ -821,9 +821,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
+        <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
           <div className="p-4 lg:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4 min-w-0 flex-1">
@@ -832,24 +832,24 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                 </Button>
                 {isLoading ? (
                   <div>
-                    <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-                    <div className="h-4 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mt-2" />
+                    <div className="h-8 w-48 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse" />
+                    <div className="h-4 w-32 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse mt-2" />
                   </div>
                 ) : loadError ? (
                   <div>
-                    <div className="text-red-600">Error loading lead</div>
-                    <p className="text-sm text-gray-500 mt-1">{loadError}</p>
+                    <div className="text-[--af-danger-text]">Error loading lead</div>
+                    <p className="text-sm text-[--af-text-muted] mt-1">{loadError}</p>
                   </div>
                 ) : lead ? (
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h1 className="text-xl sm:text-2xl font-semibold truncate">
+                      <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight truncate">
                         {lead.firstName} {lead.lastName}
                       </h1>
                       <TemperatureBadge temperature={lead.temperature} />
                       <StatusBadge status={lead.status} />
                       {lead.archivedAt && (
-                        <Badge className="bg-gray-500/10 text-gray-600 border-gray-500/20 border">
+                        <Badge className="bg-[--af-bg-canvas]0/10 text-[--af-text-secondary] border-[--af-border-default] border">
                           Archived
                         </Badge>
                       )}
@@ -859,7 +859,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-[--af-text-muted] mt-1">
                       {lead.companyName && `${lead.companyName} · `}
                       Lead since {new Date(lead.createdAt).toLocaleDateString()}
                     </p>
@@ -930,9 +930,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
               {/* Left Column - Lead Info */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Contact Information */}
-                <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+                <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">Contact Information</h2>
+                    <h2 className="text-lg font-display font-bold">Contact Information</h2>
                     {canEditLead && (
                       editingSection === "contact" ? (
                         <div className="flex gap-2">
@@ -961,9 +961,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                       <>
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
-                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <User className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">First Name</p>
+                              <p className="text-sm text-[--af-text-muted]">First Name</p>
                               <Input
                                 value={contactEditForm.firstName}
                                 onChange={(e) =>
@@ -974,9 +974,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <User className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">Last Name</p>
+                              <p className="text-sm text-[--af-text-muted]">Last Name</p>
                               <Input
                                 value={contactEditForm.lastName}
                                 onChange={(e) =>
@@ -987,9 +987,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <Mail className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">Email</p>
+                              <p className="text-sm text-[--af-text-muted]">Email</p>
                               <Input
                                 type="email"
                                 value={contactEditForm.email}
@@ -1001,9 +1001,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <PhoneIcon className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <PhoneIcon className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">Phone</p>
+                              <p className="text-sm text-[--af-text-muted]">Phone</p>
                               <Input
                                 value={contactEditForm.phone}
                                 onChange={(e) =>
@@ -1016,9 +1016,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                         </div>
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
-                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <User className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">Unique Customer ID</p>
+                              <p className="text-sm text-[--af-text-muted]">Unique Customer ID</p>
                               <Input
                                 value={contactEditForm.uniqueCustomerIdentifier}
                                 onChange={(e) =>
@@ -1029,9 +1029,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <Target className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <Target className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">Lead Type</p>
+                              <p className="text-sm text-[--af-text-muted]">Lead Type</p>
                               <Select
                                 value={contactEditForm.leadTypeId || "_none"}
                                 onValueChange={(v) =>
@@ -1051,9 +1051,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <Building2 className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">Company</p>
+                              <p className="text-sm text-[--af-text-muted]">Company</p>
                               <Input
                                 value={contactEditForm.companyName}
                                 onChange={(e) =>
@@ -1064,9 +1064,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <MapPin className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">Address</p>
+                              <p className="text-sm text-[--af-text-muted]">Address</p>
                               <Input
                                 value={contactEditForm.address}
                                 onChange={(e) =>
@@ -1077,9 +1077,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <MapPin className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">City</p>
+                              <p className="text-sm text-[--af-text-muted]">City</p>
                               <CityCombobox
                                 value={contactEditForm.city}
                                 onChange={(v) =>
@@ -1090,9 +1090,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <MapPin className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div className="flex-1 space-y-2">
-                              <p className="text-sm text-gray-500">State</p>
+                              <p className="text-sm text-[--af-text-muted]">State</p>
                               <SearchableSelect
                                 options={US_STATES}
                                 value={contactEditForm.state}
@@ -1110,67 +1110,67 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                       <>
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
-                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <User className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">Full Name</p>
+                              <p className="text-sm text-[--af-text-muted]">Full Name</p>
                               <p className="font-medium">{lead.firstName} {lead.lastName}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <Mail className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">Email</p>
+                              <p className="text-sm text-[--af-text-muted]">Email</p>
                               <p className="font-medium">{lead.email || "---"}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <PhoneIcon className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <PhoneIcon className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">Phone</p>
+                              <p className="text-sm text-[--af-text-muted]">Phone</p>
                               <p className="font-medium">{lead.phone || "---"}</p>
                             </div>
                           </div>
                         </div>
                         <div className="space-y-4">
                           <div className="flex items-start gap-3">
-                            <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <User className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">Unique Customer ID</p>
+                              <p className="text-sm text-[--af-text-muted]">Unique Customer ID</p>
                               <p className="font-medium">{lead.uniqueCustomerIdentifier || "---"}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <Target className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <Target className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">Lead Type</p>
+                              <p className="text-sm text-[--af-text-muted]">Lead Type</p>
                               <p className="font-medium">{lead.leadTypeName || "---"}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <Building2 className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">Company</p>
+                              <p className="text-sm text-[--af-text-muted]">Company</p>
                               <p className="font-medium">{lead.companyName || "---"}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <MapPin className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">Address</p>
+                              <p className="text-sm text-[--af-text-muted]">Address</p>
                               <p className="font-medium">{lead.address || "---"}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <MapPin className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">City</p>
+                              <p className="text-sm text-[--af-text-muted]">City</p>
                               <p className="font-medium">{lead.city || "---"}</p>
                             </div>
                           </div>
                           <div className="flex items-start gap-3">
-                            <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                            <MapPin className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                             <div>
-                              <p className="text-sm text-gray-500">State</p>
+                              <p className="text-sm text-[--af-text-muted]">State</p>
                               <p className="font-medium">
                                 {lead.state ? US_STATES.find((s) => s.value === lead.state)?.label || lead.state : "---"}
                               </p>
@@ -1183,9 +1183,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                 </div>
 
                 {/* Details */}
-                <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+                <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">Details</h2>
+                    <h2 className="text-lg font-display font-bold">Details</h2>
                     {canEditLead && (
                       editingSection === "details" ? (
                         <div className="flex gap-2">
@@ -1214,7 +1214,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                       <>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-2">
-                            <p className="text-sm text-gray-500">Source</p>
+                            <p className="text-sm text-[--af-text-muted]">Source</p>
                             <Select
                               value={detailsEditForm.source || "other"}
                               onValueChange={(v) =>
@@ -1234,7 +1234,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             </Select>
                           </div>
                           <div className="space-y-2">
-                            <p className="text-sm text-gray-500">Service</p>
+                            <p className="text-sm text-[--af-text-muted]">Service</p>
                             <Input
                               value={detailsEditForm.interest}
                               onChange={(e) =>
@@ -1245,7 +1245,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <p className="text-sm text-gray-500">Pain Points</p>
+                          <p className="text-sm text-[--af-text-muted]">Pain Points</p>
                           <Textarea
                             value={detailsEditForm.painPoints}
                             onChange={(e) =>
@@ -1256,7 +1256,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                           />
                         </div>
                         <div className="space-y-2">
-                          <p className="text-sm text-gray-500">Budget</p>
+                          <p className="text-sm text-[--af-text-muted]">Budget</p>
                           <Input
                             type="number"
                             value={detailsEditForm.budget}
@@ -1268,7 +1268,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="space-y-2">
-                            <p className="text-sm text-gray-500">Square Footage</p>
+                            <p className="text-sm text-[--af-text-muted]">Square Footage</p>
                             <Input
                               type="number"
                               value={detailsEditForm.squareFootage}
@@ -1279,7 +1279,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             />
                           </div>
                           <div className="space-y-2">
-                            <p className="text-sm text-gray-500">Cost per Sq Ft</p>
+                            <p className="text-sm text-[--af-text-muted]">Cost per Sq Ft</p>
                             <Input
                               type="number"
                               value={detailsEditForm.costPerSqft}
@@ -1304,20 +1304,20 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                           const finalTotal = total != null ? total - discount : null
                           const hasDiscount = discount > 0
                           return (
-                            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-3 px-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+                            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 py-3 px-4 rounded-lg bg-[--af-bg-surface-alt]/50 border border-[--af-border-default]/50 dark:border-warm-800">
                               <div className="flex items-center gap-2">
-                                <span className="text-sm text-gray-500">Total Price</span>
+                                <span className="text-sm text-[--af-text-muted]">Total Price</span>
                                 <span className="font-medium tabular-nums">
                                   {total != null ? `$${total.toLocaleString()}` : "---"}
                                   {hasDiscount && (
-                                    <span className="text-xs text-gray-500 font-normal ml-1">
+                                    <span className="text-xs text-[--af-text-muted] font-normal ml-1">
                                       (− {discountType === "percent" ? `${discountVal}%` : `$${discount.toLocaleString()}`})
                                     </span>
                                   )}
                                 </span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm text-gray-500">Discount</span>
+                                <span className="text-sm text-[--af-text-muted]">Discount</span>
                                 <Select
                                   value={detailsEditForm.discountType || "_none"}
                                   onValueChange={(v) =>
@@ -1344,14 +1344,14 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                                 />
                               </div>
                               <div className="flex items-center gap-2">
-                                <span className="text-sm text-gray-500">Final Total</span>
+                                <span className="text-sm text-[--af-text-muted]">Final Total</span>
                                 <span className="font-semibold tabular-nums">{finalTotal != null ? `$${finalTotal.toLocaleString()}` : "---"}</span>
                               </div>
                             </div>
                           )
                         })()}
                         <div className="space-y-2">
-                          <p className="text-sm text-gray-500">Notes</p>
+                          <p className="text-sm text-[--af-text-muted]">Notes</p>
                           <Textarea
                             value={detailsEditForm.notes}
                             onChange={(e) =>
@@ -1366,22 +1366,22 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                       <>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div>
-                            <p className="text-sm text-gray-500">Source</p>
+                            <p className="text-sm text-[--af-text-muted]">Source</p>
                             <p className="font-medium">{sourceLabels[lead.source] || lead.source}</p>
                           </div>
                           <div>
-                            <p className="text-sm text-gray-500">Service</p>
+                            <p className="text-sm text-[--af-text-muted]">Service</p>
                             <p className="font-medium">{lead.interest || "---"}</p>
                           </div>
                         </div>
                         {lead.painPoints && (
                           <div>
-                            <p className="text-sm text-gray-500">Pain Points</p>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">{lead.painPoints}</p>
+                            <p className="text-sm text-[--af-text-muted]">Pain Points</p>
+                            <p className="text-sm text-[--af-text-secondary] dark:text-[--af-text-muted] mt-1">{lead.painPoints}</p>
                           </div>
                         )}
                         <div className="space-y-2">
-                          <p className="text-sm text-gray-500">Budget</p>
+                          <p className="text-sm text-[--af-text-muted]">Budget</p>
                           <p className="font-medium">
                             {lead.budget != null ? `$${lead.budget.toLocaleString()}` : "---"}
                           </p>
@@ -1404,22 +1404,22 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             <>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                  <p className="text-sm text-gray-500">Square Footage</p>
+                                  <p className="text-sm text-[--af-text-muted]">Square Footage</p>
                                   <p className="font-medium">{sqft != null ? sqft.toLocaleString() : "---"}</p>
                                 </div>
                                 <div className="space-y-2">
-                                  <p className="text-sm text-gray-500">Cost per Sq Ft</p>
+                                  <p className="text-sm text-[--af-text-muted]">Cost per Sq Ft</p>
                                   <p className="font-medium">{cost != null ? `$${cost.toLocaleString()}` : "---"}</p>
                                 </div>
                               </div>
                               {total != null && (
-                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3 px-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+                                <div className="flex flex-wrap items-center gap-x-6 gap-y-2 py-3 px-4 rounded-lg bg-[--af-bg-surface-alt]/50 border border-[--af-border-default]/50 dark:border-warm-800">
                                   <div className="flex items-center gap-2">
-                                    <span className="text-sm text-gray-500">Total Price</span>
+                                    <span className="text-sm text-[--af-text-muted]">Total Price</span>
                                     <span className="font-medium tabular-nums">
                                       ${total.toLocaleString()}
                                       {hasDiscount && (
-                                        <span className="text-xs text-gray-500 font-normal ml-1">
+                                        <span className="text-xs text-[--af-text-muted] font-normal ml-1">
                                           (− {discountType === "percent" ? `${discountVal}%` : `$${discount.toLocaleString()}`})
                                         </span>
                                       )}
@@ -1427,7 +1427,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                                   </div>
                                   {finalTotal != null && (
                                     <div className="flex items-center gap-2">
-                                      <span className="text-sm text-gray-500">Final Total</span>
+                                      <span className="text-sm text-[--af-text-muted]">Final Total</span>
                                       <span className="font-semibold tabular-nums">${finalTotal.toLocaleString()}</span>
                                     </div>
                                   )}
@@ -1438,8 +1438,8 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                         })()}
                         {lead.notes && (
                           <div>
-                            <p className="text-sm text-gray-500">Notes</p>
-                            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 whitespace-pre-wrap">{lead.notes}</p>
+                            <p className="text-sm text-[--af-text-muted]">Notes</p>
+                            <p className="text-sm text-[--af-text-secondary] dark:text-[--af-text-muted] mt-1 whitespace-pre-wrap">{lead.notes}</p>
                           </div>
                         )}
                       </>
@@ -1448,9 +1448,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                 </div>
 
                 {/* Activity Timeline */}
-                <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+                <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold">Activity Timeline</h2>
+                    <h2 className="text-lg font-display font-bold">Activity Timeline</h2>
                     <div className="flex gap-2">
                       <Button size="sm" variant="outline" onClick={() => openActivityModal("call")}>
                         <PhoneCall className="w-4 h-4 mr-1" />
@@ -1473,9 +1473,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
 
                   {activities.length === 0 ? (
                     <div className="text-center py-8">
-                      <Clock className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                      <p className="text-sm text-gray-400">No activity recorded yet.</p>
-                      <p className="text-xs text-gray-400 mt-1">Log a call, email, meeting, or note to get started.</p>
+                      <Clock className="w-8 h-8 text-[--af-text-muted] mx-auto mb-2" />
+                      <p className="text-sm text-[--af-text-muted]">No activity recorded yet.</p>
+                      <p className="text-xs text-[--af-text-muted] mt-1">Log a call, email, meeting, or note to get started.</p>
                     </div>
                   ) : (
                     <div className="space-y-0">
@@ -1486,16 +1486,16 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                             {/* Timeline line */}
                             <div className="flex flex-col items-center">
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                                activity.activityType === "call" ? "bg-green-500/10 text-green-600" :
-                                activity.activityType === "email" ? "bg-blue-500/10 text-blue-600" :
+                                activity.activityType === "call" ? "bg-[--af-success-bg]0/10 text-[--af-success-text]" :
+                                activity.activityType === "email" ? "bg-[--af-info-bg]0/10 text-[--af-info-text]" :
                                 activity.activityType === "meeting" ? "bg-purple-500/10 text-purple-600" :
                                 activity.activityType === "status_change" ? "bg-orange-500/10 text-orange-600" :
-                                "bg-gray-500/10 text-gray-500"
+                                "bg-[--af-bg-canvas]0/10 text-[--af-text-muted]"
                               }`}>
                                 <Icon className="w-4 h-4" />
                               </div>
                               {index < activities.length - 1 && (
-                                <div className="w-px h-full bg-gray-200 dark:bg-gray-800 min-h-[24px]" />
+                                <div className="w-px h-full bg-[--af-bg-surface-alt] dark:bg-warm-800 min-h-[24px]" />
                               )}
                             </div>
 
@@ -1507,26 +1507,26 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                                     {activity.subject || activity.activityType.charAt(0).toUpperCase() + activity.activityType.slice(1)}
                                   </p>
                                   {activity.description && (
-                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 whitespace-pre-wrap">
+                                    <p className="text-sm text-[--af-text-secondary] mt-1 whitespace-pre-wrap">
                                       {activity.description}
                                     </p>
                                   )}
                                   {activity.activityType === "call" && (activity.callDuration || activity.callOutcome) && (
                                     <div className="flex gap-3 mt-1">
                                       {activity.callDuration && (
-                                        <span className="text-xs text-gray-500">
+                                        <span className="text-xs text-[--af-text-muted]">
                                           Duration: {Math.round(activity.callDuration / 60)}m
                                         </span>
                                       )}
                                       {activity.callOutcome && (
-                                        <span className="text-xs text-gray-500 capitalize">
+                                        <span className="text-xs text-[--af-text-muted] capitalize">
                                           Outcome: {activity.callOutcome.replace("_", " ")}
                                         </span>
                                       )}
                                     </div>
                                   )}
                                 </div>
-                                <p className="text-xs text-gray-400 shrink-0 ml-4">
+                                <p className="text-xs text-[--af-text-muted] shrink-0 ml-4">
                                   {new Date(activity.createdAt).toLocaleDateString()}{" "}
                                   {new Date(activity.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                 </p>
@@ -1543,11 +1543,11 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
               {/* Right Column - Status Sidebar */}
               <div className="space-y-6">
                 {/* Status Card */}
-                <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold mb-4">Lead Status</h2>
+                <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
+                  <h2 className="text-lg font-display font-bold mb-4">Lead Status</h2>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm text-gray-500">Temperature</p>
+                      <p className="text-sm text-[--af-text-muted]">Temperature</p>
                       <div className="mt-1">
                         {canEditLead ? (
                           <Select
@@ -1571,7 +1571,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Status</p>
+                      <p className="text-sm text-[--af-text-muted]">Status</p>
                       <div className="mt-1">
                         {canEditLead ? (
                           <Select
@@ -1595,7 +1595,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500">Lead Score</p>
+                      <p className="text-sm text-[--af-text-muted]">Lead Score</p>
                       <div className="mt-1">
                         {canEditLead ? (
                           <LeadScoreSlider
@@ -1618,7 +1618,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                     </div>
                     {lead.assignedTo && (
                       <div>
-                        <p className="text-sm text-gray-500">Assigned To</p>
+                        <p className="text-sm text-[--af-text-muted]">Assigned To</p>
                         <p className="font-medium mt-1">
                           {workspaceUsers.find((u) => u.id === lead.assignedTo)?.name ||
                            workspaceUsers.find((u) => u.id === lead.assignedTo)?.email ||
@@ -1630,50 +1630,50 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                 </div>
 
                 {/* Next Action Card */}
-                <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold mb-4">Next Action</h2>
+                <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
+                  <h2 className="text-lg font-display font-bold mb-4">Next Action</h2>
                   {lead.nextAction ? (
                     <div className="space-y-2">
                       <p className="font-medium">{lead.nextAction}</p>
                       {lead.nextActionDate && (
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-[--af-text-muted]">
                           <Calendar className="w-4 h-4" />
                           {new Date(lead.nextActionDate).toLocaleDateString()}
                         </div>
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-400 italic">No next action set.</p>
+                    <p className="text-sm text-[--af-text-muted] italic">No next action set.</p>
                   )}
                 </div>
 
                 {/* Quick Stats */}
-                <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold mb-4">Activity Stats</h2>
+                <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
+                  <h2 className="text-lg font-display font-bold mb-4">Activity Stats</h2>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                      <p className="text-2xl font-bold">
+                      <p className="text-2xl font-display font-bold tracking-tight">
                         {activities.filter((a) => a.activityType === "call").length}
                       </p>
-                      <p className="text-xs text-gray-500">Calls</p>
+                      <p className="text-xs text-[--af-text-muted]">Calls</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">
+                      <p className="text-2xl font-display font-bold tracking-tight">
                         {activities.filter((a) => a.activityType === "email").length}
                       </p>
-                      <p className="text-xs text-gray-500">Emails</p>
+                      <p className="text-xs text-[--af-text-muted]">Emails</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">
+                      <p className="text-2xl font-display font-bold tracking-tight">
                         {activities.filter((a) => a.activityType === "meeting").length}
                       </p>
-                      <p className="text-xs text-gray-500">Meetings</p>
+                      <p className="text-xs text-[--af-text-muted]">Meetings</p>
                     </div>
                     <div className="text-center">
-                      <p className="text-2xl font-bold">
+                      <p className="text-2xl font-display font-bold tracking-tight">
                         {activities.filter((a) => a.activityType === "note").length}
                       </p>
-                      <p className="text-xs text-gray-500">Notes</p>
+                      <p className="text-xs text-[--af-text-muted]">Notes</p>
                     </div>
                   </div>
                 </div>
@@ -1712,20 +1712,20 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
             </DialogHeader>
             {lead && (
               <div className="space-y-3 py-2">
-                <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 space-y-2">
+                <div className="bg-[--af-bg-surface-alt] rounded-lg p-4 space-y-2">
                   <p className="text-sm">
-                    <span className="text-gray-500">Lead:</span>{" "}
+                    <span className="text-[--af-text-muted]">Lead:</span>{" "}
                     <span className="font-medium">{lead.firstName} {lead.lastName}</span>
                   </p>
                   {lead.companyName && (
                     <p className="text-sm">
-                      <span className="text-gray-500">Company:</span>{" "}
+                      <span className="text-[--af-text-muted]">Company:</span>{" "}
                       <span className="font-medium">{lead.companyName}</span>
                     </p>
                   )}
                   {lead.interest && (
                     <p className="text-sm">
-                      <span className="text-gray-500">Service:</span>{" "}
+                      <span className="text-[--af-text-muted]">Service:</span>{" "}
                       <span className="font-medium">{lead.interest}</span>
                     </p>
                   )}
@@ -1744,7 +1744,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                     const displayBudget = finalTotal ?? lead.budget ?? null
                     return displayBudget != null ? (
                       <p className="text-sm">
-                        <span className="text-gray-500">Budget:</span>{" "}
+                        <span className="text-[--af-text-muted]">Budget:</span>{" "}
                         <span className="font-medium">
                           ${displayBudget.toLocaleString()}
                         </span>
@@ -1752,7 +1752,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                     ) : null
                   })()}
                 </div>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[--af-text-muted]">
                   A new client and project will be created. The lead will be moved to the &quot;Converted&quot; tab.
                 </p>
               </div>

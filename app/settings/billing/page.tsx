@@ -235,15 +235,15 @@ export default function BillingPage() {
           <div>
             <Link
               href="/settings"
-              className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 mb-4"
+              className="inline-flex items-center gap-1 text-sm text-[--af-text-muted] hover:text-[--af-text-secondary] dark:hover:text-[--af-text-muted] mb-4"
             >
               <ChevronLeft className="w-4 h-4" />
               Back to Settings
             </Link>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold">Billing & Plan</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                <h1 className="text-2xl font-display font-bold tracking-tight">Billing & Plan</h1>
+                <p className="text-sm text-[--af-text-secondary] mt-1">
                   Manage your subscription, seats, and billing details.
                 </p>
               </div>
@@ -253,13 +253,13 @@ export default function BillingPage() {
 
           {/* Comped banner */}
           {workspace?.subscriptionStatus === "comped" && (
-            <div className="flex items-center gap-3 rounded-lg border border-purple-200 dark:border-purple-900/30 bg-purple-50 dark:bg-purple-900/10 p-4">
+            <div className="flex items-center gap-3 rounded-card border border-purple-200 dark:border-purple-900/30 bg-purple-50 dark:bg-purple-900/10 p-4">
               <Gift className="w-5 h-5 text-purple-500 flex-shrink-0" />
               <div>
                 <p className="font-medium text-sm text-purple-700 dark:text-purple-400">
                   Complimentary Plan
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                <p className="text-xs text-[--af-text-secondary] mt-0.5">
                   Your {config.name} plan has been comped by an administrator. You have full access to all {config.name} features at no cost.
                 </p>
               </div>
@@ -268,13 +268,13 @@ export default function BillingPage() {
 
           {/* Past due warning */}
           {workspace?.subscriptionStatus === "past_due" && (
-            <div className="flex items-center gap-3 rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 p-4">
+            <div className="flex items-center gap-3 rounded-card border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 p-4">
               <AlertCircle className="w-5 h-5 text-orange-500 flex-shrink-0" />
               <div>
                 <p className="font-medium text-sm text-orange-700 dark:text-orange-400">
                   Payment past due
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                <p className="text-xs text-[--af-text-secondary] mt-0.5">
                   Your last payment failed. Please update your payment method to avoid service interruption.
                 </p>
               </div>
@@ -293,15 +293,15 @@ export default function BillingPage() {
           )}
 
           {/* Current Plan Card */}
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <div className="border border-[--af-border-default] rounded-lg">
+            <div className="p-6 border-b border-[--af-border-default]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-[--af-text-secondary]" />
                 </div>
                 <div>
                   <h2 className="font-semibold">Current Plan</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[--af-text-secondary]">
                     {config.name} — ${config.basePrice}/mo
                     {config.basePrice > 0 && ` + $${config.seatPrice}/extra seat`}
                   </p>
@@ -321,16 +321,16 @@ export default function BillingPage() {
 
               {/* Status */}
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Status</span>
+                <span className="text-[--af-text-secondary]">Status</span>
                 <Badge
                   className={
                     workspace?.subscriptionStatus === "active"
-                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                      ? "bg-[--af-success-bg] text-[--af-success-text]"
                       : workspace?.subscriptionStatus === "comped"
                         ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
                         : workspace?.subscriptionStatus === "past_due"
                           ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
-                          : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                          : "bg-[--af-bg-surface-alt] text-[--af-text-secondary] dark:bg-warm-800 dark:text-[--af-text-muted]"
                   }
                 >
                   {workspace?.subscriptionStatus === "none"
@@ -386,7 +386,7 @@ export default function BillingPage() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="text-red-600 hover:text-red-700"
+                        className="text-[--af-danger-text] hover:text-[--af-danger-text]"
                         onClick={() => handleChangePlan("free")}
                         disabled={!!loading}
                       >
@@ -416,7 +416,7 @@ export default function BillingPage() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="text-red-600 hover:text-red-700"
+                        className="text-[--af-danger-text] hover:text-[--af-danger-text]"
                         onClick={() => handleChangePlan("free")}
                         disabled={!!loading}
                       >
@@ -430,8 +430,8 @@ export default function BillingPage() {
           </div>
 
           {/* Usage Section with Seat Breakdown */}
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <div className="border border-[--af-border-default] rounded-lg">
+            <div className="p-6 border-b border-[--af-border-default]">
               <h2 className="font-semibold">Usage</h2>
             </div>
             <div className="p-6 space-y-5">
@@ -439,23 +439,23 @@ export default function BillingPage() {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-gray-500" />
+                    <Users className="w-4 h-4 text-[--af-text-muted]" />
                     <span className="text-sm font-medium">Seats</span>
                   </div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-sm text-[--af-text-secondary]">
                     {seatCount} / {includedSeats} included
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
+                <div className="w-full bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded-full h-2">
                   <div
-                    className="bg-blue-500 h-2 rounded-full transition-all"
+                    className="bg-[--af-info-bg]0 h-2 rounded-full transition-all"
                     style={{
                       width: `${Math.min(100, (seatCount / Math.max(includedSeats, 1)) * 100)}%`,
                     }}
                   />
                 </div>
                 {/* Seat breakdown detail */}
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                <p className="text-xs text-[--af-text-muted] mt-2">
                   {includedSeats} included
                   {extraSeats > 0 && (
                     <> + {extraSeats} extra (${extraSeatCost}/mo)</>
@@ -469,19 +469,19 @@ export default function BillingPage() {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-gray-500" />
+                      <Sparkles className="w-4 h-4 text-[--af-text-muted]" />
                       <span className="text-sm font-medium">AI Credits</span>
                     </div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span className="text-sm text-[--af-text-secondary]">
                       {workspace?.aiCreditsUsed || 0} / {workspace?.aiCreditsLimit || 0} used
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2">
+                  <div className="w-full bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded-full h-2">
                     <div
                       className={`h-2 rounded-full transition-all ${
                         (workspace?.aiCreditsUsed || 0) > (workspace?.aiCreditsLimit || 0) * 0.9
                           ? "bg-orange-500"
-                          : "bg-green-500"
+                          : "bg-[--af-success-bg]0"
                       }`}
                       style={{
                         width: `${Math.min(100, ((workspace?.aiCreditsUsed || 0) / Math.max(workspace?.aiCreditsLimit || 1, 1)) * 100)}%`,
@@ -495,18 +495,18 @@ export default function BillingPage() {
 
           {/* Next Billing Date + Estimated Charge (paid plans only) */}
           {tier !== "free" && subscriptionInfo?.currentPeriodEnd && (
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="border border-[--af-border-default] rounded-lg">
+              <div className="p-6 border-b border-[--af-border-default]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                    <Calendar className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                    <Calendar className="w-5 h-5 text-[--af-text-secondary]" />
                   </div>
                   <h2 className="font-semibold">Next Billing</h2>
                 </div>
               </div>
               <div className="p-6 space-y-3">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Next billing date</span>
+                  <span className="text-[--af-text-secondary]">Next billing date</span>
                   <span className="font-medium">
                     {new Date(subscriptionInfo.currentPeriodEnd).toLocaleDateString("en-US", {
                       month: "short",
@@ -516,11 +516,11 @@ export default function BillingPage() {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Estimated charge</span>
+                  <span className="text-[--af-text-secondary]">Estimated charge</span>
                   <span className="font-medium">
                     ${estimatedCharge}/mo
                     {extraSeats > 0 && (
-                      <span className="text-xs text-gray-500 ml-1">
+                      <span className="text-xs text-[--af-text-muted] ml-1">
                         (${config.basePrice} base + ${extraSeatCost} seats)
                       </span>
                     )}
@@ -532,29 +532,29 @@ export default function BillingPage() {
 
           {/* Payment Method (paid plans only) */}
           {tier !== "free" && (
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="border border-[--af-border-default] rounded-lg">
+              <div className="p-6 border-b border-[--af-border-default]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                    <CreditCard className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-[--af-text-secondary]" />
                   </div>
                   <h2 className="font-semibold">Payment Method</h2>
                 </div>
               </div>
               <div className="p-6">
                 {pmLoading ? (
-                  <p className="text-sm text-gray-500">Loading...</p>
+                  <p className="text-sm text-[--af-text-muted]">Loading...</p>
                 ) : paymentMethod ? (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-7 rounded bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-300">
+                      <div className="w-10 h-7 rounded bg-[--af-bg-surface-alt] dark:bg-warm-800 flex items-center justify-center text-xs font-bold text-[--af-text-secondary] dark:text-[--af-text-muted]">
                         {formatCardBrand(paymentMethod.brand).slice(0, 4)}
                       </div>
                       <div>
                         <p className="text-sm font-medium">
                           {formatCardBrand(paymentMethod.brand)} ending in {paymentMethod.last4}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-[--af-text-muted]">
                           Expires {String(paymentMethod.expMonth).padStart(2, "0")}/{paymentMethod.expYear}
                         </p>
                       </div>
@@ -572,7 +572,7 @@ export default function BillingPage() {
                   </div>
                 ) : (
                   <div className="flex items-center justify-between">
-                    <p className="text-sm text-gray-500">No payment method on file.</p>
+                    <p className="text-sm text-[--af-text-muted]">No payment method on file.</p>
                     {isOwner && (
                       <Button
                         size="sm"
@@ -591,20 +591,20 @@ export default function BillingPage() {
 
           {/* Invoice History (paid plans only) */}
           {tier !== "free" && (
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="border border-[--af-border-default] rounded-lg">
+              <div className="p-6 border-b border-[--af-border-default]">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                    <Receipt className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                    <Receipt className="w-5 h-5 text-[--af-text-secondary]" />
                   </div>
                   <h2 className="font-semibold">Invoice History</h2>
                 </div>
               </div>
-              <div className="divide-y divide-gray-200 dark:divide-gray-800">
+              <div className="divide-y divide-[--af-border-default] dark:divide-warm-800">
                 {invoicesLoading ? (
-                  <div className="p-6 text-sm text-gray-500">Loading...</div>
+                  <div className="p-6 text-sm text-[--af-text-muted]">Loading...</div>
                 ) : invoices.length === 0 ? (
-                  <div className="p-6 text-sm text-gray-500">No invoices yet.</div>
+                  <div className="p-6 text-sm text-[--af-text-muted]">No invoices yet.</div>
                 ) : (
                   invoices.map((inv) => (
                     <div key={inv.id} className="p-4 flex items-center justify-between">
@@ -619,7 +619,7 @@ export default function BillingPage() {
                                 })
                               : "—"}
                           </p>
-                          <p className="text-xs text-gray-500">
+                          <p className="text-xs text-[--af-text-muted]">
                             {formatCurrency(inv.amountPaid || inv.amountDue, inv.currency)}
                           </p>
                         </div>
@@ -628,10 +628,10 @@ export default function BillingPage() {
                         <Badge
                           className={
                             inv.status === "paid"
-                              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                              ? "bg-[--af-success-bg] text-[--af-success-text]"
                               : inv.status === "open"
-                                ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                                : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                                ? "bg-[--af-info-bg] text-[--af-info-text]"
+                                : "bg-[--af-bg-surface-alt] text-[--af-text-secondary] dark:bg-warm-800 dark:text-[--af-text-muted]"
                           }
                         >
                           {inv.status || "unknown"}
@@ -641,7 +641,7 @@ export default function BillingPage() {
                             href={inv.invoicePdf}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                            className="text-[--af-text-muted] hover:text-[--af-text-secondary] dark:hover:text-[--af-text-muted]"
                           >
                             <Download className="w-4 h-4" />
                           </a>
@@ -655,25 +655,25 @@ export default function BillingPage() {
           )}
 
           {/* Recent Billing Events */}
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <div className="border border-[--af-border-default] rounded-lg">
+            <div className="p-6 border-b border-[--af-border-default]">
               <h2 className="font-semibold">Recent Billing Events</h2>
             </div>
-            <div className="divide-y divide-gray-200 dark:divide-gray-800">
+            <div className="divide-y divide-[--af-border-default] dark:divide-warm-800">
               {eventsLoading ? (
-                <div className="p-6 text-sm text-gray-500">Loading...</div>
+                <div className="p-6 text-sm text-[--af-text-muted]">Loading...</div>
               ) : events.length === 0 ? (
-                <div className="p-6 text-sm text-gray-500">No billing events yet.</div>
+                <div className="p-6 text-sm text-[--af-text-muted]">No billing events yet.</div>
               ) : (
                 events.map((event) => (
                   <div key={event.id} className="p-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-gray-400" />
+                      <CheckCircle className="w-4 h-4 text-[--af-text-muted]" />
                       <span className="text-sm capitalize">
                         {formatEventType(event.event_type)}
                       </span>
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-[--af-text-muted]">
                       {new Date(event.created_at).toLocaleDateString()}
                     </span>
                   </div>

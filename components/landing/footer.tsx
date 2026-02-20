@@ -35,14 +35,14 @@ export function Footer() {
           {/* Logo + Tagline */}
           <div className="col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center">
-                <div className="w-3.5 h-3.5 border-2 border-black rotate-45" />
+              <div className="w-7 h-7 bg-[--af-bg-surface] rounded-lg flex items-center justify-center">
+                <div className="w-3.5 h-3.5 border-2 border-foreground rotate-45" />
               </div>
               <span className="font-semibold text-white text-sm">
                 ArchaFlow
               </span>
             </Link>
-            <p className="text-sm text-gray-500 max-w-xs">
+            <p className="text-sm text-[--af-text-muted] max-w-xs">
               Project management built for architecture firms. From concept to
               completion.
             </p>
@@ -51,7 +51,7 @@ export function Footer() {
           {/* Link columns */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-[--af-text-muted] mb-4">
                 {category}
               </h4>
               <ul className="space-y-2.5">
@@ -59,7 +59,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-400 hover:text-white transition-colors"
+                      className="text-sm text-[--af-text-muted] hover:text-white transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -71,13 +71,13 @@ export function Footer() {
 
           {/* New Features */}
           <div>
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[--af-text-muted] mb-4">
               New Features
             </h4>
             <ul className="space-y-2.5">
               {newFeatures.map((feature) => (
                 <li key={feature}>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-[--af-text-muted]">
                     {feature}
                   </span>
                 </li>
@@ -88,9 +88,9 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="flex flex-col sm:flex-row items-center justify-between mt-16 pt-8 border-t border-white/[0.06] gap-4">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-[--af-text-secondary]">
             &copy; {new Date().getFullYear()} ArchaFlow. All rights reserved.
-            <span className="ml-2 text-gray-700">v0.1.1</span>
+            <span className="ml-2 text-[--af-text-secondary]">v0.1.1</span>
           </p>
           <div className="flex items-center gap-4">
             {/* Social icons as simple text links */}
@@ -98,7 +98,7 @@ export function Footer() {
               <a
                 key={social}
                 href="#"
-                className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+                className="text-xs text-[--af-text-secondary] hover:text-[--af-text-muted] transition-colors"
               >
                 {social}
               </a>

@@ -101,11 +101,11 @@ export function CompPlanModal({
             </Select>
           </div>
 
-          <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-sm space-y-1">
-            <p><span className="text-gray-500">Plan:</span> <span className="font-medium">{config.name}</span></p>
-            <p><span className="text-gray-500">Seats:</span> {config.includedSeats} included</p>
-            <p><span className="text-gray-500">AI Credits:</span> {config.aiCredits}</p>
-            <p><span className="text-gray-500">Cost:</span> <span className="text-green-600 dark:text-green-400 font-medium">$0 (comped)</span></p>
+          <div className="p-3 rounded-lg bg-[--af-bg-surface-alt] border border-[--af-border-default] text-sm space-y-1">
+            <p><span className="text-[--af-text-muted]">Plan:</span> <span className="font-medium">{config.name}</span></p>
+            <p><span className="text-[--af-text-muted]">Seats:</span> {config.includedSeats} included</p>
+            <p><span className="text-[--af-text-muted]">AI Credits:</span> {config.aiCredits}</p>
+            <p><span className="text-[--af-text-muted]">Cost:</span> <span className="text-[--af-success-text] font-medium">$0 (comped)</span></p>
           </div>
 
           <div>

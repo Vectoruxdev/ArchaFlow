@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/badge"
 import type { PlanTier } from "@/lib/stripe/config"
 
 const tierStyles: Record<PlanTier, string> = {
-  free: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-  pro: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  free: "bg-[--af-bg-surface-alt] text-[--af-text-secondary] dark:bg-warm-800 dark:text-[--af-text-muted]",
+  pro: "bg-[--af-info-bg] text-[--af-info-text]",
   enterprise: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
 }
 

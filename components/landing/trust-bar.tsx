@@ -21,7 +21,7 @@ export function TrustBar() {
   return (
     <section className="py-16 border-y border-white/[0.06]">
       <ScrollAnimation>
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-gray-600 mb-8">
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-[--af-text-secondary] mb-8">
           Trusted by architecture firms worldwide
         </p>
       </ScrollAnimation>
@@ -38,7 +38,7 @@ export function TrustBar() {
               key={`${firm}-${i}`}
               className="flex-shrink-0 px-8 flex items-center"
             >
-              <span className="text-lg font-semibold text-gray-700 whitespace-nowrap tracking-tight">
+              <span className="text-lg font-display font-bold text-[--af-text-secondary] whitespace-nowrap tracking-tight">
                 {firm}
               </span>
             </div>

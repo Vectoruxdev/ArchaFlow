@@ -140,12 +140,12 @@ export function AssignTeamModal({
         </DialogHeader>
         <div className="space-y-4 py-4">
           {error && (
-            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+            <p className="text-sm text-[--af-danger-text]" role="alert">
               {error}
             </p>
           )}
           {loadingMembers ? (
-            <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-[--af-text-muted]">
               <Loader2 className="h-4 w-4 animate-spin" />
               Loading team members…
             </div>

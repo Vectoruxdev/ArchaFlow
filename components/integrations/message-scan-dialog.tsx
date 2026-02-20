@@ -266,10 +266,10 @@ export function MessageScanDialog({
   }
 
   const priorityColors: Record<string, string> = {
-    low: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
-    medium: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+    low: "bg-[--af-bg-surface-alt] text-[--af-text-secondary] dark:bg-warm-800 dark:text-[--af-text-muted]",
+    medium: "bg-[--af-info-bg] text-[--af-info-text]",
     high: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300",
-    urgent: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300",
+    urgent: "bg-[--af-danger-bg] text-[--af-danger-text]",
   }
 
   const destinationLabel = importDestination === "inbox"
@@ -303,7 +303,7 @@ export function MessageScanDialog({
             {/* Date Range */}
             <div className="space-y-2">
               <label className="text-sm font-medium flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-500" />
+                <Calendar className="w-4 h-4 text-[--af-text-muted]" />
                 Time range
               </label>
               <div className="flex gap-1.5 flex-wrap">
@@ -314,8 +314,8 @@ export function MessageScanDialog({
                       onClick={() => setDateRange(value)}
                       className={`px-3 py-1.5 text-xs rounded-md border transition-colors ${
                         dateRange === value
-                          ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
-                          : "bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500"
+                          ? "bg-warm-900 text-white border-foreground dark:bg-[--af-bg-surface] dark:text-foreground dark:border-white"
+                          : "bg-[--af-bg-surface] dark:bg-warm-900 border-[--af-border-default] dark:border-warm-700 hover:border-[--af-border-strong] dark:hover:border-[--af-border-strong]"
                       }`}
                     >
                       {label}
@@ -328,7 +328,7 @@ export function MessageScanDialog({
             {/* Name filter */}
             <div className="space-y-2">
               <label className="text-sm font-medium flex items-center gap-2">
-                <User className="w-4 h-4 text-gray-500" />
+                <User className="w-4 h-4 text-[--af-text-muted]" />
                 Your name
               </label>
               <Input
@@ -342,8 +342,8 @@ export function MessageScanDialog({
                   onClick={() => setNameFilter("all")}
                   className={`px-3 py-1.5 text-xs rounded-md border transition-colors flex-1 ${
                     nameFilter === "all"
-                      ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
-                      : "bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500"
+                      ? "bg-warm-900 text-white border-foreground dark:bg-[--af-bg-surface] dark:text-foreground dark:border-white"
+                      : "bg-[--af-bg-surface] dark:bg-warm-900 border-[--af-border-default] dark:border-warm-700 hover:border-[--af-border-strong] dark:hover:border-[--af-border-strong]"
                   }`}
                 >
                   All messages
@@ -353,15 +353,15 @@ export function MessageScanDialog({
                   disabled={!userName.trim()}
                   className={`px-3 py-1.5 text-xs rounded-md border transition-colors flex-1 ${
                     nameFilter === "mentions_only"
-                      ? "bg-black text-white border-black dark:bg-white dark:text-black dark:border-white"
-                      : "bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                      ? "bg-warm-900 text-white border-foreground dark:bg-[--af-bg-surface] dark:text-foreground dark:border-white"
+                      : "bg-[--af-bg-surface] dark:bg-warm-900 border-[--af-border-default] dark:border-warm-700 hover:border-[--af-border-strong] dark:hover:border-[--af-border-strong] disabled:opacity-40 disabled:cursor-not-allowed"
                   }`}
                 >
                   Only mentioning me
                 </button>
               </div>
               {userName.trim() && nameFilter === "all" && (
-                <p className="text-[11px] text-gray-500">
+                <p className="text-[11px] text-[--af-text-muted]">
                   Tasks mentioning &ldquo;{userName.trim()}&rdquo; will be prioritized
                 </p>
               )}
@@ -372,8 +372,8 @@ export function MessageScanDialog({
         {/* Progress states */}
         {(status === "fetching" || status === "extracting" || status === "importing") && (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-            <p className="text-sm text-gray-500">
+            <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted]" />
+            <p className="text-sm text-[--af-text-muted]">
               {status === "fetching" && "Fetching messages..."}
               {status === "extracting" && "Extracting tasks..."}
               {status === "importing" && "Importing tasks..."}
@@ -384,8 +384,8 @@ export function MessageScanDialog({
         {/* Error state */}
         {status === "error" && (
           <div className="flex flex-col items-center justify-center py-8 gap-3">
-            <AlertCircle className="w-8 h-8 text-red-500" />
-            <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
+            <AlertCircle className="w-8 h-8 text-[--af-danger-text]" />
+            <p className="text-sm text-[--af-danger-text]">{errorMessage}</p>
             <Button variant="outline" size="sm" onClick={() => setStatus(tasks.length > 0 ? "ready" : "idle")}>
               {tasks.length > 0 ? "Back to Tasks" : "Back to Settings"}
             </Button>
@@ -395,14 +395,14 @@ export function MessageScanDialog({
         {/* Imported state */}
         {status === "imported" && (
           <div className="flex flex-col items-center justify-center py-8 gap-3">
-            <CheckCircle2 className="w-8 h-8 text-green-500" />
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <CheckCircle2 className="w-8 h-8 text-[--af-success-text]" />
+            <p className="text-sm text-[--af-text-secondary]">
               {importedCount} tasks imported to <span className="font-medium">{destinationLabel}</span>.
             </p>
             {importedProjectId && (
               <a
                 href={`/projects/${importedProjectId}`}
-                className="text-sm text-black dark:text-white underline hover:no-underline"
+                className="text-sm text-foreground underline hover:no-underline"
               >
                 View project
               </a>
@@ -415,14 +415,14 @@ export function MessageScanDialog({
           <>
             <div className="flex-1 overflow-y-auto min-h-0 max-h-[40vh] space-y-2 pr-1">
               {tasks.length === 0 ? (
-                <div className="text-center py-8 text-sm text-gray-500">
+                <div className="text-center py-8 text-sm text-[--af-text-muted]">
                   No actionable tasks found in the messages.
                 </div>
               ) : (
                 tasks.map((task) => (
                   <div
                     key={task.id}
-                    className="border rounded-lg p-3 space-y-2 bg-white dark:bg-gray-950"
+                    className="border rounded-lg p-3 space-y-2 bg-[--af-bg-surface] dark:bg-warm-950"
                   >
                     <div className="flex items-start gap-3">
                       <Checkbox
@@ -470,7 +470,7 @@ export function MessageScanDialog({
                         onClick={() =>
                           setExpandedTask(expandedTask === task.id ? null : task.id)
                         }
-                        className="p-1 text-gray-400 hover:text-gray-600"
+                        className="p-1 text-[--af-text-muted] hover:text-[--af-text-secondary]"
                       >
                         {expandedTask === task.id ? (
                           <ChevronUp className="w-4 h-4" />
@@ -481,17 +481,17 @@ export function MessageScanDialog({
                     </div>
 
                     {expandedTask === task.id && (
-                      <div className="ml-8 p-3 bg-gray-50 dark:bg-gray-900 rounded text-xs space-y-1">
+                      <div className="ml-8 p-3 bg-[--af-bg-surface-alt] rounded text-xs space-y-1">
                         {task.description && (
-                          <p className="text-gray-600 dark:text-gray-400 mb-2">
+                          <p className="text-[--af-text-secondary] mb-2">
                             {task.description}
                           </p>
                         )}
-                        <p className="text-gray-500">
+                        <p className="text-[--af-text-muted]">
                           <span className="font-medium">From:</span>{" "}
                           #{task.sourceMessage.channelName} by {task.sourceMessage.author}
                         </p>
-                        <p className="text-gray-500 italic">
+                        <p className="text-[--af-text-muted] italic">
                           &ldquo;{task.sourceMessage.content.slice(0, 300)}
                           {task.sourceMessage.content.length > 300 ? "..." : ""}&rdquo;
                         </p>
@@ -504,15 +504,15 @@ export function MessageScanDialog({
 
             {/* Import destination picker */}
             {tasks.length > 0 && selectedTasks.length > 0 && (
-              <div className="border rounded-lg p-3 space-y-3 bg-gray-50 dark:bg-gray-900">
+              <div className="border rounded-lg p-3 space-y-3 bg-[--af-bg-surface-alt]">
                 <p className="text-sm font-medium">Import destination</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setImportDestination("inbox")}
                     className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm transition-colors flex-1 ${
                       importDestination === "inbox"
-                        ? "border-black dark:border-white bg-white dark:bg-gray-950"
-                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                        ? "border-foreground dark:border-white bg-[--af-bg-surface] dark:bg-warm-950"
+                        : "border-[--af-border-default] dark:border-warm-700 hover:border-[--af-border-default] dark:hover:border-warm-600"
                     }`}
                   >
                     <Inbox className="w-4 h-4" />
@@ -527,8 +527,8 @@ export function MessageScanDialog({
                     }}
                     className={`flex items-center gap-2 px-3 py-2 rounded-md border text-sm transition-colors flex-1 ${
                       importDestination === "new_project"
-                        ? "border-black dark:border-white bg-white dark:bg-gray-950"
-                        : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                        ? "border-foreground dark:border-white bg-[--af-bg-surface] dark:bg-warm-950"
+                        : "border-[--af-border-default] dark:border-warm-700 hover:border-[--af-border-default] dark:hover:border-warm-600"
                     }`}
                   >
                     <FolderPlus className="w-4 h-4" />
@@ -562,7 +562,7 @@ export function MessageScanDialog({
           )}
           {status === "ready" && tasks.length > 0 && (
             <>
-              <div className="flex-1 text-sm text-gray-500">
+              <div className="flex-1 text-sm text-[--af-text-muted]">
                 {selectedTasks.length} of {tasks.length} tasks selected
               </div>
               <Button variant="outline" onClick={handleClose}>

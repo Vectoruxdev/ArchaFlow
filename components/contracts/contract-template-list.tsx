@@ -113,8 +113,8 @@ export function ContractTemplateList({ templates, businessId, onRefresh }: Props
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-semibold">Templates</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-lg font-display font-bold">Templates</h2>
+          <p className="text-sm text-[--af-text-muted]">
             Reusable contract templates with variable support
           </p>
         </div>
@@ -125,9 +125,9 @@ export function ContractTemplateList({ templates, businessId, onRefresh }: Props
       </div>
 
       {activeTemplates.length === 0 ? (
-        <div className="text-center py-12 border border-dashed border-gray-200 dark:border-gray-800 rounded-lg">
-          <FileText className="w-10 h-10 text-gray-300 dark:text-gray-700 mx-auto mb-3" />
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="text-center py-12 border border-dashed border-[--af-border-default] rounded-lg">
+          <FileText className="w-10 h-10 text-[--af-text-muted] dark:text-[--af-text-secondary] mx-auto mb-3" />
+          <p className="text-sm text-[--af-text-muted] mb-4">
             No templates yet. Create your first contract template.
           </p>
           <Button onClick={createTemplate} disabled={creating} variant="outline">
@@ -140,15 +140,15 @@ export function ContractTemplateList({ templates, businessId, onRefresh }: Props
           {activeTemplates.map((template) => (
             <div
               key={template.id}
-              className="group bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-5 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer"
+              className="group bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-5 hover:border-[--af-border-strong] transition-colors cursor-pointer"
               onClick={() => router.push(`/contracts/templates/${template.id}`)}
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="w-9 h-9 rounded-lg bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-lg bg-[--af-bg-surface-alt] flex items-center justify-center">
                   {template.type === "pdf" ? (
-                    <FileUp className="w-4 h-4 text-gray-500" />
+                    <FileUp className="w-4 h-4 text-[--af-text-muted]" />
                   ) : (
-                    <FileText className="w-4 h-4 text-gray-500" />
+                    <FileText className="w-4 h-4 text-[--af-text-muted]" />
                   )}
                 </div>
                 <DropdownMenu>
@@ -186,14 +186,14 @@ export function ContractTemplateList({ templates, businessId, onRefresh }: Props
               </div>
               <h3 className="font-medium text-sm truncate">{template.name}</h3>
               {template.description && (
-                <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                <p className="text-xs text-[--af-text-muted] mt-1 line-clamp-2">
                   {template.description}
                 </p>
               )}
               <div className="flex items-center gap-2 mt-3">
-                <span className="text-xs text-gray-400 capitalize">{template.type.replace("_", " ")}</span>
+                <span className="text-xs text-[--af-text-muted] capitalize">{template.type.replace("_", " ")}</span>
                 {template.variables.length > 0 && (
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-[--af-text-muted]">
                     · {template.variables.length} variable{template.variables.length !== 1 ? "s" : ""}
                   </span>
                 )}

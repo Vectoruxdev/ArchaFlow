@@ -43,11 +43,11 @@ export function FileGrid({ files, onUpload }: FileGridProps) {
   const getFileIcon = (type: string) => {
     switch (type) {
       case "pdf":
-        return <FileText className="w-8 h-8 text-red-500" />
+        return <FileText className="w-8 h-8 text-[--af-danger-text]" />
       case "image":
-        return <Image className="w-8 h-8 text-blue-500" />
+        return <Image className="w-8 h-8 text-[--af-info-text]" />
       default:
-        return <File className="w-8 h-8 text-gray-500" />
+        return <File className="w-8 h-8 text-[--af-text-muted]" />
     }
   }
 
@@ -60,13 +60,13 @@ export function FileGrid({ files, onUpload }: FileGridProps) {
         onDrop={handleDrop}
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           isDragging
-            ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
-            : "border-gray-300 dark:border-gray-700"
+            ? "border-foreground dark:border-white bg-[--af-bg-surface-alt]"
+            : "border-[--af-border-default] dark:border-warm-700"
         }`}
       >
-        <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+        <Upload className="w-12 h-12 mx-auto mb-4 text-[--af-text-muted]" />
         <p className="text-sm font-medium mb-1">Drop files here or click to upload</p>
-        <p className="text-xs text-gray-500">PDF, PNG, JPG up to 10MB</p>
+        <p className="text-xs text-[--af-text-muted]">PDF, PNG, JPG up to 10MB</p>
         <Button variant="outline" size="sm" className="mt-4">
           Browse Files
         </Button>
@@ -77,14 +77,14 @@ export function FileGrid({ files, onUpload }: FileGridProps) {
         {files.map((file) => (
           <div
             key={file.id}
-            className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 hover:shadow-md transition-shadow"
+            className="border border-[--af-border-default] rounded-lg p-4 hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-3">
                 {getFileIcon(file.type)}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{file.name}</p>
-                  <p className="text-xs text-gray-500">{file.size}</p>
+                  <p className="text-xs text-[--af-text-muted]">{file.size}</p>
                 </div>
               </div>
               {file.version && (
@@ -93,7 +93,7 @@ export function FileGrid({ files, onUpload }: FileGridProps) {
                 </Badge>
               )}
             </div>
-            <div className="text-xs text-gray-500 mb-3">
+            <div className="text-xs text-[--af-text-muted] mb-3">
               <p>Uploaded by {file.uploadedBy}</p>
               <p>{file.uploadedAt}</p>
             </div>

@@ -39,12 +39,12 @@ export function Testimonials() {
     <section className="py-24 px-4">
       <div className="max-w-6xl mx-auto">
         <ScrollAnimation className="text-center mb-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[--af-text-muted] mb-4">
             Testimonials
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-white">
             Loved by{" "}
-            <span className="text-gray-500">architecture teams</span>
+            <span className="text-[--af-text-muted]">architecture teams</span>
           </h2>
         </ScrollAnimation>
 
@@ -63,18 +63,18 @@ export function Testimonials() {
                 </div>
 
                 {/* Quote */}
-                <p className="text-sm text-gray-300 leading-relaxed flex-1">
+                <p className="text-sm text-[--af-text-muted] leading-relaxed flex-1">
                   &ldquo;{t.quote}&rdquo;
                 </p>
 
                 {/* Author */}
                 <div className="flex items-center gap-3 mt-6 pt-4 border-t border-white/[0.06]">
-                  <div className="w-9 h-9 rounded-full bg-white/[0.08] flex items-center justify-center text-xs font-semibold text-gray-400">
+                  <div className="w-9 h-9 rounded-full bg-[--af-bg-surface]/[0.08] flex items-center justify-center text-xs font-semibold text-[--af-text-muted]">
                     {t.initials}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-white">{t.name}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-[--af-text-muted]">
                       {t.role} · {t.firm}
                     </p>
                   </div>

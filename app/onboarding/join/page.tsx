@@ -106,7 +106,7 @@ export default function JoinWorkspacePage() {
           Back to search
         </button>
 
-        <h1 className="text-2xl font-semibold mb-2 text-card-foreground">Request to join</h1>
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2 text-card-foreground">Request to join</h1>
         <div className="flex items-center gap-2 mb-6">
           <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center">
             <Building2 className="w-4 h-4 text-muted-foreground" />
@@ -118,15 +118,15 @@ export default function JoinWorkspacePage() {
         </div>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3 mb-4">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3 mb-4">
+            <p className="text-sm text-[--af-danger-text]">{error}</p>
           </div>
         )}
 
         <div className="space-y-4">
           <div>
             <label htmlFor="message" className="block text-sm font-medium mb-2">
-              Message <span className="text-gray-500">(optional)</span>
+              Message <span className="text-[--af-text-muted]">(optional)</span>
             </label>
             <Textarea
               id="message"
@@ -161,13 +161,13 @@ export default function JoinWorkspacePage() {
         Back
       </button>
 
-      <h1 className="text-2xl font-semibold mb-2 text-card-foreground">Join a workspace</h1>
+      <h1 className="text-2xl font-display font-bold tracking-tight mb-2 text-card-foreground">Join a workspace</h1>
       <p className="text-muted-foreground mb-6">
         Search for the workspace you&apos;d like to join.
       </p>
 
       <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
         <Input
           type="text"
           value={query}
@@ -178,13 +178,13 @@ export default function JoinWorkspacePage() {
       </div>
 
       {searchError && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3 mb-4">
-          <p className="text-sm text-red-600 dark:text-red-400">{searchError}</p>
+        <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3 mb-4">
+          <p className="text-sm text-[--af-danger-text]">{searchError}</p>
         </div>
       )}
 
       {searching && (
-        <p className="text-sm text-gray-500 py-2">Searching...</p>
+        <p className="text-sm text-[--af-text-muted] py-2">Searching...</p>
       )}
 
       {!searching && query.trim().length >= 2 && results.length === 0 && (

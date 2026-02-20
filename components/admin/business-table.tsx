@@ -13,9 +13,9 @@ function StatusBadge({ status }: { status: string | null }) {
   if (!status) return <Badge variant="secondary">No subscription</Badge>
 
   const styles: Record<string, string> = {
-    active: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    trialing: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-    canceled: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+    active: "bg-[--af-success-bg] text-[--af-success-text]",
+    trialing: "bg-[--af-warning-bg] text-[--af-warning-text]",
+    canceled: "bg-[--af-danger-bg] text-[--af-danger-text]",
     past_due: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
   }
 
@@ -30,27 +30,27 @@ export function BusinessTable({ businesses }: BusinessTableProps) {
   const router = useRouter()
 
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+    <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-200 dark:border-gray-800">
-              <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+            <tr className="border-b border-[--af-border-default]">
+              <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                 Name
               </th>
-              <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+              <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                 Plan
               </th>
-              <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+              <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                 Status
               </th>
-              <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+              <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                 Members
               </th>
-              <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+              <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                 Owner
               </th>
-              <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+              <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                 Created
               </th>
             </tr>
@@ -60,7 +60,7 @@ export function BusinessTable({ businesses }: BusinessTableProps) {
               <tr
                 key={biz.id}
                 onClick={() => router.push(`/businesses/${biz.id}`)}
-                className="border-b border-gray-100 dark:border-gray-800/50 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer transition-colors"
+                className="border-b border-[--af-border-default]/50 dark:border-warm-800/50 last:border-0 hover:bg-[--af-bg-canvas] dark:hover:bg-warm-800/50 cursor-pointer transition-colors"
               >
                 <td className="px-6 py-3 text-sm font-medium">{biz.name}</td>
                 <td className="px-6 py-3">
@@ -69,13 +69,13 @@ export function BusinessTable({ businesses }: BusinessTableProps) {
                 <td className="px-6 py-3">
                   <StatusBadge status={biz.subscriptionStatus} />
                 </td>
-                <td className="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
+                <td className="px-6 py-3 text-sm text-[--af-text-secondary]">
                   {biz.memberCount}
                 </td>
-                <td className="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
+                <td className="px-6 py-3 text-sm text-[--af-text-secondary]">
                   {biz.ownerEmail || "—"}
                 </td>
-                <td className="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
+                <td className="px-6 py-3 text-sm text-[--af-text-secondary]">
                   {new Date(biz.createdAt).toLocaleDateString()}
                 </td>
               </tr>
@@ -84,7 +84,7 @@ export function BusinessTable({ businesses }: BusinessTableProps) {
               <tr>
                 <td
                   colSpan={6}
-                  className="px-6 py-8 text-center text-sm text-gray-500"
+                  className="px-6 py-8 text-center text-sm text-[--af-text-muted]"
                 >
                   No businesses found
                 </td>

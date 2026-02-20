@@ -28,15 +28,15 @@ export function Navbar() {
         "fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
         "rounded-full border border-white/[0.08] px-2 py-2",
         scrolled
-          ? "bg-black/80 backdrop-blur-xl shadow-2xl shadow-black/20"
-          : "bg-white/[0.03] backdrop-blur-md"
+          ? "bg-warm-900/80 backdrop-blur-xl shadow-2xl shadow-black/20"
+          : "bg-[--af-bg-surface]/[0.03] backdrop-blur-md"
       )}
     >
       <div className="flex items-center gap-1">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 px-3 py-1.5">
-          <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center">
-            <div className="w-3.5 h-3.5 border-2 border-black rotate-45" />
+          <div className="w-7 h-7 bg-[--af-bg-surface] rounded-lg flex items-center justify-center">
+            <div className="w-3.5 h-3.5 border-2 border-foreground rotate-45" />
           </div>
           <span className="font-semibold text-white text-sm">ArchaFlow</span>
         </Link>
@@ -47,7 +47,7 @@ export function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="px-3.5 py-1.5 text-sm text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/[0.05]"
+              className="px-3.5 py-1.5 text-sm text-[--af-text-muted] hover:text-white transition-colors rounded-full hover:bg-[--af-bg-surface]/[0.05]"
             >
               {link.label}
             </a>
@@ -57,13 +57,13 @@ export function Navbar() {
         {/* CTAs */}
         <Link
           href="/login"
-          className="hidden md:flex items-center px-3.5 py-1.5 ml-2 text-sm text-gray-400 hover:text-white transition-colors rounded-full hover:bg-white/[0.05]"
+          className="hidden md:flex items-center px-3.5 py-1.5 ml-2 text-sm text-[--af-text-muted] hover:text-white transition-colors rounded-full hover:bg-[--af-bg-surface]/[0.05]"
         >
           Log In
         </Link>
         <Link
           href="/signup"
-          className="hidden md:flex items-center gap-1.5 px-4 py-1.5 bg-white text-black text-sm font-medium rounded-full hover:bg-gray-200 transition-colors"
+          className="hidden md:flex items-center gap-1.5 px-4 py-1.5 bg-[--af-bg-surface] text-foreground text-sm font-medium rounded-full hover:bg-[--af-bg-surface-alt] transition-colors"
         >
           Start Free
           <ArrowRight className="w-3.5 h-3.5" />
@@ -80,14 +80,14 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 mt-2 p-4 bg-black/95 backdrop-blur-xl rounded-2xl border border-white/[0.08]">
+        <div className="md:hidden absolute top-full left-0 right-0 mt-2 p-4 bg-warm-900/95 backdrop-blur-xl rounded-2xl border border-white/[0.08]">
           <div className="flex flex-col gap-2">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/[0.05]"
+                className="px-4 py-2 text-sm text-[--af-text-muted] hover:text-white transition-colors rounded-lg hover:bg-[--af-bg-surface]/[0.05]"
               >
                 {link.label}
               </a>
@@ -95,14 +95,14 @@ export function Navbar() {
             <Link
               href="/login"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-white/[0.05] mt-2"
+              className="flex items-center justify-center px-4 py-2 text-sm text-[--af-text-muted] hover:text-white transition-colors rounded-lg hover:bg-[--af-bg-surface]/[0.05] mt-2"
             >
               Log In
             </Link>
             <Link
               href="/signup"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-center gap-1.5 px-4 py-2 bg-white text-black text-sm font-medium rounded-full hover:bg-gray-200 transition-colors"
+              className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[--af-bg-surface] text-foreground text-sm font-medium rounded-full hover:bg-[--af-bg-surface-alt] transition-colors"
             >
               Start Free
               <ArrowRight className="w-3.5 h-3.5" />

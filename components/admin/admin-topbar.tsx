@@ -8,13 +8,13 @@ export function AdminTopbar() {
   const { user, signOut } = useAdminAuth()
 
   return (
-    <header className="h-16 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 flex items-center justify-between px-6">
-      <div className="text-sm text-gray-500 dark:text-gray-400">
+    <header className="h-14 border-b border-[--af-border-default] bg-[--af-bg-surface] flex items-center justify-between px-6">
+      <div className="text-[13px] text-[--af-text-secondary] font-mono uppercase tracking-wider">
         Super Admin Portal
       </div>
       <div className="flex items-center gap-4">
         {user && (
-          <span className="text-sm text-gray-600 dark:text-gray-400">
+          <span className="text-[13px] text-[--af-text-secondary]">
             {user.email}
           </span>
         )}

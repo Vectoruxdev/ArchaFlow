@@ -4,48 +4,192 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 5%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 5%;
+    /* ── ArchaFlow Warm Neutral Palette (Light) ── */
+    --background: 37 33% 95%;       /* #F7F4EF warmNeutral050 — canvas */
+    --foreground: 30 13% 10%;       /* #1C1916 warmNeutral900 */
+    --card: 0 0% 100%;              /* #FFFFFF */
+    --card-foreground: 30 13% 10%;  /* #1C1916 */
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 5%;
-    --primary: 0 0% 0%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 5%;
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 5%;
-    --destructive: 0 84% 60%;
+    --popover-foreground: 30 13% 10%;
+    --primary: 30 13% 10%;          /* #1C1916 — dark button */
+    --primary-foreground: 46 59% 89%; /* #F0EAD6 warm cream */
+    --secondary: 36 29% 93%;        /* #F2EEE8 warmNeutral100 */
+    --secondary-foreground: 33 9% 44%; /* #7A7268 warmNeutral500 */
+    --muted: 36 29% 93%;            /* #F2EEE8 */
+    --muted-foreground: 33 10% 65%; /* #B0A89E warmNeutral400 */
+    --accent: 36 29% 93%;           /* #F2EEE8 hover */
+    --accent-foreground: 30 13% 10%;
+    --destructive: 0 45% 45%;       /* #A84040 rust red */
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 5%;
+    --border: 37 29% 86%;           /* #E4DDD2 warmNeutral200 */
+    --input: 37 29% 86%;            /* #E4DDD2 */
+    --ring: 32 54% 36%;             /* #8B5E2A amber600 — focus ring */
     --radius: 0.5rem;
+
+    /* ── Brand / Amber ── */
+    --af-brand: #8B5E2A;
+    --af-brand-light: #F5EBD9;
+    --af-brand-border: rgba(139,94,42,0.25);
+    --af-brand-text: #8B5E2A;
+
+    /* ── Backgrounds ── */
+    --af-bg-canvas: #F7F4EF;
+    --af-bg-outer: #E8E3DB;
+    --af-bg-surface: #FFFFFF;
+    --af-bg-surface-alt: #F2EEE8;
+    --af-bg-surface-hover: #FDFAF5;
+    --af-bg-input: #F7F4EF;
+    --af-bg-sidebar: #1C1916;
+    --af-bg-sidebar-surface: #262220;
+    --af-bg-overlay: rgba(255,255,255,0.90);
+    --af-bg-scrim: rgba(0,0,0,0.45);
+
+    /* ── Text ── */
+    --af-text-primary: #1C1916;
+    --af-text-secondary: #7A7268;
+    --af-text-muted: #B0A89E;
+    --af-text-disabled: #D0C8BC;
+    --af-text-inverse: #F0EAD6;
+    --af-text-link: #8B5E2A;
+
+    /* ── Borders ── */
+    --af-border-default: #E4DDD2;
+    --af-border-strong: #D0C8BC;
+    --af-border-focus: #8B5E2A;
+    --af-border-sidebar: #2E2A26;
+
+    /* ── Status Colors ── */
+    --af-success-text: #3F7A52;
+    --af-success-bg: rgba(63,122,82,0.08);
+    --af-success-border: rgba(63,122,82,0.25);
+    --af-warning-text: #B07800;
+    --af-warning-bg: #FFF5DC;
+    --af-warning-border: rgba(176,120,0,0.25);
+    --af-danger-text: #A84040;
+    --af-danger-bg: rgba(168,64,64,0.06);
+    --af-danger-border: rgba(168,64,64,0.22);
+    --af-info-text: #2A5E8B;
+    --af-info-bg: rgba(42,94,139,0.06);
+    --af-info-border: rgba(42,94,139,0.20);
+
+    /* ── Sidebar ── */
+    --af-sidebar-text: #C8C0B4;
+    --af-sidebar-muted: #5A5248;
+    --af-sidebar-active: #C8902A;
+    --af-sidebar-active-bg: rgba(200,144,42,0.15);
+
+    /* ── Shadows ── */
+    --af-shadow-card: 0 1px 4px rgba(0,0,0,0.03);
+    --af-shadow-card-hover: 0 4px 16px rgba(0,0,0,0.07);
+    --af-shadow-dropdown: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+    --af-shadow-modal: 0 24px 60px rgba(0,0,0,0.18);
+
+    /* ── Typography (next/font CSS variables with fallbacks) ── */
+    --af-font-display: var(--font-cormorant), 'Georgia', 'Times New Roman', serif;
+    --af-font-body: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --af-font-mono: var(--font-ibm-plex-mono), 'Fira Code', 'Consolas', monospace;
+
+    /* ── Radius ── */
+    --af-radius-button: 9px;
+    --af-radius-input: 9px;
+    --af-radius-card: 14px;
+    --af-radius-modal: 16px;
+    --af-radius-dropdown: 10px;
+    --af-radius-badge: 20px;
+    --af-radius-sidebar: 8px;
+
+    /* ── Motion ── */
+    --af-duration-fast: 120ms;
+    --af-duration-normal: 200ms;
+    --af-duration-slow: 300ms;
+    --af-spring: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* ── Scrollbar ── */
+    --af-scroll-thumb: #D8D0C4;
   }
 
   .dark {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 0 0% 5%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 95%;
-    --destructive: 0 62% 50%;
-    --destructive-foreground: 0 0% 95%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 0% 95%;
+    /* ── ArchaFlow Warm Neutral Palette (Dark) ── */
+    --background: 60 3% 6%;          /* #111110 warmNeutral950 */
+    --foreground: 46 59% 89%;        /* #F0EAD6 warm cream */
+    --card: 60 5% 7%;                /* #141412 */
+    --card-foreground: 46 59% 89%;
+    --popover: 60 5% 7%;
+    --popover-foreground: 46 59% 89%;
+    --primary: 39 65% 47%;           /* #C8902A amber500 — amber button */
+    --primary-foreground: 60 3% 4%;  /* #0E0E0C */
+    --secondary: 60 8% 10%;          /* #1C1C18 */
+    --secondary-foreground: 27 9% 57%; /* #9A9088 */
+    --muted: 60 8% 10%;              /* #1C1C18 */
+    --muted-foreground: 24 6% 33%;   /* #5A5450 */
+    --accent: 60 8% 10%;
+    --accent-foreground: 46 59% 89%;
+    --destructive: 0 38% 60%;        /* #C07070 */
+    --destructive-foreground: 60 3% 6%;
+    --border: 60 5% 16%;             /* #2A2A26 */
+    --input: 60 5% 16%;
+    --ring: 39 65% 47%;              /* #C8902A amber — focus ring */
+
+    /* ── Brand / Amber ── */
+    --af-brand: #C8902A;
+    --af-brand-light: rgba(200,144,42,0.12);
+    --af-brand-border: rgba(200,144,42,0.30);
+    --af-brand-text: #C8902A;
+
+    /* ── Backgrounds ── */
+    --af-bg-canvas: #111110;
+    --af-bg-outer: #0A0A08;
+    --af-bg-surface: #141412;
+    --af-bg-surface-alt: #1C1C18;
+    --af-bg-surface-hover: #1C1C18;
+    --af-bg-input: #0E0E0C;
+    --af-bg-sidebar: #0E0E0C;
+    --af-bg-sidebar-surface: #1A1A16;
+    --af-bg-overlay: rgba(20,20,18,0.92);
+    --af-bg-scrim: rgba(0,0,0,0.65);
+
+    /* ── Text ── */
+    --af-text-primary: #F0EAD6;
+    --af-text-secondary: #9A9088;
+    --af-text-muted: #5A5450;
+    --af-text-disabled: #3A3430;
+    --af-text-inverse: #1C1916;
+    --af-text-link: #C8902A;
+
+    /* ── Borders ── */
+    --af-border-default: #2A2A26;
+    --af-border-strong: #3A3A30;
+    --af-border-focus: #C8902A;
+    --af-border-sidebar: #222220;
+
+    /* ── Status Colors ── */
+    --af-success-text: #7AAE7A;
+    --af-success-bg: rgba(122,174,122,0.10);
+    --af-success-border: rgba(122,174,122,0.25);
+    --af-warning-text: #D4A830;
+    --af-warning-bg: rgba(200,160,30,0.12);
+    --af-warning-border: rgba(200,160,30,0.25);
+    --af-danger-text: #C07070;
+    --af-danger-bg: rgba(192,112,112,0.10);
+    --af-danger-border: rgba(192,112,112,0.22);
+    --af-info-text: #6A9EC8;
+    --af-info-bg: rgba(106,158,200,0.08);
+    --af-info-border: rgba(106,158,200,0.20);
+
+    /* ── Sidebar ── */
+    --af-sidebar-text: #C8C0B4;
+    --af-sidebar-muted: #5A5248;
+    --af-sidebar-active: #C8902A;
+    --af-sidebar-active-bg: rgba(200,144,42,0.15);
+
+    /* ── Shadows ── */
+    --af-shadow-card: 0 1px 4px rgba(0,0,0,0.20);
+    --af-shadow-card-hover: 0 4px 16px rgba(0,0,0,0.35);
+    --af-shadow-dropdown: 0 8px 32px rgba(0,0,0,0.35), 0 2px 8px rgba(0,0,0,0.20);
+    --af-shadow-modal: 0 24px 60px rgba(0,0,0,0.45);
+
+    /* ── Scrollbar ── */
+    --af-scroll-thumb: #2A2A24;
   }
 }
 
@@ -58,7 +202,10 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--af-font-body);
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -70,11 +217,62 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Design system scrollbar */
+  .af-scroll {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--af-scroll-thumb) transparent;
+  }
+  .af-scroll::-webkit-scrollbar { width: 4px; }
+  .af-scroll::-webkit-scrollbar-thumb { background: var(--af-scroll-thumb); border-radius: 4px; }
+
+  /* Display font utility */
+  .font-display {
+    font-family: var(--af-font-display);
+  }
+  .font-mono-af {
+    font-family: var(--af-font-mono);
+  }
+}
+
+/* ── Keyframe Animations ── */
+
+/* ArchaFlow design system animations */
+@keyframes af-drop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes af-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes af-slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes af-scale {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes af-toast {
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes af-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes af-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+@keyframes af-skeleton {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 /* Landing page animations */
-
-/* Signal pulse on badges */
 @keyframes signal-pulse {
   0%, 100% { transform: scale(1); opacity: 0.75; }
   50% { transform: scale(2); opacity: 0; }
@@ -83,13 +281,11 @@
   animation: signal-pulse 2s ease-in-out infinite;
 }
 
-/* 3D cube rotation */
 @keyframes spinCube {
   0% { transform: rotateX(-15deg) rotateY(0deg); }
   100% { transform: rotateX(-15deg) rotateY(360deg); }
 }
 
-/* SVG dash flow */
 @keyframes dash-flow {
   0% { stroke-dashoffset: 24; }
   100% { stroke-dashoffset: 0; }
@@ -98,7 +294,6 @@
   animation: dash-flow 2s linear infinite;
 }
 
-/* Floating pills */
 @keyframes floatA {
   0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.7; }
   25% { transform: translateY(-8px) translateX(4px); opacity: 1; }
@@ -110,7 +305,6 @@
   66% { transform: translateY(-4px) translateX(3px); opacity: 0.5; }
 }
 
-/* Marquee scroll */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }

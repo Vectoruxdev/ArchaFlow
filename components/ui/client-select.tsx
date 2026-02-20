@@ -197,20 +197,20 @@ export function ClientSelect({
     <div ref={containerRef} className="relative">
       {/* Selected client display or search input */}
       {value.clientId ? (
-        <div className="flex items-center gap-2 px-3 py-2 border border-gray-200 dark:border-gray-800 rounded-lg bg-gray-50 dark:bg-gray-900">
-          <User className="w-4 h-4 text-gray-400" />
+        <div className="flex items-center gap-2 px-3 py-2 border border-[--af-border-default] dark:border-warm-800 rounded-lg bg-[--af-bg-canvas] dark:bg-warm-900">
+          <User className="w-4 h-4 text-[--af-text-muted]" />
           <span className="flex-1 text-sm font-medium">{value.displayName}</span>
           <button
             type="button"
             onClick={handleClear}
-            className="p-0.5 hover:bg-gray-200 dark:hover:bg-gray-800 rounded"
+            className="p-0.5 hover:bg-[--af-bg-surface-alt] dark:hover:bg-warm-800 rounded"
           >
-            <X className="w-4 h-4 text-gray-400" />
+            <X className="w-4 h-4 text-[--af-text-muted]" />
           </button>
         </div>
       ) : (
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
           <Input
             ref={inputRef}
             type="text"
@@ -228,13 +228,13 @@ export function ClientSelect({
 
       {/* Dropdown */}
       {isOpen && !value.clientId && (
-        <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] dark:border-warm-800 rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {isLoading && (
-            <div className="px-4 py-3 text-sm text-gray-500">Searching...</div>
+            <div className="px-4 py-3 text-sm text-[--af-text-muted]">Searching...</div>
           )}
 
           {!isLoading && options.length === 0 && (
-            <div className="px-4 py-3 text-sm text-gray-500">
+            <div className="px-4 py-3 text-sm text-[--af-text-muted]">
               {query ? "No clients found." : "No clients in this workspace."}
             </div>
           )}
@@ -245,10 +245,10 @@ export function ClientSelect({
                 key={client.id}
                 type="button"
                 onClick={() => handleSelect(client)}
-                className="w-full text-left px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center gap-3 transition-colors"
+                className="w-full text-left px-4 py-2.5 hover:bg-[--af-bg-surface-alt] dark:hover:bg-warm-900 flex items-center gap-3 transition-colors"
               >
-                <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                <div className="w-8 h-8 rounded-full bg-[--af-bg-surface-alt] dark:bg-warm-800 flex items-center justify-center">
+                  <span className="text-xs font-medium text-[--af-text-secondary] dark:text-[--af-text-muted]">
                     {client.firstName.charAt(0)}
                     {client.lastName.charAt(0)}
                   </span>
@@ -258,7 +258,7 @@ export function ClientSelect({
                     {client.firstName} {client.lastName}
                   </p>
                   {client.email && (
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-[--af-text-muted] truncate">
                       {client.email}
                     </p>
                   )}
@@ -267,11 +267,11 @@ export function ClientSelect({
             ))}
 
           {/* Add new client option */}
-          <div className="border-t border-gray-200 dark:border-gray-800">
+          <div className="border-t border-[--af-border-default] dark:border-warm-800">
             <button
               type="button"
               onClick={handleCreateNew}
-              className="w-full text-left px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-900 flex items-center gap-3 text-blue-600 dark:text-blue-400 transition-colors"
+              className="w-full text-left px-4 py-2.5 hover:bg-[--af-bg-surface-alt] dark:hover:bg-warm-900 flex items-center gap-3 text-[--af-info-text] transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span className="text-sm font-medium">

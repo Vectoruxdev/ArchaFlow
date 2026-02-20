@@ -151,17 +151,17 @@ const defaultColumns: Column[] = [
 ]
 
 const statusColors = {
-  lead: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  sale: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-  design: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-  completed: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
-  neutral: "bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20",
+  lead: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
+  sale: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+  design: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+  completed: "bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20",
+  neutral: "bg-[--af-bg-canvas]0/10 text-[--af-text-secondary] border-[--af-border-default]",
 }
 
 const paymentColors = {
-  pending: "bg-red-500/10 text-red-600 dark:text-red-400",
-  partial: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-  paid: "bg-green-500/10 text-green-600 dark:text-green-400",
+  pending: "bg-[--af-danger-bg]0/10 text-[--af-danger-text]",
+  partial: "bg-[--af-warning-bg]0/10 text-[--af-warning-text]",
+  paid: "bg-[--af-success-bg]0/10 text-[--af-success-text]",
 }
 
 export default function WorkflowPage() {
@@ -1432,11 +1432,11 @@ export default function WorkflowPage() {
         {/* Error toast — only when there is a load error */}
         {loadError && isAuthReady && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
-            <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg shadow-lg p-3 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg shadow-lg p-3 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-[--af-danger-text] flex-shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">Error loading projects</p>
-                <p className="text-sm text-red-700 dark:text-red-300 break-words select-all" title={loadError}>
+                <p className="text-sm font-medium text-[--af-danger-text] mb-1">Error loading projects</p>
+                <p className="text-sm text-[--af-danger-text] break-words select-all" title={loadError}>
                   {loadError}
                 </p>
               </div>
@@ -1444,7 +1444,7 @@ export default function WorkflowPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50"
+                  className="h-8 w-8 text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                   onClick={copyErrorToClipboard}
                   title="Copy error"
                 >
@@ -1453,7 +1453,7 @@ export default function WorkflowPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50"
+                  className="text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                   onClick={loadProjectsAndColumns}
                 >
                   Retry
@@ -1461,7 +1461,7 @@ export default function WorkflowPage() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50"
+                  className="h-8 w-8 text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                   onClick={() => setLoadError(null)}
                   title="Dismiss"
                 >
@@ -1476,8 +1476,8 @@ export default function WorkflowPage() {
         {(authLoading || workspacesLoading) && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4"></div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4"></div>
+              <p className="text-sm text-[--af-text-secondary]">
                 {authLoading ? "Authenticating..." : "Loading your workspaces..."}
               </p>
             </div>
@@ -1488,8 +1488,8 @@ export default function WorkflowPage() {
         {!authLoading && !workspacesLoading && isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4"></div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Loading projects...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4"></div>
+              <p className="text-sm text-[--af-text-secondary]">Loading projects...</p>
             </div>
           </div>
         )}
@@ -1498,8 +1498,8 @@ export default function WorkflowPage() {
         {isAuthReady && !authLoading && !workspacesLoading && workspaces.length > 0 && !businessId && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4"></div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Selecting workspace...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4"></div>
+              <p className="text-sm text-[--af-text-secondary]">Selecting workspace...</p>
             </div>
           </div>
         )}
@@ -1508,13 +1508,13 @@ export default function WorkflowPage() {
         {isAuthReady && !authLoading && !workspacesLoading && workspaces.length === 0 && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center max-w-md">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-16 h-16 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[--af-text-muted]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold mb-2">No Workspaces Found</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              <h3 className="text-lg font-display font-bold mb-2">No Workspaces Found</h3>
+              <p className="text-sm text-[--af-text-secondary] mb-4">
                 You don't have access to any workspaces yet. Create a new workspace to get started.
               </p>
               <Button onClick={() => router.push("/settings")}>
@@ -1529,58 +1529,58 @@ export default function WorkflowPage() {
           <>
         {/* Stats Row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
-            <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0">
+            <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
               <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Active Projects</span>
-                <FolderKanban className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Active Projects</span>
+                <FolderKanban className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
               </div>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">
                 {stats.activeProjects}
                 {hasActiveFilters && (
-                  <span className="text-xs text-gray-500 ml-2">(filtered)</span>
+                  <span className="text-xs text-[--af-text-muted] ml-2">(filtered)</span>
                 )}
               </div>
               {stats.newThisWeek > 0 && (
-                <p className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 mt-1">+{stats.newThisWeek} this week</p>
+                <p className="text-[10px] sm:text-xs text-[--af-success-text] mt-1">+{stats.newThisWeek} this week</p>
               )}
             </div>
 
-            <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0">
+            <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
               <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Pending Invoices</span>
-                <DollarSign className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Pending Invoices</span>
+                <DollarSign className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
               </div>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">
                 {filteredProjects.filter((p) => p.paymentStatus === "pending").length}
                 {hasActiveFilters && (
-                  <span className="text-xs text-gray-500 ml-2">(filtered)</span>
+                  <span className="text-xs text-[--af-text-muted] ml-2">(filtered)</span>
                 )}
               </div>
-              <p className="text-[10px] sm:text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+              <p className="text-[10px] sm:text-xs text-[--af-warning-text] mt-1">
                 {filteredProjects.filter((p) => p.paymentStatus === "pending").length} invoices
               </p>
             </div>
 
-            <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0">
+            <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
               <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Overdue Tasks</span>
-                <AlertCircle className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Overdue Tasks</span>
+                <AlertCircle className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
               </div>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{stats.overdueTasks}</div>
-              <p className="text-[10px] sm:text-xs text-red-600 dark:text-red-400 mt-1">
+              <p className="text-[10px] sm:text-xs text-[--af-danger-text] mt-1">
                 {stats.overdueTasks > 0 ? "Needs attention" : "All on track"}
               </p>
             </div>
 
-            <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0">
+            <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
               <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Team Workload</span>
-                <CheckCircle2 className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Team Workload</span>
+                <CheckCircle2 className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
               </div>
               <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{stats.teamWorkload}%</div>
-              <div className="mt-1 sm:mt-2 h-1.5 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden">
+              <div className="mt-1 sm:mt-2 h-1.5 bg-[--af-bg-surface-alt] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-black dark:bg-white rounded-full"
+                  className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full"
                   style={{ width: `${stats.teamWorkload}%` }}
                 />
               </div>
@@ -1590,16 +1590,16 @@ export default function WorkflowPage() {
         {/* Board/List container - can be fullscreened */}
         <div
           ref={fullscreenRef}
-          className="space-y-6 bg-white dark:bg-black rounded-lg min-h-0 [&:fullscreen]:p-6"
+          className="space-y-6 bg-[--af-bg-surface] rounded-lg min-h-0 [&:fullscreen]:p-6"
         >
         {/* Filter Bar */}
-        <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+        <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-4">
           <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center">
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Filter className="w-4 h-4 text-gray-400" />
+              <Filter className="w-4 h-4 text-[--af-text-muted]" />
               <span className="text-sm font-medium">Filters</span>
               {activeFilterCount > 0 && (
-                <Badge className="bg-black dark:bg-white text-white dark:text-black text-xs">
+                <Badge className="bg-warm-900 dark:bg-[--af-bg-surface] text-white dark:text-foreground text-xs">
                   {activeFilterCount}
                 </Badge>
               )}
@@ -1720,15 +1720,15 @@ export default function WorkflowPage() {
               </Select>
 
               {/* Status Checkboxes */}
-              <div className="flex items-center gap-2 px-3 py-1.5 border border-gray-200 dark:border-gray-800 rounded-md bg-white dark:bg-black overflow-x-auto">
+              <div className="flex items-center gap-2 px-3 py-1.5 border border-[--af-border-default] rounded-md bg-[--af-bg-surface] overflow-x-auto">
                 {columns.map((column) => (
                   <button
                     key={column.id}
                     onClick={() => toggleStatusFilter(column.id)}
                     className={`px-2 py-1 text-xs rounded capitalize transition-colors whitespace-nowrap ${
                       filters.statuses.includes(column.id)
-                        ? "bg-black dark:bg-white text-white dark:text-black"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                        ? "bg-warm-900 dark:bg-[--af-bg-surface] text-white dark:text-foreground"
+                        : "bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-secondary]"
                     }`}
                   >
                     {column.label}
@@ -1754,10 +1754,10 @@ export default function WorkflowPage() {
 
         {/* View Toggle */}
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Projects</h2>
+          <h2 className="text-lg font-display font-bold">Projects</h2>
           <div className="flex items-center gap-3">
             {isAddingColumn ? (
-              <div className="flex items-center gap-2 border border-gray-200 dark:border-gray-800 rounded-lg p-1 bg-white dark:bg-black">
+              <div className="flex items-center gap-2 border border-[--af-border-default] rounded-lg p-1 bg-[--af-bg-surface]">
                 <Input
                   value={newColumnLabel}
                   onChange={(e) => setNewColumnLabel(e.target.value)}
@@ -1799,13 +1799,13 @@ export default function WorkflowPage() {
                 <span className="hidden sm:inline">Add column</span>
               </Button>
             )}
-            <div className="flex items-center gap-2 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-1">
+            <div className="flex items-center gap-2 bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-1">
               <button
                 onClick={() => setViewMode("board")}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm transition-colors ${
                   viewMode === "board"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                    ? "bg-warm-900 dark:bg-[--af-bg-surface] text-white dark:text-foreground"
+                    : "text-[--af-text-secondary] hover:text-foreground dark:hover:text-white"
                 }`}
               >
                 <LayoutGrid className="w-4 h-4" />
@@ -1815,8 +1815,8 @@ export default function WorkflowPage() {
                 onClick={() => setViewMode("list")}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm transition-colors ${
                   viewMode === "list"
-                    ? "bg-black dark:bg-white text-white dark:text-black"
-                    : "text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+                    ? "bg-warm-900 dark:bg-[--af-bg-surface] text-white dark:text-foreground"
+                    : "text-[--af-text-secondary] hover:text-foreground dark:hover:text-white"
                 }`}
               >
                 <List className="w-4 h-4" />
@@ -1824,10 +1824,10 @@ export default function WorkflowPage() {
               </button>
               {(viewMode === "board" || isFullScreen) && (
                 <>
-                  <div className="w-px h-5 bg-gray-200 dark:bg-gray-800" />
+                  <div className="w-px h-5 bg-[--af-bg-surface-alt] dark:bg-warm-800" />
                   <button
                     onClick={toggleFullScreen}
-                    className="flex items-center justify-center p-1.5 rounded text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    className="flex items-center justify-center p-1.5 rounded text-[--af-text-secondary] hover:text-foreground dark:hover:text-white hover:bg-[--af-bg-surface-alt] transition-colors"
                     title={isFullScreen ? "Exit full screen" : "View full screen"}
                   >
                     {isFullScreen ? (
@@ -1885,7 +1885,7 @@ export default function WorkflowPage() {
                                     {...provided.dragHandleProps}
                                     className="opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
                                   >
-                                    <GripVertical className="w-4 h-4 text-gray-400" />
+                                    <GripVertical className="w-4 h-4 text-[--af-text-muted]" />
                                   </div>
                                   {editingColumnId === column.id ? (
                                     <Input
@@ -1907,7 +1907,7 @@ export default function WorkflowPage() {
                                       {column.label}
                                     </button>
                                   )}
-                                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded-full">
+                                  <span className="text-xs text-[--af-text-muted] bg-[--af-bg-surface-alt] px-2 py-0.5 rounded-full">
                                     {getProjectsByStatus(column.id).length}
                                   </span>
                                 </div>
@@ -1918,10 +1918,10 @@ export default function WorkflowPage() {
                         <div
                           ref={provided.innerRef}
                           {...provided.droppableProps}
-                          className={`flex-1 space-y-3 p-3 rounded-xl border-2 border-dashed min-h-[200px] transition-colors ${
+                          className={`flex-1 space-y-3 p-3 rounded-card border-2 border-dashed min-h-[200px] transition-colors ${
                             snapshot.isDraggingOver
-                              ? "border-gray-400 dark:border-gray-600 bg-gray-50 dark:bg-gray-900"
-                              : "border-gray-200 dark:border-gray-800"
+                              ? "border-[--af-border-strong] dark:border-warm-600 bg-[--af-bg-surface-alt]"
+                              : "border-[--af-border-default]"
                           }`}
                         >
                           {getProjectsByStatus(column.id).map((project, index) => (
@@ -1931,14 +1931,14 @@ export default function WorkflowPage() {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  className={`p-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-black cursor-move transition-shadow ${
+                                  className={`p-4 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] cursor-move transition-shadow ${
                                     snapshot.isDragging ? "shadow-lg" : "hover:shadow-md"
                                   }`}
                                 >
                                   <div className="space-y-3">
                                     <div>
                                       <h4 
-                                        className="font-medium text-sm mb-1 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors"
+                                        className="font-medium text-sm mb-1 hover:text-[--af-info-text] cursor-pointer transition-colors"
                                         onClick={(e) => {
                                           e.stopPropagation()
                                           setSelectedProject(project)
@@ -1947,30 +1947,30 @@ export default function WorkflowPage() {
                                       >
                                         {project.title}
                                       </h4>
-                                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                                      <p className="text-xs text-[--af-text-secondary]">
                                         {project.client}
                                       </p>
                                     </div>
 
                                     <div className="flex items-center gap-2 text-xs">
-                                        <Calendar className="w-3 h-3 text-gray-400" />
-                                        <span className="text-gray-600 dark:text-gray-400">
+                                        <Calendar className="w-3 h-3 text-[--af-text-muted]" />
+                                        <span className="text-[--af-text-secondary]">
                                           {new Date(project.dueDate).toLocaleDateString()}
                                         </span>
                                       </div>
 
                                       <div className="flex -space-x-2 items-center">
                                         {[project.primaryOwner, project.secondaryOwner].filter(Boolean).map((owner, i) => (
-                                          <Avatar key={i} className="w-6 h-6 border-2 border-white dark:border-black flex-shrink-0">
+                                          <Avatar key={i} className="w-6 h-6 border-2 border-white dark:border-foreground flex-shrink-0">
                                             <AvatarImage src={owner!.avatar} alt="" />
-                                            <AvatarFallback className="text-[10px] bg-gray-200 dark:bg-gray-800">
+                                            <AvatarFallback className="text-[10px] bg-[--af-bg-surface-alt] dark:bg-warm-800">
                                               {owner!.name.split(/\s+/).map((s) => s[0]).join("").slice(0, 2).toUpperCase() || "?"}
                                             </AvatarFallback>
                                           </Avatar>
                                         ))}
                                       </div>
 
-                                    <div className="flex items-center gap-1 pt-2 border-t border-gray-100 dark:border-gray-900">
+                                    <div className="flex items-center gap-1 pt-2 border-t border-[--af-border-default]/50 dark:border-foreground">
                                       <Button variant="ghost" size="icon" className="h-7 w-7">
                                         <StickyNote className="w-3.5 h-3.5" />
                                       </Button>
@@ -1989,7 +1989,7 @@ export default function WorkflowPage() {
                                         variant="ghost"
                                         size="icon"
                                         className={`h-7 w-7 relative ${
-                                          hasActiveTimer(project.id) ? "text-green-600 dark:text-green-400" : ""
+                                          hasActiveTimer(project.id) ? "text-[--af-success-text]" : ""
                                         }`}
                                         onClick={(e) => {
                                           e.stopPropagation()
@@ -1998,7 +1998,7 @@ export default function WorkflowPage() {
                                       >
                                         <Clock className="w-3.5 h-3.5" />
                                         {hasActiveTimer(project.id) && (
-                                          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                                          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[--af-success-bg]0 rounded-full animate-pulse" />
                                         )}
                                       </Button>
                                       <Button
@@ -2050,15 +2050,15 @@ export default function WorkflowPage() {
               }}
             />
           ) : filteredProjects.length === 0 ? (
-            <div className="text-center py-12 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg">
-              <p className="text-gray-500 dark:text-gray-400">No projects match your filters.</p>
+            <div className="text-center py-12 bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg">
+              <p className="text-[--af-text-muted]">No projects match your filters.</p>
             </div>
           ) : (
             <div className="space-y-2">
               {filteredProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
                   onClick={() => {
                     setSelectedProject(project)
                     setIsProjectDetailModalOpen(true)
@@ -2068,23 +2068,23 @@ export default function WorkflowPage() {
                     {/* Project Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold text-base truncate hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{project.title}</h3>
+                        <h3 className="font-semibold text-base truncate hover:text-[--af-info-text] transition-colors">{project.title}</h3>
                         <Badge className={getColumnColor(project.status)}>
                           {getColumnLabel(project.status)}
                         </Badge>
                         {project.priority === "high" && (
-                          <Badge className="bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20">
+                          <Badge className="bg-[--af-danger-bg]0/10 text-[--af-danger-text] border-[--af-danger-border]/20">
                             High Priority
                           </Badge>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{project.client}</p>
+                      <p className="text-sm text-[--af-text-secondary]">{project.client}</p>
                     </div>
 
                     {/* Due Date */}
                     <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="w-4 h-4 text-gray-400" />
-                      <span className="text-gray-600 dark:text-gray-400">
+                      <Calendar className="w-4 h-4 text-[--af-text-muted]" />
+                      <span className="text-[--af-text-secondary]">
                         {new Date(project.dueDate).toLocaleDateString()}
                       </span>
                     </div>
@@ -2092,9 +2092,9 @@ export default function WorkflowPage() {
                     {/* Owner & sub-owner */}
                     <div className="flex -space-x-2 items-center">
                       {[project.primaryOwner, project.secondaryOwner].filter(Boolean).map((owner, i) => (
-                        <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-black flex-shrink-0">
+                        <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-foreground flex-shrink-0">
                           <AvatarImage src={owner!.avatar} alt="" />
-                          <AvatarFallback className="text-[10px] bg-gray-200 dark:bg-gray-800">
+                          <AvatarFallback className="text-[10px] bg-[--af-bg-surface-alt] dark:bg-warm-800">
                             {owner!.name.split(/\s+/).map((s) => s[0]).join("").slice(0, 2).toUpperCase() || "?"}
                           </AvatarFallback>
                         </Avatar>
@@ -2133,7 +2133,7 @@ export default function WorkflowPage() {
                         variant="ghost"
                         size="icon"
                         className={`h-8 w-8 relative ${
-                          hasActiveTimer(project.id) ? "text-green-600 dark:text-green-400" : ""
+                          hasActiveTimer(project.id) ? "text-[--af-success-text]" : ""
                         }`}
                         onClick={(e) => {
                           e.stopPropagation()
@@ -2142,7 +2142,7 @@ export default function WorkflowPage() {
                       >
                         <Clock className="w-4 h-4" />
                         {hasActiveTimer(project.id) && (
-                          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                          <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[--af-success-bg]0 rounded-full animate-pulse" />
                         )}
                       </Button>
                       <Button
@@ -2169,7 +2169,7 @@ export default function WorkflowPage() {
         {/* Floating Action Button */}
       <button
         onClick={() => setIsNewProjectOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-black dark:bg-white text-white dark:text-black rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center z-50"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-warm-900 dark:bg-[--af-bg-surface] text-white dark:text-foreground rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center z-50"
       >
         <Plus className="w-6 h-6" />
       </button>
@@ -2219,7 +2219,7 @@ export default function WorkflowPage() {
           </DialogHeader>
           <div className="py-4">
             {createError && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-600 dark:text-red-400 mb-4">
+              <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3 text-sm text-[--af-danger-text] mb-4">
                 {createError}
               </div>
             )}
@@ -2242,7 +2242,7 @@ export default function WorkflowPage() {
                     placeholder="Enter project name"
                     value={newProject.title}
                     onChange={(e) => setNewProject(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -2302,7 +2302,7 @@ export default function WorkflowPage() {
                     value={newProject.description}
                     onChange={(e) => setNewProject(prev => ({ ...prev, description: e.target.value }))}
                     rows={4}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 resize-none"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
                   />
                 </div>
               </TabsContent>
@@ -2311,7 +2311,7 @@ export default function WorkflowPage() {
               <TabsContent value="client" className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Client</label>
-                  <p className="text-xs text-gray-500">Search for an existing client or create a new one.</p>
+                  <p className="text-xs text-[--af-text-muted]">Search for an existing client or create a new one.</p>
                   <ClientSelect
                     value={{ clientId: newProject.clientId, displayName: newProject.client }}
                     onChange={({ clientId, displayName }) =>
@@ -2352,7 +2352,7 @@ export default function WorkflowPage() {
                     placeholder="What are they interested in?"
                     value={newProject.interest}
                     onChange={(e) => setNewProject(prev => ({ ...prev, interest: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -2363,14 +2363,14 @@ export default function WorkflowPage() {
                         key={temp}
                         type="button"
                         onClick={() => setNewProject(prev => ({ ...prev, temperature: prev.temperature === temp ? "" : temp }))}
-                        className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium capitalize transition-colors ${
+                        className={`flex-1 py-2 px-4 rounded-card border text-sm font-medium capitalize transition-colors ${
                           newProject.temperature === temp
                             ? temp === "cold"
-                              ? "border-blue-500 bg-blue-500/10 text-blue-600"
+                              ? "border-[--af-info-border] bg-[--af-info-bg]0/10 text-[--af-info-text]"
                               : temp === "warm"
-                                ? "border-yellow-500 bg-yellow-500/10 text-yellow-600"
-                                : "border-red-500 bg-red-500/10 text-red-600"
-                            : "border-gray-200 dark:border-gray-800 text-gray-500"
+                                ? "border-[--af-warning-border] bg-[--af-warning-bg]0/10 text-[--af-warning-text]"
+                                : "border-[--af-danger-border] bg-[--af-danger-bg]0/10 text-[--af-danger-text]"
+                            : "border-[--af-border-default] text-[--af-text-muted]"
                         }`}
                       >
                         {temp}
@@ -2385,7 +2385,7 @@ export default function WorkflowPage() {
                     value={newProject.painPoints}
                     onChange={(e) => setNewProject(prev => ({ ...prev, painPoints: e.target.value }))}
                     rows={3}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 resize-none"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -2396,7 +2396,7 @@ export default function WorkflowPage() {
                       placeholder="Acme Corp"
                       value={newProject.companyName}
                       onChange={(e) => setNewProject(prev => ({ ...prev, companyName: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                   <div className="space-y-2">
@@ -2406,7 +2406,7 @@ export default function WorkflowPage() {
                       placeholder="Real Estate, Construction..."
                       value={newProject.industry}
                       onChange={(e) => setNewProject(prev => ({ ...prev, industry: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                 </div>
@@ -2418,7 +2418,7 @@ export default function WorkflowPage() {
                       placeholder="City, State"
                       value={newProject.location}
                       onChange={(e) => setNewProject(prev => ({ ...prev, location: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                   <div className="space-y-2">
@@ -2448,7 +2448,7 @@ export default function WorkflowPage() {
                     value={newProject.notes}
                     onChange={(e) => setNewProject(prev => ({ ...prev, notes: e.target.value }))}
                     rows={3}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 resize-none"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
                   />
                 </div>
               </TabsContent>
@@ -2462,7 +2462,7 @@ export default function WorkflowPage() {
                       type="date"
                       value={newProject.startDate}
                       onChange={(e) => setNewProject(prev => ({ ...prev, startDate: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                   <div className="space-y-2">
@@ -2471,7 +2471,7 @@ export default function WorkflowPage() {
                       type="date"
                       value={newProject.dueDate}
                       onChange={(e) => setNewProject(prev => ({ ...prev, dueDate: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                 </div>
@@ -2481,19 +2481,19 @@ export default function WorkflowPage() {
                     type="date"
                     value={newProject.expectedCompletion}
                     onChange={(e) => setNewProject(prev => ({ ...prev, expectedCompletion: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Budget</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[--af-text-muted]">$</span>
                     <input
                       type="number"
                       placeholder="0.00"
                       value={newProject.budget}
                       onChange={(e) => setNewProject(prev => ({ ...prev, budget: e.target.value }))}
-                      className="w-full pl-7 pr-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                      className="w-full pl-7 pr-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                       step="0.01"
                       min="0"
                     />
@@ -2501,7 +2501,7 @@ export default function WorkflowPage() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Initial Tasks (Optional)</label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Add tasks that need to be done for this project</p>
+                  <p className="text-xs text-[--af-text-muted] mb-2">Add tasks that need to be done for this project</p>
                   {initialTasks.map((task, index) => (
                     <div key={index} className="flex gap-2">
                       <input
@@ -2513,7 +2513,7 @@ export default function WorkflowPage() {
                           newTasks[index].title = e.target.value
                           setInitialTasks(newTasks)
                         }}
-                        className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                        className="flex-1 px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                       />
                       <Button
                         type="button"
@@ -2541,20 +2541,20 @@ export default function WorkflowPage() {
               <TabsContent value="team" className="space-y-4 mt-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Team Members (Optional)</label>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Select team members to assign to this project</p>
+                  <p className="text-xs text-[--af-text-muted] mb-2">Select team members to assign to this project</p>
                   
                   {loadingWorkspaceUsers ? (
-                    <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-center text-sm text-gray-500">
+                    <div className="border border-[--af-border-default] rounded-lg p-4 text-center text-sm text-[--af-text-muted]">
                       Loading team members...
                     </div>
                   ) : workspaceUsers.length === 0 ? (
-                    <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-center text-sm text-gray-500">
+                    <div className="border border-[--af-border-default] rounded-lg p-4 text-center text-sm text-[--af-text-muted]">
                       No team members found in this workspace
                     </div>
                   ) : (
-                    <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 space-y-3 max-h-60 overflow-y-auto">
+                    <div className="border border-[--af-border-default] rounded-lg p-4 space-y-3 max-h-60 overflow-y-auto">
                       {workspaceUsers.map((user) => (
-                        <label key={user.id} className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50 p-2 rounded-lg transition-colors">
+                        <label key={user.id} className="flex items-center gap-3 cursor-pointer hover:bg-[--af-bg-canvas] dark:hover:bg-warm-800/50 p-2 rounded-lg transition-colors">
                           <input
                             type="checkbox"
                             checked={selectedTeamMembers.includes(user.id)}
@@ -2565,11 +2565,11 @@ export default function WorkflowPage() {
                                 setSelectedTeamMembers(selectedTeamMembers.filter(id => id !== user.id))
                               }
                             }}
-                            className="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                            className="w-4 h-4 rounded border-[--af-border-default] dark:border-warm-600 text-[--af-info-text] focus:ring-2 focus:ring-blue-500"
                           />
                           <div className="flex-1">
                             <div className="text-sm font-medium">{user.name}</div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">{user.email}</div>
+                            <div className="text-xs text-[--af-text-muted]">{user.email}</div>
                           </div>
                         </label>
                       ))}
@@ -2577,7 +2577,7 @@ export default function WorkflowPage() {
                   )}
                   
                   {selectedTeamMembers.length > 0 && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    <div className="text-xs text-[--af-text-muted] mt-2">
                       {selectedTeamMembers.length} team member{selectedTeamMembers.length !== 1 ? 's' : ''} selected
                     </div>
                   )}
@@ -2619,7 +2619,7 @@ export default function WorkflowPage() {
 
             {/* Timer Tab */}
             <TabsContent value="timer" className="space-y-4 mt-4">
-              <div className="flex flex-col items-center justify-center py-8 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <div className="flex flex-col items-center justify-center py-8 bg-[--af-bg-surface-alt] rounded-lg">
                 <div className="text-5xl font-mono font-semibold mb-6">
                   {activeTimer ? formatTimerDisplay(activeTimer.elapsed) : "00:00:00"}
                 </div>
@@ -2752,10 +2752,10 @@ export default function WorkflowPage() {
 
           {/* Time Entries List */}
           {timeTrackingModal.projectId && (
-            <div className="mt-6 border-t border-gray-200 dark:border-gray-800 pt-6">
+            <div className="mt-6 border-t border-[--af-border-default] pt-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold">Time Entries</h3>
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-[--af-text-secondary]">
                   Total: {formatDuration(getTotalTimeForProject(timeTrackingModal.projectId))}
                 </span>
               </div>
@@ -2767,23 +2767,23 @@ export default function WorkflowPage() {
                   .map((entry) => (
                     <div
                       key={entry.id}
-                      className="p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
+                      className="p-3 bg-[--af-bg-surface-alt] rounded-card border border-[--af-border-default]"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium text-sm">{entry.userName}</span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-[--af-text-muted]">
                               {new Date(entry.date).toLocaleDateString()}
                             </span>
                             {entry.billable && (
-                              <Badge className="text-xs bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+                              <Badge className="text-xs bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20">
                                 Billable
                               </Badge>
                             )}
                           </div>
                           {entry.notes && (
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{entry.notes}</p>
+                            <p className="text-sm text-[--af-text-secondary]">{entry.notes}</p>
                           )}
                         </div>
                         <span className="font-semibold text-sm ml-4">
@@ -2794,7 +2794,7 @@ export default function WorkflowPage() {
                   ))}
 
                 {projects.find((p) => p.id === timeTrackingModal.projectId)?.timeEntries.length === 0 && (
-                  <p className="text-center text-sm text-gray-500 py-4">
+                  <p className="text-center text-sm text-[--af-text-muted] py-4">
                     No time entries yet. Start tracking time to see entries here.
                   </p>
                 )}
@@ -2824,7 +2824,7 @@ export default function WorkflowPage() {
 
           <div className="space-y-6 py-4">
             {/* Upload Area */}
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center hover:border-gray-400 dark:hover:border-gray-600 transition-colors">
+            <div className="border-2 border-dashed border-[--af-border-default] dark:border-warm-700 rounded-lg p-8 text-center hover:border-[--af-border-strong] dark:hover:border-warm-600 transition-colors">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -2834,9 +2834,9 @@ export default function WorkflowPage() {
                 id="file-upload"
               />
               <label htmlFor="file-upload" className="cursor-pointer">
-                <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <Upload className="w-12 h-12 mx-auto mb-4 text-[--af-text-muted]" />
                 <p className="text-sm font-medium mb-1">Click to upload or drag and drop</p>
-                <p className="text-xs text-gray-500">Any file type, up to 50MB each</p>
+                <p className="text-xs text-[--af-text-muted]">Any file type, up to 50MB each</p>
               </label>
             </div>
 
@@ -2853,15 +2853,15 @@ export default function WorkflowPage() {
                     .map((file) => (
                       <div
                         key={file.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
+                        className="flex items-center justify-between p-3 bg-[--af-bg-surface-alt] rounded-card border border-[--af-border-default]"
                       >
                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded flex items-center justify-center flex-shrink-0">
-                            <File className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                          <div className="w-10 h-10 bg-[--af-bg-surface] dark:bg-warm-800 rounded flex items-center justify-center flex-shrink-0">
+                            <File className="w-5 h-5 text-[--af-text-secondary]" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{file.name}</p>
-                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <div className="flex items-center gap-2 text-xs text-[--af-text-muted]">
                               <span>{formatFileSize(file.size)}</span>
                               <span>•</span>
                               <span>{file.uploadedBy}</span>
@@ -2873,7 +2873,7 @@ export default function WorkflowPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                          className="h-8 w-8 text-[--af-danger-text] hover:text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                           onClick={() => fileUploadModal.projectId && deleteFile(fileUploadModal.projectId, file.id)}
                         >
                           <Trash2 className="w-4 h-4" />
@@ -2882,7 +2882,7 @@ export default function WorkflowPage() {
                     ))}
 
                   {projects.find((p) => p.id === fileUploadModal.projectId)?.files.length === 0 && (
-                    <p className="text-center text-sm text-gray-500 py-8">
+                    <p className="text-center text-sm text-[--af-text-muted] py-8">
                       No files uploaded yet. Upload your first file above.
                     </p>
                   )}
@@ -2913,11 +2913,11 @@ export default function WorkflowPage() {
           {selectedProject && (
             <>
               {/* Modal Header */}
-              <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+              <div className="p-4 border-b border-[--af-border-default]">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
-                    <h2 className="text-xl font-semibold">{selectedProject.title}</h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <h2 className="text-xl font-display font-bold tracking-tight">{selectedProject.title}</h2>
+                    <p className="text-sm text-[--af-text-secondary] mt-1">
                       {selectedProject.client}
                     </p>
                   </div>
@@ -2987,7 +2987,7 @@ export default function WorkflowPage() {
               </div>
 
               {/* Modal Content - Full Project Detail */}
-              <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-950">
+              <div className="flex-1 overflow-y-auto bg-[--af-bg-canvas] dark:bg-warm-950">
                 <ProjectDetailContent projectId={selectedProject.id} />
               </div>
             </>

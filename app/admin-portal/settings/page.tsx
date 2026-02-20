@@ -87,21 +87,21 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6 max-w-lg">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <h1 className="text-2xl font-display font-bold tracking-tight">Settings</h1>
 
       {message && (
-        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/30 rounded-lg p-3">
-          <p className="text-sm text-green-600 dark:text-green-400">{message}</p>
+        <div className="bg-[--af-success-bg] border border-[--af-success-border] rounded-lg p-3">
+          <p className="text-sm text-[--af-success-text]">{message}</p>
         </div>
       )}
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3">
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3">
+          <p className="text-sm text-[--af-danger-text]">{error}</p>
         </div>
       )}
 
       {/* Update Email */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-6">
         <h2 className="text-base font-semibold mb-4">Update Email</h2>
         <form onSubmit={handleUpdateEmail} className="space-y-4">
           <div>
@@ -125,7 +125,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Update Password */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-6">
         <h2 className="text-base font-semibold mb-4">Update Password</h2>
         <form onSubmit={handleUpdatePassword} className="space-y-4">
           <div>

@@ -101,7 +101,7 @@ export function RecordPaymentModal({
           <div className="space-y-2">
             <label className="text-sm font-medium">Payment Method</label>
             <select
-              className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950"
+              className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-950"
               value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
             >

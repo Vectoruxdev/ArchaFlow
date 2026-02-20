@@ -10,7 +10,7 @@ const steps = [
     description:
       "Create projects, define phases, set milestones, and invite your team. ArchaFlow adapts to your firm's workflow — not the other way around.",
     accent: "border-white/30",
-    accentDot: "bg-white",
+    accentDot: "bg-[--af-bg-surface]",
     icon: FolderPlus,
     details: [
       "Create projects with custom phases",
@@ -53,12 +53,12 @@ export function WorkflowTimeline() {
     <section id="workflow" className="py-24 px-4 scroll-mt-20">
       <div className="max-w-5xl mx-auto">
         <ScrollAnimation className="text-center mb-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[--af-text-muted] mb-4">
             How It Works
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-white">
             Three steps to{" "}
-            <span className="text-gray-500">project clarity</span>
+            <span className="text-[--af-text-muted]">project clarity</span>
           </h2>
         </ScrollAnimation>
 
@@ -73,7 +73,7 @@ export function WorkflowTimeline() {
                   {/* Step indicator */}
                   <div className="relative flex-shrink-0">
                     <div
-                      className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl border ${step.accent} bg-white/[0.02] flex items-center justify-center`}
+                      className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl border ${step.accent} bg-[--af-bg-surface]/[0.02] flex items-center justify-center`}
                     >
                       <span className="text-lg md:text-xl font-bold text-white/60">
                         {step.number}
@@ -87,19 +87,19 @@ export function WorkflowTimeline() {
                   {/* Content */}
                   <div className="flex-1 pb-6">
                     <div className="flex items-center gap-3 mb-2">
-                      <step.icon className="w-4 h-4 text-gray-500" />
-                      <h3 className="text-xl md:text-2xl font-semibold text-white">
+                      <step.icon className="w-4 h-4 text-[--af-text-muted]" />
+                      <h3 className="text-xl md:text-2xl font-display font-bold tracking-tight text-white">
                         {step.title}
                       </h3>
                     </div>
-                    <p className="text-gray-400 leading-relaxed max-w-xl">
+                    <p className="text-[--af-text-muted] leading-relaxed max-w-xl">
                       {step.description}
                     </p>
                     <ul className="mt-4 space-y-2">
                       {step.details.map((detail) => (
                         <li
                           key={detail}
-                          className="flex items-center gap-2 text-sm text-gray-500"
+                          className="flex items-center gap-2 text-sm text-[--af-text-muted]"
                         >
                           <div className={`w-1 h-1 rounded-full ${step.accentDot}`} />
                           {detail}

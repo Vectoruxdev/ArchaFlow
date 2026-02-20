@@ -65,8 +65,8 @@ export function BusinessDetailTabs({ business, onRefresh }: BusinessDetailTabsPr
 function OverviewTab({ business }: { business: BusinessDetailData }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 space-y-4">
-        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-6 space-y-4">
+        <h3 className="text-sm font-medium text-[--af-text-muted]">
           Business Info
         </h3>
         <InfoRow label="Name" value={business.name} />
@@ -91,8 +91,8 @@ function OverviewTab({ business }: { business: BusinessDetailData }) {
         )}
       </div>
 
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 space-y-4">
-        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-6 space-y-4">
+        <h3 className="text-sm font-medium text-[--af-text-muted]">
           Usage
         </h3>
         <InfoRow label="Members" value={business.memberCount} />
@@ -123,27 +123,27 @@ function MembersTab({ businessId }: { businessId: string }) {
   }, [businessId])
 
   if (loading) {
-    return <div className="py-8 text-center text-gray-500">Loading members...</div>
+    return <div className="py-8 text-center text-[--af-text-muted]">Loading members...</div>
   }
 
   return (
-    <div className="mt-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+    <div className="mt-4 bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg overflow-hidden">
       <table className="w-full">
         <thead>
-          <tr className="border-b border-gray-200 dark:border-gray-800">
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+          <tr className="border-b border-[--af-border-default]">
+            <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
               Email
             </th>
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+            <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
               Name
             </th>
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+            <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
               Role
             </th>
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+            <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
               Position
             </th>
-            <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+            <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
               Joined
             </th>
           </tr>
@@ -152,17 +152,17 @@ function MembersTab({ businessId }: { businessId: string }) {
           {members.map((m) => (
             <tr
               key={m.userId}
-              className="border-b border-gray-100 dark:border-gray-800/50 last:border-0"
+              className="border-b border-[--af-border-default]/50 dark:border-warm-800/50 last:border-0"
             >
               <td className="px-6 py-3 text-sm">{m.email}</td>
               <td className="px-6 py-3 text-sm">{m.fullName || "—"}</td>
               <td className="px-6 py-3">
                 <Badge variant="secondary">{m.roleName}</Badge>
               </td>
-              <td className="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
+              <td className="px-6 py-3 text-sm text-[--af-text-secondary]">
                 {m.position || "—"}
               </td>
-              <td className="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
+              <td className="px-6 py-3 text-sm text-[--af-text-secondary]">
                 {new Date(m.assignedAt).toLocaleDateString()}
               </td>
             </tr>
@@ -171,7 +171,7 @@ function MembersTab({ businessId }: { businessId: string }) {
             <tr>
               <td
                 colSpan={5}
-                className="px-6 py-8 text-center text-sm text-gray-500"
+                className="px-6 py-8 text-center text-sm text-[--af-text-muted]"
               >
                 No members found
               </td>
@@ -271,8 +271,8 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
   return (
     <div className="mt-4 space-y-4">
       {/* Billing Details Card */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 space-y-4">
-        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-6 space-y-4">
+        <h3 className="text-sm font-medium text-[--af-text-muted]">
           Billing Details
         </h3>
         <InfoRow
@@ -312,9 +312,9 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
 
         {/* Active Discount Display */}
         {activeDiscount && (
-          <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800/30">
+          <div className="flex items-center justify-between p-3 rounded-lg bg-[--af-success-bg] border border-[--af-success-border]">
             <div>
-              <p className="text-sm font-medium text-green-700 dark:text-green-400">
+              <p className="text-sm font-medium text-[--af-success-text]">
                 Active Discount:{" "}
                 {activeDiscount.discountType === "percentage"
                   ? `${activeDiscount.discountValue}% off`
@@ -325,7 +325,7 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
                   : ""}
                 )
               </p>
-              <p className="text-xs text-green-600 dark:text-green-500">
+              <p className="text-xs text-[--af-success-text] dark:text-[--af-success-text]">
                 Effective price: ${activeDiscount.effectivePrice}/mo
               </p>
             </div>
@@ -334,7 +334,7 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
               size="sm"
               onClick={handleRemoveDiscount}
               disabled={removingDiscount}
-              className="text-red-600 hover:text-red-700"
+              className="text-[--af-danger-text] hover:text-[--af-danger-text]"
             >
               <X className="h-4 w-4 mr-1" />
               {removingDiscount ? "Removing..." : "Remove"}
@@ -358,7 +358,7 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
               size="sm"
               onClick={handleRemoveComp}
               disabled={removingComp}
-              className="text-red-600 hover:text-red-700"
+              className="text-[--af-danger-text] hover:text-[--af-danger-text]"
             >
               <X className="h-4 w-4 mr-1" />
               {removingComp ? "Removing..." : "Remove Comp"}
@@ -367,8 +367,8 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
         )}
 
         {/* Stripe Links */}
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-800 space-y-3">
-          <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+        <div className="pt-4 border-t border-[--af-border-default] space-y-3">
+          <h4 className="text-sm font-medium text-[--af-text-muted]">
             Stripe Links
           </h4>
           {business.stripeCustomerId ? (
@@ -376,13 +376,13 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
               href={`${stripeBaseUrl}/customers/${business.stripeCustomerId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="inline-flex items-center gap-2 text-sm text-[--af-info-text] hover:underline"
             >
               <ExternalLink className="h-3 w-3" />
               View Customer in Stripe
             </a>
           ) : (
-            <p className="text-sm text-gray-500">No Stripe customer ID</p>
+            <p className="text-sm text-[--af-text-muted]">No Stripe customer ID</p>
           )}
           {business.stripeSubscriptionId && (
             <div>
@@ -390,7 +390,7 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
                 href={`${stripeBaseUrl}/subscriptions/${business.stripeSubscriptionId}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                className="inline-flex items-center gap-2 text-sm text-[--af-info-text] hover:underline"
               >
                 <ExternalLink className="h-3 w-3" />
                 View Subscription in Stripe
@@ -401,8 +401,8 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
       </div>
 
       {/* Admin Actions Card */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 space-y-4">
-        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-6 space-y-4">
+        <h3 className="text-sm font-medium text-[--af-text-muted]">
           Admin Actions
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -435,30 +435,30 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
           </Button>
         </div>
         {isComped && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[--af-text-muted]">
             Some actions are disabled while the business is comped. Remove the comp first.
           </p>
         )}
         {!hasSubscription && !isComped && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[--af-text-muted]">
             Discount requires an active subscription. Use Comp Plan to grant features without payment.
           </p>
         )}
       </div>
 
       {/* Override History Card */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-          <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg overflow-hidden">
+        <div className="p-6 border-b border-[--af-border-default]">
+          <h3 className="text-sm font-medium text-[--af-text-muted]">
             Override History
           </h3>
         </div>
         {overridesLoading ? (
-          <div className="p-6 text-sm text-gray-500">Loading...</div>
+          <div className="p-6 text-sm text-[--af-text-muted]">Loading...</div>
         ) : overrideHistory.length === 0 ? (
-          <div className="p-6 text-sm text-gray-500">No billing overrides recorded</div>
+          <div className="p-6 text-sm text-[--af-text-muted]">No billing overrides recorded</div>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-gray-800/50">
+          <div className="divide-y divide-[--af-border-default]/50 dark:divide-warm-800/50">
             {overrideHistory.map((o) => (
               <div key={o.id} className="px-6 py-3">
                 <div className="flex items-center justify-between">
@@ -472,22 +472,22 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
                       )}
                     </div>
                     {o.reason && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                      <p className="text-xs text-[--af-text-muted] mt-0.5">
                         {o.reason}
                       </p>
                     )}
                     {o.details && Object.keys(o.details).length > 0 && (
-                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                      <p className="text-xs text-[--af-text-muted] dark:text-[--af-text-muted] mt-0.5">
                         {formatOverrideDetails(o.actionType, o.details)}
                       </p>
                     )}
                   </div>
                   <div className="text-right">
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-[--af-text-muted]">
                       {new Date(o.createdAt).toLocaleString()}
                     </div>
                     {o.performedByEmail && (
-                      <div className="text-xs text-gray-400 dark:text-gray-500">
+                      <div className="text-xs text-[--af-text-muted] dark:text-[--af-text-muted]">
                         {o.performedByEmail}
                       </div>
                     )}
@@ -589,15 +589,15 @@ function ActivityTab({
 
   return (
     <div className="mt-4 space-y-4">
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg overflow-hidden">
         {loading ? (
-          <div className="py-8 text-center text-gray-500">Loading activity...</div>
+          <div className="py-8 text-center text-[--af-text-muted]">Loading activity...</div>
         ) : activities.length === 0 ? (
-          <div className="py-8 text-center text-sm text-gray-500">
+          <div className="py-8 text-center text-sm text-[--af-text-muted]">
             No activity recorded
           </div>
         ) : (
-          <div className="divide-y divide-gray-100 dark:divide-gray-800/50">
+          <div className="divide-y divide-[--af-border-default]/50 dark:divide-warm-800/50">
             {activities.map((a) => (
               <div key={a.id} className="px-6 py-3">
                 <div className="flex items-center justify-between">
@@ -606,17 +606,17 @@ function ActivityTab({
                       {a.activityType.replace(/_/g, " ")}
                     </span>
                     {a.description && (
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                      <p className="text-sm text-[--af-text-secondary] mt-0.5">
                         {a.description}
                       </p>
                     )}
                   </div>
                   <div className="text-right">
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className="text-xs text-[--af-text-muted]">
                       {new Date(a.createdAt).toLocaleString()}
                     </div>
                     {a.performedByEmail && (
-                      <div className="text-xs text-gray-400 dark:text-gray-500">
+                      <div className="text-xs text-[--af-text-muted] dark:text-[--af-text-muted]">
                         {a.performedByEmail}
                       </div>
                     )}
@@ -630,7 +630,7 @@ function ActivityTab({
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-[--af-text-muted]">
             Page {page} of {totalPages} ({total} entries)
           </span>
           <div className="flex gap-2">
@@ -666,7 +666,7 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
+      <span className="text-sm text-[--af-text-muted]">{label}</span>
       <span className="text-sm font-medium">{value}</span>
     </div>
   )

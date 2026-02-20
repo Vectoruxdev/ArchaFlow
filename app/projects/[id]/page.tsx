@@ -38,10 +38,10 @@ interface ProjectHeader {
 }
 
 const statusColors = {
-  lead: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  sale: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-  design: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-  completed: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
+  lead: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
+  sale: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+  design: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+  completed: "bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20",
 }
 
 export default function ProjectDetailPage({ params }: { params: { id: string } }) {
@@ -145,9 +145,9 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
+        <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
           <div className="p-4 lg:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4 min-w-0 flex-1">
@@ -163,27 +163,27 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                   // Loading skeleton
                   <div>
                     <div className="flex items-center gap-3">
-                      <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-                      <div className="h-6 w-20 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
+                      <div className="h-8 w-48 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse" />
+                      <div className="h-6 w-20 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse" />
                     </div>
-                    <div className="h-4 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mt-2" />
+                    <div className="h-4 w-32 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse mt-2" />
                   </div>
                 ) : loadError ? (
                   // Error state
                   <div>
-                    <div className="text-red-600">Error loading project</div>
-                    <p className="text-sm text-gray-500 mt-1">{loadError}</p>
+                    <div className="text-[--af-danger-text]">Error loading project</div>
+                    <p className="text-sm text-[--af-text-muted] mt-1">{loadError}</p>
                   </div>
                 ) : projectData ? (
                   // Actual data
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h1 className="text-xl sm:text-2xl font-semibold truncate">{projectData.title}</h1>
+                      <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight truncate">{projectData.title}</h1>
                       <Badge className={`${statusColors[projectData.status as keyof typeof statusColors] || statusColors.lead} border shrink-0`}>
                         {projectData.status}
                       </Badge>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">{projectData.client.name}</p>
+                    <p className="text-sm text-[--af-text-muted] mt-1">{projectData.client.name}</p>
                   </div>
                 ) : null}
               </div>

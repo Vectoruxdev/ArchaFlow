@@ -49,16 +49,16 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas] dark:bg-warm-950">
       <div className="w-full max-w-sm">
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-8">
+        <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="h-10 w-10 rounded-lg bg-gray-900 dark:bg-white flex items-center justify-center">
-              <ShieldAlert className="h-5 w-5 text-white dark:text-gray-900" />
+            <div className="h-10 w-10 rounded-lg bg-warm-900 dark:bg-[--af-bg-surface] flex items-center justify-center">
+              <ShieldAlert className="h-5 w-5 text-white dark:text-foreground" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold">ArchaFlow Admin</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <h1 className="text-lg font-display font-bold">ArchaFlow Admin</h1>
+              <p className="text-sm text-[--af-text-muted]">
                 Super Admin Portal
               </p>
             </div>
@@ -66,8 +66,8 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3">
-                <p className="text-sm text-red-600 dark:text-red-400">
+              <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3">
+                <p className="text-sm text-[--af-danger-text]">
                   {error}
                 </p>
               </div>

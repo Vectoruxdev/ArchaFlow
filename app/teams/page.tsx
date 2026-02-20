@@ -128,9 +128,9 @@ const fallbackPositions = [
 
 const roleColors: Record<string, string> = {
   Owner: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  Admin: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  Editor: "bg-green-500/10 text-green-600 border-green-500/20",
-  Viewer: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+  Admin: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
+  Editor: "bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20",
+  Viewer: "bg-[--af-bg-canvas]0/10 text-[--af-text-muted] border-[--af-border-default]",
 }
 
 export default function TeamsPage() {
@@ -536,7 +536,7 @@ export default function TeamsPage() {
       <AppLayout>
         <div className="p-6">
           <div className="flex items-center justify-center py-20">
-            <div className="text-gray-500">Loading team...</div>
+            <div className="text-[--af-text-muted]">Loading team...</div>
           </div>
         </div>
       </AppLayout>
@@ -549,7 +549,7 @@ export default function TeamsPage() {
       <AppLayout>
         <div className="p-6">
           {loadError && (
-            <div className="mb-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-3 text-sm text-amber-800 dark:text-amber-200">
+            <div className="mb-4 rounded-card border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20 p-3 text-sm text-amber-800 dark:text-amber-200">
               {loadError}
             </div>
           )}
@@ -575,8 +575,8 @@ export default function TeamsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold">Team</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-display font-bold tracking-tight">Team</h1>
+            <p className="text-sm text-[--af-text-muted] mt-1">
               {members.length} member{members.length !== 1 ? "s" : ""}
               {pendingInvites.length > 0 && `, ${pendingInvites.length} pending`}
               {joinRequests.length > 0 && `, ${joinRequests.length} join request${joinRequests.length !== 1 ? "s" : ""}`}
@@ -592,9 +592,9 @@ export default function TeamsPage() {
 
         {/* Join Requests */}
         {isOwnerOrAdmin && joinRequests.length > 0 && (
-          <div className="border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/10 rounded-lg p-4">
+          <div className="border border-[--af-warning-border] bg-[--af-warning-bg] rounded-lg p-4">
             <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-              <UserPlus className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+              <UserPlus className="w-4 h-4 text-[--af-warning-text]" />
               Pending Join Requests ({joinRequests.length})
             </h2>
             <div className="space-y-2">
@@ -607,11 +607,11 @@ export default function TeamsPage() {
                 return (
                   <div
                     key={req.id}
-                    className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200 dark:border-gray-800"
+                    className="flex items-center gap-3 bg-[--af-bg-surface] dark:bg-warm-900 rounded-lg p-3 border border-[--af-border-default]"
                   >
                     <Avatar className="w-9 h-9">
                       <AvatarImage src={req.avatarUrl} />
-                      <AvatarFallback className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 text-xs">
+                      <AvatarFallback className="bg-[--af-warning-bg] text-[--af-warning-text] text-xs">
                         {initials}
                       </AvatarFallback>
                     </Avatar>
@@ -620,10 +620,10 @@ export default function TeamsPage() {
                         {req.fullName || req.email}
                       </p>
                       {req.fullName && (
-                        <p className="text-xs text-gray-500 truncate">{req.email}</p>
+                        <p className="text-xs text-[--af-text-muted] truncate">{req.email}</p>
                       )}
                       {req.message && (
-                        <p className="text-xs text-gray-400 mt-0.5 italic truncate">
+                        <p className="text-xs text-[--af-text-muted] mt-0.5 italic truncate">
                           &ldquo;{req.message}&rdquo;
                         </p>
                       )}
@@ -656,7 +656,7 @@ export default function TeamsPage() {
 
         {/* Search */}
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
           <Input
             placeholder="Search team members..."
             value={searchQuery}
@@ -666,7 +666,7 @@ export default function TeamsPage() {
         </div>
 
         {/* Table */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+        <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <Table>
             <TableHeader>
@@ -695,7 +695,7 @@ export default function TeamsPage() {
                         <div className="flex items-center gap-3">
                           <Avatar className="w-9 h-9">
                             <AvatarImage src={member.avatarUrl} />
-                            <AvatarFallback className="bg-gray-200 dark:bg-gray-800 text-xs">
+                            <AvatarFallback className="bg-[--af-bg-surface-alt] dark:bg-warm-800 text-xs">
                               {initials}
                             </AvatarFallback>
                           </Avatar>
@@ -703,14 +703,14 @@ export default function TeamsPage() {
                             <p className="font-medium text-sm">
                               {displayName}
                               {isCurrentUser && (
-                                <span className="text-xs text-gray-400 ml-1">(you)</span>
+                                <span className="text-xs text-[--af-text-muted] ml-1">(you)</span>
                               )}
                             </p>
-                            <p className="text-xs text-gray-400 sm:hidden">
+                            <p className="text-xs text-[--af-text-muted] sm:hidden">
                               {member.email || member.userId.substring(0, 12) + "..."}
                             </p>
                             {member.phone && (
-                              <p className="text-xs text-gray-400 flex items-center gap-1">
+                              <p className="text-xs text-[--af-text-muted] flex items-center gap-1">
                                 <Phone className="w-3 h-3" />
                                 {member.phone}
                               </p>
@@ -718,10 +718,10 @@ export default function TeamsPage() {
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell text-sm text-gray-600 dark:text-gray-400">
+                      <TableCell className="hidden sm:table-cell text-sm text-[--af-text-secondary]">
                         {member.email || member.userId.substring(0, 12) + "..."}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-sm text-gray-600 dark:text-gray-400">
+                      <TableCell className="hidden md:table-cell text-sm text-[--af-text-secondary]">
                         {member.position || "---"}
                       </TableCell>
                       <TableCell>
@@ -730,11 +730,11 @@ export default function TeamsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        <Badge className="bg-green-500/10 text-green-600 border-green-500/20 border text-xs">
+                        <Badge className="bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20 border text-xs">
                           Active
                         </Badge>
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm text-gray-500">
+                      <TableCell className="hidden lg:table-cell text-sm text-[--af-text-muted]">
                         {new Date(member.assignedAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
@@ -754,7 +754,7 @@ export default function TeamsPage() {
                                 <>
                                   <DropdownMenuSeparator />
                                   <DropdownMenuItem
-                                    className="text-red-600"
+                                    className="text-[--af-danger-text]"
                                     onClick={() =>
                                       setRemoveConfirm({
                                         type: "member",
@@ -779,22 +779,22 @@ export default function TeamsPage() {
                   const isExpired = new Date(invite.expiresAt) < new Date()
 
                   return (
-                    <TableRow key={`invite-${invite.id}`} className="bg-gray-50/50 dark:bg-gray-900/20">
+                    <TableRow key={`invite-${invite.id}`} className="bg-[--af-bg-canvas]/50 dark:bg-warm-900/20">
                       <TableCell>
                         <div className="flex items-center gap-3">
                           <Avatar className="w-9 h-9">
-                            <AvatarFallback className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 text-xs">
+                            <AvatarFallback className="bg-[--af-warning-bg] text-[--af-warning-text] text-xs">
                               <Mail className="w-4 h-4" />
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-medium text-sm text-gray-500">Invited User</p>
-                            <p className="text-xs text-gray-400 sm:hidden">{invite.email}</p>
+                            <p className="font-medium text-sm text-[--af-text-muted]">Invited User</p>
+                            <p className="text-xs text-[--af-text-muted] sm:hidden">{invite.email}</p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell text-sm">{invite.email}</TableCell>
-                      <TableCell className="hidden md:table-cell text-sm text-gray-600 dark:text-gray-400">
+                      <TableCell className="hidden md:table-cell text-sm text-[--af-text-secondary]">
                         {invite.position || "---"}
                       </TableCell>
                       <TableCell>
@@ -806,14 +806,14 @@ export default function TeamsPage() {
                         <Badge
                           className={`border text-xs ${
                             isExpired
-                              ? "bg-red-500/10 text-red-600 border-red-500/20"
-                              : "bg-yellow-500/10 text-yellow-600 border-yellow-500/20"
+                              ? "bg-[--af-danger-bg]0/10 text-[--af-danger-text] border-[--af-danger-border]/20"
+                              : "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20"
                           }`}
                         >
                           {isExpired ? "Expired" : "Pending"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm text-gray-500">
+                      <TableCell className="hidden lg:table-cell text-sm text-[--af-text-muted]">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {new Date(invite.createdAt).toLocaleDateString()}
@@ -834,7 +834,7 @@ export default function TeamsPage() {
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuItem
-                                className="text-red-600"
+                                className="text-[--af-danger-text]"
                                 onClick={() =>
                                   setRemoveConfirm({
                                     type: "invite",
@@ -856,7 +856,7 @@ export default function TeamsPage() {
               })}
               {allRows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-gray-400">
+                  <TableCell colSpan={7} className="text-center py-8 text-[--af-text-muted]">
                     {searchQuery ? "No team members match your search." : "No team members found."}
                   </TableCell>
                 </TableRow>
@@ -899,11 +899,11 @@ export default function TeamsPage() {
                     type="button"
                     onClick={() => setIsAvatarPickerOpen(true)}
                     disabled={avatarUploading}
-                    className="block rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 focus:ring-offset-2"
+                    className="block rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] focus:ring-offset-2"
                   >
                     <Avatar className="w-16 h-16 cursor-pointer hover:opacity-90 transition-opacity">
                       <AvatarImage src={editAvatarUrl} />
-                      <AvatarFallback className="bg-gray-200 dark:bg-gray-800 text-lg">
+                      <AvatarFallback className="bg-[--af-bg-surface-alt] dark:bg-warm-800 text-lg">
                         {`${editFirstName?.[0] || ""}${editLastName?.[0] || ""}`.toUpperCase() || "?"}
                       </AvatarFallback>
                     </Avatar>
@@ -912,7 +912,7 @@ export default function TeamsPage() {
                     type="button"
                     onClick={() => setIsAvatarPickerOpen(true)}
                     disabled={avatarUploading}
-                    className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center hover:opacity-90 disabled:opacity-50"
+                    className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-warm-900 dark:bg-[--af-bg-surface] text-white dark:text-foreground flex items-center justify-center hover:opacity-90 disabled:opacity-50"
                   >
                     {avatarUploading ? (
                       <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -921,7 +921,7 @@ export default function TeamsPage() {
                     )}
                   </button>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[--af-text-secondary]">
                   Click to change photo. Choose from presets or upload your own.
                 </p>
               </div>
@@ -984,14 +984,14 @@ export default function TeamsPage() {
                         ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[--af-text-muted]">
                     Changing the role will update this member&apos;s permissions.
                   </p>
                 </div>
               )}
             </div>
             <DialogFooter>
-              {editError && <p className="text-sm text-red-600 flex-1">{editError}</p>}
+              {editError && <p className="text-sm text-[--af-danger-text] flex-1">{editError}</p>}
               <Button variant="outline" onClick={() => setIsEditOpen(false)} disabled={isSavingEdit}>
                 Cancel
               </Button>
@@ -1111,12 +1111,12 @@ export default function TeamsPage() {
               />
             </div>
             {inviteError && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-600">
+              <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3 text-sm text-[--af-danger-text]">
                 {inviteError}
               </div>
             )}
             {inviteSuccess && (
-              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 text-sm text-green-600">
+              <div className="bg-[--af-success-bg] border border-[--af-success-border] rounded-lg p-3 text-sm text-[--af-success-text]">
                 {inviteSuccess}
               </div>
             )}

@@ -170,31 +170,31 @@ function AcceptInviteContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-xl p-8 text-center">
+    <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-900 flex items-center justify-center p-4">
+      <div className="max-w-md w-full bg-[--af-bg-surface] border border-[--af-border-default] rounded-xl p-8 text-center">
         {status === "loading" || status === "accepting" ? (
           <div className="space-y-4">
-            <Loader2 className="w-12 h-12 text-gray-400 animate-spin mx-auto" />
-            <h1 className="text-xl font-semibold">
+            <Loader2 className="w-12 h-12 text-[--af-text-muted] animate-spin mx-auto" />
+            <h1 className="text-xl font-display font-bold tracking-tight">
               {status === "loading" ? "Loading..." : "Accepting invitation..."}
             </h1>
-            <p className="text-sm text-gray-500">Please wait a moment.</p>
+            <p className="text-sm text-[--af-text-muted]">Please wait a moment.</p>
           </div>
         ) : status === "needs_auth" ? (
           <div className="space-y-6">
-            <LogIn className="w-12 h-12 text-gray-400 mx-auto" />
+            <LogIn className="w-12 h-12 text-[--af-text-muted] mx-auto" />
             {detailsLoading ? (
               <div className="space-y-2">
-                <Loader2 className="w-8 h-8 text-gray-400 animate-spin mx-auto" />
-                <p className="text-sm text-gray-500">Loading invitation...</p>
+                <Loader2 className="w-8 h-8 text-[--af-text-muted] animate-spin mx-auto" />
+                <p className="text-sm text-[--af-text-muted]">Loading invitation...</p>
               </div>
             ) : (
               <>
                 <div>
-                  <h1 className="text-xl font-semibold">
+                  <h1 className="text-xl font-display font-bold tracking-tight">
                     Join {workspaceName || "this workspace"}?
                   </h1>
-                  <p className="text-sm text-gray-500 mt-2">
+                  <p className="text-sm text-[--af-text-muted] mt-2">
                     Sign in or create an account with the invited email to accept.
                   </p>
                 </div>
@@ -214,16 +214,16 @@ function AcceptInviteContent() {
           </div>
         ) : status === "success" ? (
           <div className="space-y-4">
-            <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-            <h1 className="text-xl font-semibold">Invitation Accepted!</h1>
-            <p className="text-sm text-gray-500">{message}</p>
-            <p className="text-xs text-gray-400">Redirecting to Workflow...</p>
+            <CheckCircle2 className="w-12 h-12 text-[--af-success-text] mx-auto" />
+            <h1 className="text-xl font-display font-bold tracking-tight">Invitation Accepted!</h1>
+            <p className="text-sm text-[--af-text-muted]">{message}</p>
+            <p className="text-xs text-[--af-text-muted]">Redirecting to Workflow...</p>
           </div>
         ) : (
           <div className="space-y-4">
-            <XCircle className="w-12 h-12 text-red-500 mx-auto" />
-            <h1 className="text-xl font-semibold">Something went wrong</h1>
-            <p className="text-sm text-gray-500">{message}</p>
+            <XCircle className="w-12 h-12 text-[--af-danger-text] mx-auto" />
+            <h1 className="text-xl font-display font-bold tracking-tight">Something went wrong</h1>
+            <p className="text-sm text-[--af-text-muted]">{message}</p>
             <Button variant="outline" onClick={() => router.push("/workflow")}>
               Go to Workflow
             </Button>
@@ -238,8 +238,8 @@ export default function AcceptInvitePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-4">
-          <Loader2 className="w-10 h-10 text-gray-400 animate-spin" />
+        <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-900 flex items-center justify-center p-4">
+          <Loader2 className="w-10 h-10 text-[--af-text-muted] animate-spin" />
         </div>
       }
     >

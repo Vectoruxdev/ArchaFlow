@@ -40,12 +40,12 @@ export function FAQ() {
     <section id="faq" className="py-24 px-4 scroll-mt-20">
       <div className="max-w-3xl mx-auto">
         <ScrollAnimation className="text-center mb-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[--af-text-muted] mb-4">
             FAQ
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-white">
             Common{" "}
-            <span className="text-gray-500">questions</span>
+            <span className="text-[--af-text-muted]">questions</span>
           </h2>
         </ScrollAnimation>
 
@@ -62,7 +62,7 @@ export function FAQ() {
                   </span>
                   <ChevronDown
                     className={cn(
-                      "w-4 h-4 text-gray-500 flex-shrink-0 transition-transform duration-200",
+                      "w-4 h-4 text-[--af-text-muted] flex-shrink-0 transition-transform duration-200",
                       openIndex === i && "rotate-180"
                     )}
                   />
@@ -73,7 +73,7 @@ export function FAQ() {
                     openIndex === i ? "max-h-96" : "max-h-0"
                   )}
                 >
-                  <p className="px-6 pb-4 text-sm text-gray-400 leading-relaxed">
+                  <p className="px-6 pb-4 text-sm text-[--af-text-muted] leading-relaxed">
                     {faq.answer}
                   </p>
                 </div>

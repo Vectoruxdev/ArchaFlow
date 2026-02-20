@@ -396,7 +396,7 @@ export default function ClientsPage() {
       <AppLayout>
         <div className="p-6">
           <div className="flex items-center justify-center py-20">
-            <div className="text-gray-500">Loading clients...</div>
+            <div className="text-[--af-text-muted]">Loading clients...</div>
           </div>
         </div>
       </AppLayout>
@@ -437,8 +437,8 @@ export default function ClientsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold">Clients</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-display font-bold tracking-tight">Clients</h1>
+            <p className="text-sm text-[--af-text-muted] mt-1">
               {activeClients.length} active, {archivedClients.length} archived
             </p>
           </div>
@@ -450,7 +450,7 @@ export default function ClientsPage() {
 
         {/* Search */}
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
           <Input
             placeholder="Search clients..."
             value={searchQuery}
@@ -487,7 +487,7 @@ export default function ClientsPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[--af-text-muted]">
               Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
               {Math.min(currentPage * itemsPerPage, displayClients.length)} of{" "}
               {displayClients.length} clients
@@ -563,8 +563,8 @@ export default function ClientsPage() {
   function renderTable(clientsList: Client[], isArchived: boolean) {
     if (clientsList.length === 0) {
       return (
-        <div className="text-center py-12 border border-gray-200 dark:border-gray-800 rounded-lg">
-          <p className="text-gray-500 dark:text-gray-400">
+        <div className="text-center py-12 border border-[--af-border-default] rounded-lg">
+          <p className="text-[--af-text-muted]">
             {searchQuery
               ? "No clients found matching your search."
               : isArchived
@@ -576,7 +576,7 @@ export default function ClientsPage() {
     }
 
     return (
-      <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+      <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
           <TableHeader>
@@ -600,7 +600,7 @@ export default function ClientsPage() {
                 <TableCell className="font-medium">
                   <div>
                     <p>{client.firstName} {client.lastName}</p>
-                    <p className="text-xs text-gray-500 font-normal sm:hidden">
+                    <p className="text-xs text-[--af-text-muted] font-normal sm:hidden">
                       {client.email || client.phone || ""}
                     </p>
                   </div>
@@ -608,12 +608,12 @@ export default function ClientsPage() {
                 <TableCell>
                   <div className="space-y-1">
                     <p className="text-sm">{client.email || "—"}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-[--af-text-muted]">
                       {client.phone || ""}
                     </p>
                   </div>
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-gray-600 dark:text-gray-400">
+                <TableCell className="hidden md:table-cell text-sm text-[--af-text-secondary]">
                   {client.address || "—"}
                 </TableCell>
                 <TableCell className="hidden sm:table-cell text-center">
@@ -623,14 +623,14 @@ export default function ClientsPage() {
                   <Badge
                     className={
                       client.activeProjects > 0
-                        ? "bg-green-500/10 text-green-600 dark:text-green-400"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                        ? "bg-[--af-success-bg]0/10 text-[--af-success-text]"
+                        : "bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-secondary]"
                     }
                   >
                     {client.activeProjects}
                   </Badge>
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-gray-500">
+                <TableCell className="hidden md:table-cell text-sm text-[--af-text-muted]">
                   {new Date(client.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
@@ -685,7 +685,7 @@ export default function ClientsPage() {
                               e.stopPropagation()
                               unarchiveClient(client.id)
                             }}
-                            className="text-blue-600"
+                            className="text-[--af-info-text]"
                           >
                             <ArchiveRestore className="w-4 h-4 mr-2" />
                             Unarchive Client
@@ -695,7 +695,7 @@ export default function ClientsPage() {
                               e.stopPropagation()
                               setDeleteConfirm(client.id)
                             }}
-                            className="text-red-600"
+                            className="text-[--af-danger-text]"
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Delete Permanently

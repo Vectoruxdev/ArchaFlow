@@ -185,13 +185,13 @@ export function DiscountModal({
 
           {/* Effective price preview */}
           {value > 0 && (
-            <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+            <div className="p-3 rounded-lg bg-[--af-bg-surface-alt] border border-[--af-border-default]">
               <p className="text-sm">
-                <span className="text-gray-500">Effective price: </span>
+                <span className="text-[--af-text-muted]">Effective price: </span>
                 <span className="font-medium">
                   {config.name} (${config.basePrice}/mo){" "}
                   {discountType === "percentage" ? `- ${value}%` : `- $${value}`}{" "}
-                  = <span className="text-green-600 dark:text-green-400">${effectivePrice.toFixed(2)}/mo</span>
+                  = <span className="text-[--af-success-text]">${effectivePrice.toFixed(2)}/mo</span>
                 </span>
               </p>
             </div>

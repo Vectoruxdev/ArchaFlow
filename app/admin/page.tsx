@@ -79,11 +79,11 @@ export default function AdminPage() {
       <AppLayout>
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-6">
           <div className="text-center max-w-md">
-            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-red-600 dark:text-red-400" />
+            <div className="w-16 h-16 bg-[--af-danger-bg]  rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-8 h-8 text-[--af-danger-text]" />
             </div>
-            <h2 className="text-2xl font-semibold mb-2">Access Denied</h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <h2 className="text-2xl font-display font-bold tracking-tight mb-2">Access Denied</h2>
+            <p className="text-[--af-text-secondary]">
               You don't have permission to access team management.
             </p>
           </div>
@@ -125,16 +125,16 @@ export default function AdminPage() {
       <div className="p-6 space-y-6">
         {/* Header */}
         <div>
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+          <div className="flex items-center gap-2 text-sm text-[--af-text-muted] mb-2">
             <span>Workflow</span>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-gray-900 dark:text-gray-100">Team Management</span>
+            <span className="text-foreground">Team Management</span>
           </div>
-          <h1 className="text-2xl font-semibold flex items-center gap-2">
+          <h1 className="text-2xl font-display font-bold tracking-tight flex items-center gap-2">
             <Shield className="w-6 h-6" />
             Team Management
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-[--af-text-muted] mt-1">
             Manage users, integrations, and system settings
           </p>
         </div>
@@ -162,7 +162,7 @@ export default function AdminPage() {
 
           {/* Users Tab */}
           <TabsContent value="users" className="space-y-4">
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+            <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -199,12 +199,12 @@ export default function AdminPage() {
                           onClick={() => handleStatusToggle(user.id)}
                           className={`relative w-11 h-6 rounded-full transition-colors ${
                             user.status === "active"
-                              ? "bg-green-500"
-                              : "bg-gray-300 dark:bg-gray-700"
+                              ? "bg-[--af-success-bg]0"
+                              : "bg-warm-300 dark:bg-warm-700"
                           }`}
                         >
                           <div
-                            className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-transform ${
+                            className={`absolute top-0.5 w-5 h-5 rounded-full bg-[--af-bg-surface] transition-transform ${
                               user.status === "active"
                                 ? "translate-x-5"
                                 : "translate-x-0.5"
@@ -212,7 +212,7 @@ export default function AdminPage() {
                           />
                         </button>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-500">
+                      <TableCell className="text-sm text-[--af-text-muted]">
                         {user.lastLogin}
                       </TableCell>
                       <TableCell>
@@ -229,7 +229,7 @@ export default function AdminPage() {
                             size="icon"
                             onClick={() => setDeleteConfirm(user.id)}
                           >
-                            <Trash2 className="w-4 h-4 text-red-600" />
+                            <Trash2 className="w-4 h-4 text-[--af-danger-text]" />
                           </Button>
                         </div>
                       </TableCell>
@@ -242,7 +242,7 @@ export default function AdminPage() {
 
           {/* Invite Users Tab */}
           <TabsContent value="invite" className="space-y-4">
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-6 max-w-2xl">
+            <div className="border border-[--af-border-default] rounded-lg p-6 max-w-2xl">
               <h3 className="font-semibold mb-4">Invite Team Members</h3>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -253,7 +253,7 @@ export default function AdminPage() {
                     onChange={(e) => setInviteEmails(e.target.value)}
                     className="min-h-[100px]"
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[--af-text-muted]">
                     Separate multiple emails with commas or new lines
                   </p>
                 </div>
@@ -307,17 +307,17 @@ export default function AdminPage() {
           <TabsContent value="settings" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Company Branding */}
-              <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+              <div className="border border-[--af-border-default] rounded-lg p-6">
                 <h3 className="font-semibold mb-4">Company Branding</h3>
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Company Logo</label>
-                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 text-center">
-                      <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    <div className="border-2 border-dashed border-[--af-border-default] dark:border-warm-700 rounded-lg p-8 text-center">
+                      <Upload className="w-8 h-8 mx-auto mb-2 text-[--af-text-muted]" />
+                      <p className="text-sm text-[--af-text-secondary] mb-2">
                         Click to upload or drag and drop
                       </p>
-                      <p className="text-xs text-gray-500">PNG, JPG up to 2MB</p>
+                      <p className="text-xs text-[--af-text-muted]">PNG, JPG up to 2MB</p>
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -328,7 +328,7 @@ export default function AdminPage() {
               </div>
 
               {/* Notification Preferences */}
-              <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+              <div className="border border-[--af-border-default] rounded-lg p-6">
                 <h3 className="font-semibold mb-4">Notification Preferences</h3>
                 <div className="space-y-3">
                   {[
@@ -339,8 +339,8 @@ export default function AdminPage() {
                   ].map((pref) => (
                     <div key={pref} className="flex items-center justify-between">
                       <span className="text-sm">{pref}</span>
-                      <button className="relative w-11 h-6 rounded-full bg-black dark:bg-white">
-                        <div className="absolute top-0.5 translate-x-5 w-5 h-5 rounded-full bg-white dark:bg-black" />
+                      <button className="relative w-11 h-6 rounded-full bg-warm-900 dark:bg-[--af-bg-surface]">
+                        <div className="absolute top-0.5 translate-x-5 w-5 h-5 rounded-full bg-[--af-bg-surface]" />
                       </button>
                     </div>
                   ))}
@@ -348,9 +348,9 @@ export default function AdminPage() {
               </div>
 
               {/* Data Export */}
-              <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+              <div className="border border-[--af-border-default] rounded-lg p-6">
                 <h3 className="font-semibold mb-4">Data Export</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <p className="text-sm text-[--af-text-secondary] mb-4">
                   Export all your data including projects, clients, and invoices
                 </p>
                 <Button variant="outline" className="w-full">
@@ -364,34 +364,34 @@ export default function AdminPage() {
           {/* Billing Tab */}
           <TabsContent value="billing" className="space-y-6">
             {/* Current Plan */}
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+            <div className="border border-[--af-border-default] rounded-lg p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h3 className="font-semibold text-lg">Professional Plan</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[--af-text-secondary]">
                     $49/month • Renews on March 15, 2026
                   </p>
                 </div>
-                <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+                <Badge className="bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20">
                   Active
                 </Badge>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                <div className="p-4 bg-[--af-bg-surface-alt] rounded-lg">
+                  <p className="text-sm text-[--af-text-secondary] mb-1">
                     Projects
                   </p>
-                  <p className="text-2xl font-semibold">9 / 50</p>
+                  <p className="text-2xl font-display font-bold tracking-tight">9 / 50</p>
                 </div>
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                <div className="p-4 bg-[--af-bg-surface-alt] rounded-lg">
+                  <p className="text-sm text-[--af-text-secondary] mb-1">
                     Team Members
                   </p>
-                  <p className="text-2xl font-semibold">4 / 10</p>
+                  <p className="text-2xl font-display font-bold tracking-tight">4 / 10</p>
                 </div>
-                <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Storage</p>
-                  <p className="text-2xl font-semibold">12 / 100 GB</p>
+                <div className="p-4 bg-[--af-bg-surface-alt] rounded-lg">
+                  <p className="text-sm text-[--af-text-secondary] mb-1">Storage</p>
+                  <p className="text-2xl font-display font-bold tracking-tight">12 / 100 GB</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -404,8 +404,8 @@ export default function AdminPage() {
             </div>
 
             {/* Invoice History */}
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
-              <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+            <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
+              <div className="p-6 border-b border-[--af-border-default]">
                 <h3 className="font-semibold">Invoice History</h3>
               </div>
               <Table>
@@ -427,7 +427,7 @@ export default function AdminPage() {
                         ${invoice.amount}.00
                       </TableCell>
                       <TableCell>
-                        <Badge className="bg-green-500/10 text-green-600 dark:text-green-400">
+                        <Badge className="bg-[--af-success-bg]0/10 text-[--af-success-text]">
                           {invoice.status}
                         </Badge>
                       </TableCell>

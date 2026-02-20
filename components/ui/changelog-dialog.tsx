@@ -25,15 +25,15 @@ export function ChangelogDialog({ open, onOpenChange }: ChangelogDialogProps) {
           {CHANGELOG.map((entry) => (
             <div
               key={entry.version}
-              className="border-b border-gray-200 dark:border-gray-800 pb-4 last:border-0 last:pb-0"
+              className="border-b border-[--af-border-default] dark:border-warm-800 pb-4 last:border-0 last:pb-0"
             >
               <div className="flex items-center gap-2 mb-2">
                 <Badge variant="secondary" className="font-mono text-xs">
                   {entry.version}
                 </Badge>
-                <span className="text-sm text-gray-500">{entry.date}</span>
+                <span className="text-sm text-[--af-text-muted]">{entry.date}</span>
               </div>
-              <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1 list-disc list-inside">
+              <ul className="text-sm text-[--af-text-secondary] dark:text-[--af-text-muted] space-y-1 list-disc list-inside">
                 {entry.changes.map((change, i) => (
                   <li key={i}>{change}</li>
                 ))}

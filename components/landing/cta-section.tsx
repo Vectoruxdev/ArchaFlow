@@ -22,12 +22,12 @@ export function CTASection() {
 
             <div className="relative z-10">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.1] bg-white/[0.03] mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.1] bg-[--af-bg-surface]/[0.03] mb-8">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-signal-pulse absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[--af-info-bg]0" />
                 </span>
-                <span className="text-sm text-gray-300">
+                <span className="text-sm text-[--af-text-muted]">
                   Limited spots for onboarding this month
                 </span>
               </div>
@@ -36,7 +36,7 @@ export function CTASection() {
               <h2 className="text-3xl md:text-5xl font-bold text-white leading-tight">
                 See your projects differently.
                 <br />
-                <span className="text-gray-500">Starting now.</span>
+                <span className="text-[--af-text-muted]">Starting now.</span>
               </h2>
 
               {/* Benefits */}
@@ -44,7 +44,7 @@ export function CTASection() {
                 {benefits.map((benefit) => (
                   <div
                     key={benefit}
-                    className="flex items-center gap-2 text-sm text-gray-400"
+                    className="flex items-center gap-2 text-sm text-[--af-text-muted]"
                   >
                     <Check className="w-4 h-4 text-green-400" />
                     {benefit}
@@ -56,14 +56,14 @@ export function CTASection() {
               <div className="mt-10">
                 <Link
                   href="/signup"
-                  className="group inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black font-medium rounded-full hover:bg-gray-100 transition-all text-base"
+                  className="group inline-flex items-center gap-2 px-8 py-3.5 bg-[--af-bg-surface] text-foreground font-medium rounded-full hover:bg-[--af-bg-surface-alt] transition-all text-base"
                 >
                   Start Free
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
               </div>
 
-              <p className="mt-4 text-xs text-gray-600">
+              <p className="mt-4 text-xs text-[--af-text-secondary]">
                 Join 500+ architecture firms already using ArchaFlow
               </p>
             </div>

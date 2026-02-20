@@ -224,7 +224,7 @@ export function ClientFormModal({
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-semibold">Contacts</h3>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[--af-text-muted]">
                   Add people associated with this client (spouse, project manager, etc.)
                 </p>
               </div>
@@ -240,7 +240,7 @@ export function ClientFormModal({
             </div>
 
             {formData.contacts.length === 0 && (
-              <p className="text-sm text-gray-400 italic py-2">
+              <p className="text-sm text-[--af-text-muted] italic py-2">
                 No additional contacts added yet.
               </p>
             )}
@@ -248,10 +248,10 @@ export function ClientFormModal({
             {formData.contacts.map((contact, index) => (
               <div
                 key={index}
-                className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 space-y-3"
+                className="border border-[--af-border-default] rounded-lg p-4 space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  <span className="text-sm font-medium text-[--af-text-secondary]">
                     Contact {index + 1}
                   </span>
                   <Button
@@ -259,7 +259,7 @@ export function ClientFormModal({
                     variant="ghost"
                     size="sm"
                     onClick={() => removeContact(index)}
-                    className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                    className="text-[--af-danger-text] hover:text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -329,7 +329,7 @@ export function ClientFormModal({
           {/* Footer */}
           <DialogFooter>
             {saveError && (
-              <p className="text-sm text-red-600 flex-1">{saveError}</p>
+              <p className="text-sm text-[--af-danger-text] flex-1">{saveError}</p>
             )}
             <Button
               type="button"

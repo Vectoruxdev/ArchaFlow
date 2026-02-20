@@ -45,16 +45,16 @@ function LoginContent() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold mb-2">Welcome back</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2">Welcome back</h1>
+        <p className="text-[--af-text-secondary]">
           Sign in to your account to continue
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-[--af-radius-input] p-3">
+            <p className="text-sm text-[--af-danger-text]">{error}</p>
           </div>
         )}
 
@@ -91,7 +91,7 @@ function LoginContent() {
         <div className="flex items-center justify-between">
           <Link
             href="/forgot-password"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+            className="text-sm text-[--af-text-secondary] hover:text-foreground dark:hover:text-white"
           >
             Forgot password?
           </Link>
@@ -103,9 +103,9 @@ function LoginContent() {
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-[--af-text-secondary]">
           Don't have an account?{" "}
-          <Link href="/signup" className="font-medium text-black dark:text-white hover:underline">
+          <Link href="/signup" className="font-medium text-foreground hover:underline">
             Sign up
           </Link>
         </p>

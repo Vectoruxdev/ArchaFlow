@@ -112,8 +112,8 @@ export function Hero() {
       />
       {/* Cross hairs / intersection - right mid */}
       <div className="absolute top-[55%] right-[8%]" style={{ transform: `translate(${mx * 25}px, ${my * 15}px)` }}>
-        <div className="w-12 md:w-16 h-px bg-white/[0.06] absolute top-1/2 left-0" />
-        <div className="w-px h-12 md:h-16 bg-white/[0.06] absolute left-1/2 top-0" />
+        <div className="w-12 md:w-16 h-px bg-[--af-bg-surface]/[0.06] absolute top-1/2 left-0" />
+        <div className="w-px h-12 md:h-16 bg-[--af-bg-surface]/[0.06] absolute left-1/2 top-0" />
       </div>
       {/* Long horizontal beam - center bottom */}
       <div
@@ -135,15 +135,15 @@ export function Hero() {
       </svg>
       {/* Small circles / nodes */}
       <div
-        className="absolute top-[25%] left-[20%] w-2 h-2 rounded-full bg-white/[0.08]"
+        className="absolute top-[25%] left-[20%] w-2 h-2 rounded-full bg-[--af-bg-surface]/[0.08]"
         style={{ transform: `translate(${mx * -22}px, ${my * -16}px)` }}
       />
       <div
-        className="absolute top-[70%] right-[20%] w-1.5 h-1.5 rounded-full bg-white/[0.06]"
+        className="absolute top-[70%] right-[20%] w-1.5 h-1.5 rounded-full bg-[--af-bg-surface]/[0.06]"
         style={{ transform: `translate(${mx * 18}px, ${my * 20}px)` }}
       />
       <div
-        className="absolute top-[35%] right-[25%] w-1 h-1 rounded-full bg-white/[0.1]"
+        className="absolute top-[35%] right-[25%] w-1 h-1 rounded-full bg-[--af-bg-surface]/[0.1]"
         style={{ transform: `translate(${mx * 12}px, ${my * -10}px)` }}
       />
 
@@ -151,12 +151,12 @@ export function Hero() {
       <div className="relative z-10 max-w-4xl mx-auto text-center">
         {/* Badge */}
         <ScrollAnimation delay={0}>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.1] bg-white/[0.03] mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/[0.1] bg-[--af-bg-surface]/[0.03] mb-8">
             <span className="relative flex h-2 w-2">
               <span className="animate-signal-pulse absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[--af-success-bg]0" />
             </span>
-            <span className="text-sm text-gray-300">
+            <span className="text-sm text-[--af-text-muted]">
               Now in Beta — AI-powered project insights
             </span>
           </div>
@@ -181,7 +181,7 @@ export function Hero() {
 
         {/* Subheadline */}
         <ScrollAnimation delay={0.2}>
-          <p className="mt-6 text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-lg md:text-xl text-[--af-text-muted] max-w-2xl mx-auto leading-relaxed">
             ArchaFlow gives architecture firms a single platform to plan projects,
             track budgets, assign tasks, and collaborate — from concept to
             completion.
@@ -193,7 +193,7 @@ export function Hero() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10">
             <Link
               href="/signup"
-              className="group flex items-center gap-2 px-7 py-3 bg-white text-black font-medium rounded-full hover:bg-gray-100 transition-all text-base"
+              className="group flex items-center gap-2 px-7 py-3 bg-[--af-bg-surface] text-foreground font-medium rounded-full hover:bg-[--af-bg-surface-alt] transition-all text-base"
             >
               Start Free
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -205,7 +205,7 @@ export function Hero() {
       {/* Scroll indicator */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
         <div className="w-5 h-8 rounded-full border-2 border-white/20 flex justify-center pt-1.5">
-          <div className="w-1 h-2 bg-white/40 rounded-full animate-bounce" />
+          <div className="w-1 h-2 bg-[--af-bg-surface]/40 rounded-full animate-bounce" />
         </div>
       </div>
     </section>

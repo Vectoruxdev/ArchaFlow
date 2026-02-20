@@ -55,13 +55,13 @@ interface Invoice {
 }
 
 const statusConfig: Record<string, { label: string; color: string }> = {
-  draft: { label: "Draft", color: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400" },
-  sent: { label: "Sent", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" },
-  viewed: { label: "Viewed", color: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" },
-  partially_paid: { label: "Partial", color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400" },
-  paid: { label: "Paid", color: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400" },
-  overdue: { label: "Overdue", color: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400" },
-  void: { label: "Void", color: "bg-gray-100 dark:bg-gray-800 text-gray-500" },
+  draft: { label: "Draft", color: "bg-[--af-bg-surface-alt] text-[--af-text-secondary] border border-[--af-border-default]" },
+  sent: { label: "Sent", color: "bg-[--af-info-bg] text-[--af-info-text] border border-[--af-info-border]" },
+  viewed: { label: "Viewed", color: "bg-[--af-info-bg] text-[--af-info-text] border border-[--af-info-border]" },
+  partially_paid: { label: "Partial", color: "bg-[--af-warning-bg] text-[--af-warning-text] border border-[--af-warning-border]" },
+  paid: { label: "Paid", color: "bg-[--af-success-bg] text-[--af-success-text] border border-[--af-success-border]" },
+  overdue: { label: "Overdue", color: "bg-[--af-danger-bg] text-[--af-danger-text] border border-[--af-danger-border]" },
+  void: { label: "Void", color: "bg-[--af-bg-surface-alt] text-[--af-text-muted] border border-[--af-border-default]" },
 }
 
 function formatCurrency(val: number): string {
@@ -164,8 +164,8 @@ export default function InvoicesPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Invoices</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-display font-bold tracking-tight">Invoices</h1>
+            <p className="text-sm text-[--af-text-muted] mt-1">
               Create, send, and track invoices for your projects
             </p>
           </div>
@@ -181,40 +181,40 @@ export default function InvoicesPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
-              <DollarSign className="w-4 h-4 text-blue-500" />
-              <p className="text-sm text-gray-500">Outstanding</p>
+              <DollarSign className="w-4 h-4 text-[--af-info-text]" />
+              <p className="text-sm text-[--af-text-muted]">Outstanding</p>
             </div>
-            <p className="text-xl font-semibold">{formatCurrency(totalOutstanding)}</p>
+            <p className="text-xl font-display font-bold tracking-tight">{formatCurrency(totalOutstanding)}</p>
           </div>
-          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
-              <AlertTriangle className="w-4 h-4 text-red-500" />
-              <p className="text-sm text-gray-500">Overdue</p>
+              <AlertTriangle className="w-4 h-4 text-[--af-danger-text]" />
+              <p className="text-sm text-[--af-text-muted]">Overdue</p>
             </div>
-            <p className="text-xl font-semibold text-red-600">{formatCurrency(totalOverdue)}</p>
+            <p className="text-xl font-display font-bold tracking-tight text-[--af-danger-text]">{formatCurrency(totalOverdue)}</p>
           </div>
-          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
-              <CheckCircle2 className="w-4 h-4 text-green-500" />
-              <p className="text-sm text-gray-500">Collected</p>
+              <CheckCircle2 className="w-4 h-4 text-[--af-success-text]" />
+              <p className="text-sm text-[--af-text-muted]">Collected</p>
             </div>
-            <p className="text-xl font-semibold text-green-600">{formatCurrency(totalPaid)}</p>
+            <p className="text-xl font-display font-bold tracking-tight text-[--af-success-text]">{formatCurrency(totalPaid)}</p>
           </div>
-          <div className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+          <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
-              <Clock className="w-4 h-4 text-gray-400" />
-              <p className="text-sm text-gray-500">Drafts</p>
+              <Clock className="w-4 h-4 text-[--af-text-muted]" />
+              <p className="text-sm text-[--af-text-muted]">Drafts</p>
             </div>
-            <p className="text-xl font-semibold">{draftCount}</p>
+            <p className="text-xl font-display font-bold tracking-tight">{draftCount}</p>
           </div>
         </div>
 
         {/* Filters */}
         <div className="flex items-center gap-3">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
             <Input
               placeholder="Search invoices..."
               className="pl-9"
@@ -223,7 +223,7 @@ export default function InvoicesPage() {
             />
           </div>
           <select
-            className="border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950"
+            className="border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-950"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -241,39 +241,39 @@ export default function InvoicesPage() {
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-12">
-            <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+            <Loader2 className="w-6 h-6 animate-spin text-[--af-text-muted]" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
-            <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">
+            <FileText className="w-12 h-12 text-[--af-text-muted] mx-auto mb-3" />
+            <p className="text-[--af-text-muted] text-sm">
               {invoices.length === 0
                 ? "No invoices yet. Create your first one."
                 : "No invoices match your filters."}
             </p>
           </div>
         ) : (
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+          <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 dark:bg-gray-900">
+                <thead className="bg-[--af-bg-surface-alt]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Invoice</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Client</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Status</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Total</th>
+                    <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Balance</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Due Date</th>
                     <th className="px-4 py-3 w-10"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                <tbody className="divide-y divide-[--af-border-default] dark:divide-warm-800">
                   {filtered.map((inv) => {
                     const sc = statusConfig[inv.status] || statusConfig.draft
                     return (
                       <tr
                         key={inv.id}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer"
+                        className="hover:bg-[--af-bg-surface-alt] cursor-pointer"
                         onClick={() => {
                           setSelectedInvoiceId(inv.id)
                           setDetailOpen(true)
@@ -282,10 +282,10 @@ export default function InvoicesPage() {
                         <td className="px-4 py-3">
                           <p className="text-sm font-medium">{inv.invoice_number}</p>
                           {inv.project && (
-                            <p className="text-xs text-gray-400">{inv.project.title}</p>
+                            <p className="text-xs text-[--af-text-muted]">{inv.project.title}</p>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                        <td className="px-4 py-3 text-sm text-[--af-text-secondary]">
                           {inv.client ? `${inv.client.first_name || ""} ${inv.client.last_name || ""}`.trim() || "—" : "—"}
                         </td>
                         <td className="px-4 py-3">
@@ -296,14 +296,14 @@ export default function InvoicesPage() {
                         </td>
                         <td className="px-4 py-3 text-sm text-right">
                           {inv.status === "paid" ? (
-                            <span className="text-green-600">Paid</span>
+                            <span className="text-[--af-success-text]">Paid</span>
                           ) : inv.status === "void" ? (
-                            <span className="text-gray-400">Void</span>
+                            <span className="text-[--af-text-muted]">Void</span>
                           ) : (
                             formatCurrency(Math.max(0, inv.amount_due))
                           )}
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-500">
+                        <td className="px-4 py-3 text-sm text-[--af-text-muted]">
                           {inv.due_date
                             ? new Date(inv.due_date).toLocaleDateString()
                             : "—"}
@@ -311,7 +311,7 @@ export default function InvoicesPage() {
                         <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <button className="p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                              <button className="p-1 rounded-md hover:bg-[--af-bg-surface-alt] text-[--af-text-muted] hover:text-[--af-text-secondary] dark:hover:text-[--af-text-muted]">
                                 <MoreHorizontal className="w-4 h-4" />
                               </button>
                             </DropdownMenuTrigger>
@@ -325,7 +325,7 @@ export default function InvoicesPage() {
                                 </DropdownMenuItem>
                               )}
                               {inv.status === "draft" && (
-                                <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => setDeleteTarget(inv)}>
+                                <DropdownMenuItem className="text-[--af-danger-text] focus:text-[--af-danger-text]" onClick={() => setDeleteTarget(inv)}>
                                   <Trash2 className="w-4 h-4 mr-2" /> Delete
                                 </DropdownMenuItem>
                               )}
@@ -355,7 +355,7 @@ export default function InvoicesPage() {
           <DialogHeader>
             <DialogTitle>Delete Invoice</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete <span className="font-medium text-gray-900 dark:text-gray-100">{deleteTarget?.invoice_number}</span>? This action cannot be undone.
+              Are you sure you want to delete <span className="font-medium text-foreground">{deleteTarget?.invoice_number}</span>? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:gap-0">

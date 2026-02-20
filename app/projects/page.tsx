@@ -80,22 +80,22 @@ interface Project {
 const allProjects: Project[] = []
 
 const statusColors = {
-  lead: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  sale: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-  design: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-  completed: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
+  lead: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
+  sale: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+  design: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+  completed: "bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20",
 }
 
 const paymentColors = {
-  pending: "bg-red-500/10 text-red-600 dark:text-red-400",
-  partial: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-  paid: "bg-green-500/10 text-green-600 dark:text-green-400",
+  pending: "bg-[--af-danger-bg]0/10 text-[--af-danger-text]",
+  partial: "bg-[--af-warning-bg]0/10 text-[--af-warning-text]",
+  paid: "bg-[--af-success-bg]0/10 text-[--af-success-text]",
 }
 
 const priorityColors = {
-  low: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
-  medium: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
-  high: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400",
+  low: "bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-secondary]",
+  medium: "bg-[--af-warning-bg] text-[--af-warning-text]",
+  high: "bg-[--af-danger-bg] text-[--af-danger-text]",
 }
 
 export default function ProjectsPage() {
@@ -450,7 +450,7 @@ export default function ProjectsPage() {
       <AppLayout>
         <div className="p-6">
           <div className="flex items-center justify-center py-20">
-            <div className="text-gray-500">Loading projects...</div>
+            <div className="text-[--af-text-muted]">Loading projects...</div>
           </div>
         </div>
       </AppLayout>
@@ -471,8 +471,8 @@ export default function ProjectsPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold">All Projects</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-display font-bold tracking-tight">All Projects</h1>
+            <p className="text-sm text-[--af-text-muted] mt-1">
               {activeProjects.length} active, {archivedProjects.length} archived
             </p>
           </div>
@@ -490,51 +490,51 @@ export default function ProjectsPage() {
         </div>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+          <div className="border border-[--af-border-default] rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Total Projects</span>
-              <UsersIcon className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-[--af-text-secondary]">Total Projects</span>
+              <UsersIcon className="w-4 h-4 text-[--af-text-muted]" />
             </div>
-            <div className="text-2xl font-semibold">{stats.total}</div>
-            <p className="text-xs text-gray-500 mt-1">{stats.active} active</p>
+            <div className="text-2xl font-display font-bold tracking-tight">{stats.total}</div>
+            <p className="text-xs text-[--af-text-muted] mt-1">{stats.active} active</p>
           </div>
 
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+          <div className="border border-[--af-border-default] rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Total Budget</span>
-              <DollarSign className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-[--af-text-secondary]">Total Budget</span>
+              <DollarSign className="w-4 h-4 text-[--af-text-muted]" />
             </div>
-            <div className="text-2xl font-semibold">${((stats.totalBudget || 0) / 1000000).toFixed(1)}M</div>
-            <p className="text-xs text-gray-500 mt-1">Across all projects</p>
+            <div className="text-2xl font-display font-bold tracking-tight">${((stats.totalBudget || 0) / 1000000).toFixed(1)}M</div>
+            <p className="text-xs text-[--af-text-muted] mt-1">Across all projects</p>
           </div>
 
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+          <div className="border border-[--af-border-default] rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Total Spent</span>
-              <DollarSign className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-[--af-text-secondary]">Total Spent</span>
+              <DollarSign className="w-4 h-4 text-[--af-text-muted]" />
             </div>
-            <div className="text-2xl font-semibold">${((stats.totalSpent || 0) / 1000000).toFixed(1)}M</div>
-            <p className="text-xs text-gray-500 mt-1">
+            <div className="text-2xl font-display font-bold tracking-tight">${((stats.totalSpent || 0) / 1000000).toFixed(1)}M</div>
+            <p className="text-xs text-[--af-text-muted] mt-1">
               {stats.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : 0}% of budget
             </p>
           </div>
 
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4">
+          <div className="border border-[--af-border-default] rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Avg. Progress</span>
-              <Calendar className="w-4 h-4 text-gray-400" />
+              <span className="text-sm text-[--af-text-secondary]">Avg. Progress</span>
+              <Calendar className="w-4 h-4 text-[--af-text-muted]" />
             </div>
-            <div className="text-2xl font-semibold">
+            <div className="text-2xl font-display font-bold tracking-tight">
               {projects.length ? Math.round(projects.reduce((sum, p) => sum + p.progress, 0) / projects.length) : 0}%
             </div>
-            <p className="text-xs text-gray-500 mt-1">Across all projects</p>
+            <p className="text-xs text-[--af-text-muted] mt-1">Across all projects</p>
           </div>
         </div>
 
         {/* Filters and Search */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
             <Input
               placeholder="Search projects or clients..."
               value={searchQuery}
@@ -575,52 +575,52 @@ export default function ProjectsPage() {
           </div>
 
           <TabsContent value="active" className="mt-0">
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+            <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+              <thead className="bg-[--af-bg-surface-alt]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Project
                   </th>
-                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Client
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Budget
                   </th>
-                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Progress
                   </th>
-                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Team
                   </th>
-                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Payment
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+              <tbody className="divide-y divide-[--af-border-default] dark:divide-warm-800">
                 {displayProjects.map((project) => (
                   <tr
                     key={project.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer"
+                    className="hover:bg-[--af-bg-surface-alt] cursor-pointer"
                     onClick={() => router.push(`/projects/${project.id}`)}
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div>
                           <p className="text-sm font-medium">{project.title}</p>
-                          <p className="text-xs text-gray-500 sm:hidden">{project.client}</p>
+                          <p className="text-xs text-[--af-text-muted] sm:hidden">{project.client}</p>
                           <Badge className={`text-xs mt-1 ${priorityColors[project.priority]}`}>
                             {project.priority}
                           </Badge>
@@ -628,7 +628,7 @@ export default function ProjectsPage() {
                       </div>
                     </td>
                     <td className="hidden sm:table-cell px-6 py-4">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{project.client}</p>
+                      <p className="text-sm text-[--af-text-secondary]">{project.client}</p>
                     </td>
                     <td className="px-6 py-4">
                       <Badge className={`${statusColors[project.status]} border`}>
@@ -638,35 +638,35 @@ export default function ProjectsPage() {
                     <td className="hidden md:table-cell px-6 py-4">
                       <div className="text-sm">
                         <p className="font-medium">${(project.budget / 1000).toFixed(0)}k</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-[--af-text-muted]">
                           ${(project.spent / 1000).toFixed(0)}k spent
                         </p>
                       </div>
                     </td>
                     <td className="hidden md:table-cell px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden min-w-[60px]">
+                        <div className="flex-1 h-2 bg-[--af-bg-surface-alt] rounded-full overflow-hidden min-w-[60px]">
                           <div
-                            className="h-full bg-black dark:bg-white rounded-full"
+                            className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full"
                             style={{ width: `${project.progress}%` }}
                           />
                         </div>
-                        <span className="text-xs text-gray-600 dark:text-gray-400 min-w-[35px]">
+                        <span className="text-xs text-[--af-text-secondary] min-w-[35px]">
                           {project.progress}%
                         </span>
                       </div>
                     </td>
                     <td className="hidden lg:table-cell px-6 py-4">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-sm text-[--af-text-secondary]">
                         {new Date(project.dueDate).toLocaleDateString()}
                       </p>
                     </td>
                     <td className="hidden lg:table-cell px-6 py-4">
                       <div className="flex -space-x-2">
                         {project.assignees.map((assignee, i) => (
-                          <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-black">
+                          <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-foreground">
                             <AvatarImage src={assignee.avatar} alt="" />
-                            <AvatarFallback className="text-xs bg-gray-200 dark:bg-gray-800">
+                            <AvatarFallback className="text-xs bg-[--af-bg-surface-alt] dark:bg-warm-800">
                               {assignee.name.slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
@@ -729,52 +729,52 @@ export default function ProjectsPage() {
           </TabsContent>
 
           <TabsContent value="archived" className="mt-0">
-            <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+            <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 dark:bg-gray-900">
+                  <thead className="bg-[--af-bg-surface-alt]">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Project
                       </th>
-                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Client
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Budget
                       </th>
-                      <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Progress
                       </th>
-                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Due Date
                       </th>
-                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Team
                       </th>
-                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Payment
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+                  <tbody className="divide-y divide-[--af-border-default] dark:divide-warm-800">
                     {displayProjects.map((project) => (
                       <tr
                         key={project.id}
-                        className="hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer"
+                        className="hover:bg-[--af-bg-surface-alt] cursor-pointer"
                         onClick={() => router.push(`/projects/${project.id}`)}
                       >
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
                             <div>
                               <p className="text-sm font-medium">{project.title}</p>
-                              <p className="text-xs text-gray-500 sm:hidden">{project.client}</p>
+                              <p className="text-xs text-[--af-text-muted] sm:hidden">{project.client}</p>
                               <Badge className={`text-xs mt-1 ${priorityColors[project.priority]}`}>
                                 {project.priority}
                               </Badge>
@@ -782,7 +782,7 @@ export default function ProjectsPage() {
                           </div>
                         </td>
                         <td className="hidden sm:table-cell px-6 py-4">
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{project.client}</p>
+                          <p className="text-sm text-[--af-text-secondary]">{project.client}</p>
                         </td>
                         <td className="px-6 py-4">
                           <Badge className={`${statusColors[project.status]} border`}>
@@ -792,35 +792,35 @@ export default function ProjectsPage() {
                         <td className="hidden md:table-cell px-6 py-4">
                           <div className="text-sm">
                             <p className="font-medium">${(project.budget / 1000).toFixed(0)}k</p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-[--af-text-muted]">
                               ${(project.spent / 1000).toFixed(0)}k spent
                             </p>
                           </div>
                         </td>
                         <td className="hidden md:table-cell px-6 py-4">
                           <div className="flex items-center gap-2">
-                            <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden min-w-[60px]">
+                            <div className="flex-1 h-2 bg-[--af-bg-surface-alt] rounded-full overflow-hidden min-w-[60px]">
                               <div
-                                className="h-full bg-black dark:bg-white rounded-full"
+                                className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full"
                                 style={{ width: `${project.progress}%` }}
                               />
                             </div>
-                            <span className="text-xs text-gray-600 dark:text-gray-400 min-w-[35px]">
+                            <span className="text-xs text-[--af-text-secondary] min-w-[35px]">
                               {project.progress}%
                             </span>
                           </div>
                         </td>
                         <td className="hidden lg:table-cell px-6 py-4">
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                          <p className="text-sm text-[--af-text-secondary]">
                             {new Date(project.dueDate).toLocaleDateString()}
                           </p>
                         </td>
                         <td className="hidden lg:table-cell px-6 py-4">
                           <div className="flex -space-x-2">
                             {project.assignees.map((assignee, i) => (
-                              <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-black">
+                              <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-foreground">
                                 <AvatarImage src={assignee.avatar} alt="" />
-                                <AvatarFallback className="text-xs bg-gray-200 dark:bg-gray-800">
+                                <AvatarFallback className="text-xs bg-[--af-bg-surface-alt] dark:bg-warm-800">
                                   {assignee.name.slice(0, 2).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
@@ -855,7 +855,7 @@ export default function ProjectsPage() {
                                   e.stopPropagation()
                                   unarchiveProject(project.id)
                                 }}
-                                className="text-blue-600"
+                                className="text-[--af-info-text]"
                               >
                                 <ArchiveRestore className="w-4 h-4 mr-2" />
                                 Unarchive Project
@@ -865,7 +865,7 @@ export default function ProjectsPage() {
                                   e.stopPropagation()
                                   handleDeleteClick(project.id)
                                 }}
-                                className="text-red-600"
+                                className="text-[--af-danger-text]"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
                                 Delete Permanently
@@ -895,7 +895,7 @@ export default function ProjectsPage() {
           />
         ) : filteredProjects.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400">No projects found matching your search.</p>
+            <p className="text-[--af-text-muted]">No projects found matching your search.</p>
             <Button variant="outline" className="mt-4" onClick={() => setSearchQuery("")}>
               Clear Search
             </Button>
@@ -921,7 +921,7 @@ export default function ProjectsPage() {
           </DialogHeader>
           <div className="py-4">
             {createError && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 text-sm text-red-600 dark:text-red-400 mb-4">
+              <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3 text-sm text-[--af-danger-text] mb-4">
                 {createError}
               </div>
             )}
@@ -1012,14 +1012,14 @@ export default function ProjectsPage() {
                         key={temp}
                         type="button"
                         onClick={() => setNewProject(prev => ({ ...prev, temperature: prev.temperature === temp ? "" : temp }))}
-                        className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium capitalize transition-colors ${
+                        className={`flex-1 py-2 px-4 rounded-card border text-sm font-medium capitalize transition-colors ${
                           newProject.temperature === temp
                             ? temp === "cold"
-                              ? "border-blue-500 bg-blue-500/10 text-blue-600"
+                              ? "border-[--af-info-border] bg-[--af-info-bg]0/10 text-[--af-info-text]"
                               : temp === "warm"
-                                ? "border-yellow-500 bg-yellow-500/10 text-yellow-600"
-                                : "border-red-500 bg-red-500/10 text-red-600"
-                            : "border-gray-200 dark:border-gray-800 text-gray-500"
+                                ? "border-[--af-warning-border] bg-[--af-warning-bg]0/10 text-[--af-warning-text]"
+                                : "border-[--af-danger-border] bg-[--af-danger-bg]0/10 text-[--af-danger-text]"
+                            : "border-[--af-border-default] text-[--af-text-muted]"
                         }`}
                       >
                         {temp}

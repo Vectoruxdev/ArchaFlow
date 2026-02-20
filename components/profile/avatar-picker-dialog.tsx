@@ -65,7 +65,7 @@ export function AvatarPickerDialog({
           </TabsList>
           <TabsContent value="upload" className="mt-4 min-h-[420px]">
             <div className="flex flex-col items-center justify-center gap-4 py-4 min-h-[420px]">
-              <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
+              <p className="text-sm text-[--af-text-secondary] text-center">
                 Upload your own photo. You can crop it before saving.
               </p>
               <input
@@ -95,7 +95,7 @@ export function AvatarPickerDialog({
           </TabsContent>
           <TabsContent value="presets" className="mt-4 min-h-[420px]">
             <div className="flex flex-col gap-4 min-h-[420px]">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-[--af-text-secondary]">
                 Choose a preset avatar below.
               </p>
               <div className="grid grid-cols-5 gap-3">
@@ -107,7 +107,7 @@ export function AvatarPickerDialog({
                       onSelectPreset(url)
                       onOpenChange(false)
                     }}
-                    className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-800 hover:border-black dark:hover:border-white transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 focus:ring-offset-2"
+                    className="w-12 h-12 rounded-full overflow-hidden border-2 border-[--af-border-default] hover:border-foreground dark:hover:border-white transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] focus:ring-offset-2"
                   >
                     <img
                       src={url}

@@ -95,9 +95,9 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
+        <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
           <div className="p-4 lg:p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -105,12 +105,12 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
                   <ArrowLeft className="w-5 h-5" />
                 </Button>
                 {loading ? (
-                  <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
+                  <div className="h-8 w-48 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse" />
                 ) : (
                   <Input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="text-xl font-semibold border-none shadow-none p-0 h-auto focus-visible:ring-0 bg-transparent max-w-md"
+                    className="text-xl font-display font-bold tracking-tight border-none shadow-none p-0 h-auto focus-visible:ring-0 bg-transparent max-w-md"
                     placeholder="Template name"
                   />
                 )}
@@ -130,7 +130,7 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
         {/* Content */}
         <div className="p-4 lg:p-6 max-w-4xl mx-auto">
           {loading ? (
-            <div className="h-96 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
+            <div className="h-96 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded-lg animate-pulse" />
           ) : type === "rich_text" ? (
             <div className="space-y-4">
               <div>
@@ -142,7 +142,7 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
                   onChange={(e) => setName(e.target.value)}
                   onBlur={(e) => saveName(e.target.value)}
                   placeholder="Template name"
-                  className="text-lg font-semibold"
+                  className="text-lg font-display font-bold"
                 />
               </div>
               <Input
@@ -154,8 +154,8 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
               <ContractTemplateEditor content={content} onChange={setContent} />
             </div>
           ) : (
-            <div className="text-center py-12 border border-dashed border-gray-200 dark:border-gray-800 rounded-lg">
-              <p className="text-sm text-gray-500">
+            <div className="text-center py-12 border border-dashed border-[--af-border-default] rounded-lg">
+              <p className="text-sm text-[--af-text-muted]">
                 PDF template viewer — upload support coming soon.
               </p>
             </div>

@@ -193,18 +193,18 @@ export function CreateInvoiceModal({
 
         {step === 1 && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">Select a client and optionally link to a project.</p>
+            <p className="text-sm text-[--af-text-muted]">Select a client and optionally link to a project.</p>
 
             {loadingOptions ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                <Loader2 className="w-6 h-6 animate-spin text-[--af-text-muted]" />
               </div>
             ) : (
               <>
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Client</label>
                   <select
-                    className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950"
+                    className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-950"
                     value={clientId}
                     onChange={(e) => setClientId(e.target.value)}
                   >
@@ -220,7 +220,7 @@ export function CreateInvoiceModal({
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Project (optional)</label>
                   <select
-                    className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950"
+                    className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-950"
                     value={projectId}
                     onChange={(e) => setProjectId(e.target.value)}
                   >
@@ -243,7 +243,7 @@ export function CreateInvoiceModal({
 
         {step === 2 && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">Add items to your invoice.</p>
+            <p className="text-sm text-[--af-text-muted]">Add items to your invoice.</p>
 
             <div className="space-y-3">
               {lineItems.map((item, idx) => (
@@ -275,7 +275,7 @@ export function CreateInvoiceModal({
                       step="0.01"
                     />
                   </div>
-                  <div className="w-24 text-right text-sm font-medium pt-2.5 text-gray-500">
+                  <div className="w-24 text-right text-sm font-medium pt-2.5 text-[--af-text-muted]">
                     ${((parseFloat(item.quantity) || 0) * (parseFloat(item.unitPrice) || 0)).toFixed(2)}
                   </div>
                   <Button
@@ -285,7 +285,7 @@ export function CreateInvoiceModal({
                     disabled={lineItems.length === 1}
                     className="mt-1"
                   >
-                    <Trash2 className="w-4 h-4 text-gray-400" />
+                    <Trash2 className="w-4 h-4 text-[--af-text-muted]" />
                   </Button>
                 </div>
               ))}
@@ -295,10 +295,10 @@ export function CreateInvoiceModal({
               <Plus className="w-4 h-4 mr-1" /> Add Item
             </Button>
 
-            <div className="border-t border-gray-200 dark:border-gray-800 pt-3 text-right space-y-1">
-              <p className="text-sm text-gray-500">Subtotal: ${subtotal.toFixed(2)}</p>
+            <div className="border-t border-[--af-border-default] pt-3 text-right space-y-1">
+              <p className="text-sm text-[--af-text-muted]">Subtotal: ${subtotal.toFixed(2)}</p>
               {parseFloat(taxRate) > 0 && (
-                <p className="text-sm text-gray-500">Tax ({taxRate}%): ${taxAmount.toFixed(2)}</p>
+                <p className="text-sm text-[--af-text-muted]">Tax ({taxRate}%): ${taxAmount.toFixed(2)}</p>
               )}
               <p className="text-base font-semibold">Total: ${total.toFixed(2)}</p>
             </div>
@@ -312,7 +312,7 @@ export function CreateInvoiceModal({
 
         {step === 3 && (
           <div className="space-y-4">
-            <p className="text-sm text-gray-500">Set dates, terms, and notes.</p>
+            <p className="text-sm text-[--af-text-muted]">Set dates, terms, and notes.</p>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -337,7 +337,7 @@ export function CreateInvoiceModal({
               <div className="space-y-2">
                 <label className="text-sm font-medium">Payment Terms</label>
                 <select
-                  className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950"
+                  className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-950"
                   value={paymentTerms}
                   onChange={(e) => setPaymentTerms(e.target.value)}
                 >
@@ -364,7 +364,7 @@ export function CreateInvoiceModal({
             <div className="space-y-2">
               <label className="text-sm font-medium">Notes (visible to client)</label>
               <textarea
-                className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 min-h-[80px] resize-y"
+                className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-900 min-h-[80px] resize-y"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Payment instructions, thank you message, etc."
@@ -372,9 +372,9 @@ export function CreateInvoiceModal({
             </div>
 
             {/* Summary */}
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-sm">
+            <div className="bg-[--af-bg-surface-alt] rounded-lg p-4 text-sm">
               <p className="font-medium mb-2">Summary</p>
-              <div className="space-y-1 text-gray-600 dark:text-gray-400">
+              <div className="space-y-1 text-[--af-text-secondary]">
                 <p>{lineItems.filter((i) => i.description.trim()).length} line item(s)</p>
                 <p>Total: ${total.toFixed(2)}</p>
                 {clientId && (

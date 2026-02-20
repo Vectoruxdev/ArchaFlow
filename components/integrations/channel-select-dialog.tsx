@@ -122,7 +122,7 @@ export function ChannelSelectDialog({
         </DialogHeader>
 
         <div className="flex items-center justify-between py-2">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-[--af-text-muted]">
             {selectedCount} of {channels.length} selected
           </span>
           <Button
@@ -144,17 +144,17 @@ export function ChannelSelectDialog({
         <div className="flex-1 overflow-y-auto space-y-1 min-h-0 max-h-[40vh] border rounded-lg p-2">
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+              <Loader2 className="w-5 h-5 animate-spin text-[--af-text-muted]" />
             </div>
           ) : channels.length === 0 ? (
-            <div className="text-center py-8 text-sm text-gray-500">
+            <div className="text-center py-8 text-sm text-[--af-text-muted]">
               No channels found. Try syncing.
             </div>
           ) : (
             channels.map((channel) => (
               <label
                 key={channel.id}
-                className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer"
+                className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[--af-bg-surface-alt] cursor-pointer"
               >
                 <Checkbox
                   checked={channel.is_selected}
@@ -162,9 +162,9 @@ export function ChannelSelectDialog({
                 />
                 <div className="flex items-center gap-2 flex-1 min-w-0">
                   {channel.channel_type === "private" ? (
-                    <Lock className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <Lock className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   ) : (
-                    <Hash className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <Hash className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   )}
                   <span className="text-sm truncate">{channel.channel_name}</span>
                 </div>

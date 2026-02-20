@@ -49,10 +49,10 @@ export default function HomePage() {
   // Loading state while auth resolves
   if (!showLanding) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-warm-900">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center animate-pulse">
-            <div className="w-5 h-5 border-2 border-black rotate-45" />
+          <div className="w-10 h-10 bg-[--af-bg-surface] rounded-lg flex items-center justify-center animate-pulse">
+            <div className="w-5 h-5 border-2 border-foreground rotate-45" />
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white antialiased">
+    <div className="min-h-screen bg-warm-900 text-white antialiased">
       <Navbar />
       <Hero />
       <DataFlowViz />

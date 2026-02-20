@@ -44,9 +44,9 @@ export function TaskList({ tasks, onToggleTask, onToggleSubtask }: TaskListProps
   }
 
   const priorityColors = {
-    low: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
-    medium: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
-    high: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400",
+    low: "bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-secondary]",
+    medium: "bg-[--af-warning-bg] text-[--af-warning-text]",
+    high: "bg-[--af-danger-bg] text-[--af-danger-text]",
   }
 
   const isOverdue = (dueDate: string) => {
@@ -63,14 +63,14 @@ export function TaskList({ tasks, onToggleTask, onToggleSubtask }: TaskListProps
         return (
           <div
             key={task.id}
-            className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 space-y-3"
+            className="border border-[--af-border-default] rounded-lg p-4 space-y-3"
           >
             {/* Main Task */}
             <div className="flex items-start gap-3">
               {hasSubtasks && (
                 <button
                   onClick={() => toggleExpand(task.id)}
-                  className="mt-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="mt-1 text-[--af-text-muted] hover:text-[--af-text-secondary] dark:hover:text-[--af-text-muted]"
                 >
                   {isExpanded ? (
                     <ChevronDown className="w-4 h-4" />
@@ -88,7 +88,7 @@ export function TaskList({ tasks, onToggleTask, onToggleSubtask }: TaskListProps
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <p
                     className={`text-sm font-medium ${
-                      task.completed ? "line-through text-gray-500" : ""
+                      task.completed ? "line-through text-[--af-text-muted]" : ""
                     }`}
                   >
                     {task.title}
@@ -97,19 +97,19 @@ export function TaskList({ tasks, onToggleTask, onToggleSubtask }: TaskListProps
                     {task.priority}
                   </Badge>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-500">
+                <div className="flex items-center gap-4 text-xs text-[--af-text-muted]">
                   <div className="flex items-center gap-1">
                     <Calendar className="w-3 h-3" />
-                    <span className={overdue ? "text-red-500 font-medium" : ""}>
+                    <span className={overdue ? "text-[--af-danger-text] font-medium" : ""}>
                       {new Date(task.dueDate).toLocaleDateString()}
                       {overdue && " (Overdue)"}
                     </span>
                   </div>
                   <div className="flex -space-x-2">
                     {task.assignees.map((assignee, i) => (
-                      <Avatar key={i} className="w-6 h-6 border-2 border-white dark:border-black">
+                      <Avatar key={i} className="w-6 h-6 border-2 border-white dark:border-foreground">
                         <AvatarImage src={assignee.avatar} alt="" />
-                        <AvatarFallback className="text-xs bg-gray-200 dark:bg-gray-800">
+                        <AvatarFallback className="text-xs bg-[--af-bg-surface-alt] dark:bg-warm-800">
                           {assignee.name.slice(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
@@ -121,7 +121,7 @@ export function TaskList({ tasks, onToggleTask, onToggleSubtask }: TaskListProps
 
             {/* Subtasks */}
             {hasSubtasks && isExpanded && (
-              <div className="ml-10 space-y-2 pt-2 border-t border-gray-100 dark:border-gray-900">
+              <div className="ml-10 space-y-2 pt-2 border-t border-[--af-border-default]/50 dark:border-foreground">
                 {task.subtasks!.map((subtask) => (
                   <div key={subtask.id} className="flex items-center gap-3">
                     <Checkbox
@@ -130,7 +130,7 @@ export function TaskList({ tasks, onToggleTask, onToggleSubtask }: TaskListProps
                     />
                     <p
                       className={`text-sm ${
-                        subtask.completed ? "line-through text-gray-500" : ""
+                        subtask.completed ? "line-through text-[--af-text-muted]" : ""
                       }`}
                     >
                       {subtask.title}

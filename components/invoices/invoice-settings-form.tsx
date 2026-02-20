@@ -164,7 +164,7 @@ export function InvoiceSettingsForm() {
   if (loading) {
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+        <Loader2 className="w-6 h-6 animate-spin text-[--af-text-muted]" />
       </div>
     )
   }
@@ -172,20 +172,20 @@ export function InvoiceSettingsForm() {
   return (
     <div className="space-y-6 max-w-xl">
       <div>
-        <h3 className="text-lg font-semibold mb-1">Invoice Settings</h3>
-        <p className="text-sm text-gray-500">
+        <h3 className="text-lg font-display font-bold mb-1">Invoice Settings</h3>
+        <p className="text-sm text-[--af-text-muted]">
           Configure defaults for new invoices and your company information displayed on invoices.
         </p>
       </div>
 
       <div className="space-y-4">
-        <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">Defaults</h4>
+        <h4 className="text-sm font-medium text-foreground">Defaults</h4>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Payment Terms</label>
             <select
-              className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950"
+              className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-950"
               value={defaultPaymentTerms}
               onChange={(e) => setDefaultPaymentTerms(e.target.value)}
             >
@@ -211,8 +211,8 @@ export function InvoiceSettingsForm() {
       </div>
 
       <div className="space-y-4">
-        <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">Company Information</h4>
-        <p className="text-xs text-gray-500">Displayed on invoices under "From"</p>
+        <h4 className="text-sm font-medium text-foreground">Company Information</h4>
+        <p className="text-xs text-[--af-text-muted]">Displayed on invoices under "From"</p>
 
         <div className="space-y-3">
           <div className="space-y-2">
@@ -226,7 +226,7 @@ export function InvoiceSettingsForm() {
           <div className="space-y-2">
             <label className="text-sm font-medium">Address</label>
             <textarea
-              className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 min-h-[80px] resize-y"
+              className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-900 min-h-[80px] resize-y"
               value={companyAddress}
               onChange={(e) => setCompanyAddress(e.target.value)}
               placeholder="123 Main St&#10;City, State ZIP"
@@ -257,12 +257,12 @@ export function InvoiceSettingsForm() {
       <div className="space-y-2">
         <label className="text-sm font-medium">Invoice Footer</label>
         <textarea
-          className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 min-h-[80px] resize-y"
+          className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-900 min-h-[80px] resize-y"
           value={footerText}
           onChange={(e) => setFooterText(e.target.value)}
           placeholder="Payment instructions, bank details, late fee policy, etc."
         />
-        <p className="text-xs text-gray-500">Shown at the bottom of invoices</p>
+        <p className="text-xs text-[--af-text-muted]">Shown at the bottom of invoices</p>
       </div>
 
       <Button onClick={handleSave} disabled={saving}>
@@ -271,30 +271,30 @@ export function InvoiceSettingsForm() {
       </Button>
 
       {/* Online Payments Section */}
-      <div className="border-t border-gray-200 dark:border-gray-800 pt-6 mt-6">
+      <div className="border-t border-[--af-border-default] pt-6 mt-6">
         <div className="flex items-center gap-2 mb-1">
-          <CreditCard className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          <h3 className="text-lg font-semibold">Online Payments</h3>
+          <CreditCard className="w-5 h-5 text-[--af-text-secondary] dark:text-[--af-text-muted]" />
+          <h3 className="text-lg font-display font-bold">Online Payments</h3>
         </div>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-[--af-text-muted] mb-4">
           Let clients pay invoices with a credit card directly from their invoice link.
         </p>
 
         {isFreeTier ? (
-          <div className="flex items-start gap-3 bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-            <AlertCircle className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
+          <div className="flex items-start gap-3 bg-[--af-bg-surface-alt] rounded-lg p-4">
+            <AlertCircle className="w-5 h-5 text-[--af-text-muted] mt-0.5 shrink-0" />
             <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              <p className="text-sm font-medium text-[--af-text-secondary] dark:text-[--af-text-muted]">
                 Upgrade to Pro to accept online payments
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[--af-text-muted] mt-1">
                 Online payments are available on Pro and Enterprise plans.
               </p>
             </div>
           </div>
         ) : !connectStatus?.connected ? (
           <div className="space-y-3">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-[--af-text-secondary]">
               Connect your Stripe account to start accepting credit card payments on invoices. A $0.50 platform fee applies per transaction.
             </p>
             <Button onClick={handleConnectStripe} disabled={connectLoading}>
@@ -308,13 +308,13 @@ export function InvoiceSettingsForm() {
           </div>
         ) : !connectStatus.onboardingComplete ? (
           <div className="space-y-3">
-            <div className="flex items-start gap-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg p-4">
-              <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 shrink-0" />
+            <div className="flex items-start gap-3 bg-[--af-warning-bg] rounded-lg p-4">
+              <AlertCircle className="w-5 h-5 text-[--af-warning-text] mt-0.5 shrink-0" />
               <div>
-                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                <p className="text-sm font-medium text-[--af-warning-text]">
                   Stripe setup incomplete
                 </p>
-                <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                <p className="text-xs text-[--af-warning-text] mt-1">
                   Complete your Stripe onboarding to start accepting payments.
                 </p>
               </div>
@@ -332,10 +332,10 @@ export function InvoiceSettingsForm() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm font-medium text-foreground">
                   Accept online payments
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[--af-text-muted]">
                   Clients will see a "Pay Now" button on their invoices
                 </p>
               </div>

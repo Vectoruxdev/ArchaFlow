@@ -78,10 +78,10 @@ interface LinkedContract {
 }
 
 const statusColors: Record<string, string> = {
-  lead: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  sale: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-  design: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
-  completed: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
+  lead: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
+  sale: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+  design: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
+  completed: "bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20",
 }
 
 export default function ClientDetailPage({ params }: { params: { id: string } }) {
@@ -287,9 +287,9 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
+        <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
           <div className="p-4 lg:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4 min-w-0 flex-1">
@@ -298,27 +298,27 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
                 </Button>
                 {isLoading ? (
                   <div>
-                    <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-                    <div className="h-4 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mt-2" />
+                    <div className="h-8 w-48 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse" />
+                    <div className="h-4 w-32 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse mt-2" />
                   </div>
                 ) : loadError ? (
                   <div>
-                    <div className="text-red-600">Error loading client</div>
-                    <p className="text-sm text-gray-500 mt-1">{loadError}</p>
+                    <div className="text-[--af-danger-text]">Error loading client</div>
+                    <p className="text-sm text-[--af-text-muted] mt-1">{loadError}</p>
                   </div>
                 ) : client ? (
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h1 className="text-xl sm:text-2xl font-semibold truncate">
+                      <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight truncate">
                         {client.firstName} {client.lastName}
                       </h1>
                       {client.archivedAt && (
-                        <Badge className="bg-gray-500/10 text-gray-600 border-gray-500/20 border">
+                        <Badge className="bg-[--af-bg-canvas]0/10 text-[--af-text-secondary] border-[--af-border-default] border">
                           Archived
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-[--af-text-muted] mt-1">
                       Client since{" "}
                       {new Date(client.createdAt).toLocaleDateString()}
                     </p>
@@ -367,46 +367,46 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
         {client && (
           <div className="p-4 lg:p-6 space-y-6">
             {/* Client Information Card */}
-            <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-              <h2 className="text-lg font-semibold mb-4">Client Information</h2>
+            <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
+              <h2 className="text-lg font-display font-bold mb-4">Client Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <User className="w-5 h-5 text-gray-400 mt-0.5" />
+                    <User className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Full Name</p>
+                      <p className="text-sm text-[--af-text-muted]">Full Name</p>
                       <p className="font-medium">
                         {client.firstName} {client.lastName}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
+                    <Mail className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Email</p>
+                      <p className="text-sm text-[--af-text-muted]">Email</p>
                       <p className="font-medium">{client.email || "—"}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
+                    <Phone className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Phone</p>
+                      <p className="text-sm text-[--af-text-muted]">Phone</p>
                       <p className="font-medium">{client.phone || "—"}</p>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                    <MapPin className="w-5 h-5 text-[--af-text-muted] mt-0.5" />
                     <div>
-                      <p className="text-sm text-gray-500">Address</p>
+                      <p className="text-sm text-[--af-text-muted]">Address</p>
                       <p className="font-medium">{client.address || "—"}</p>
                     </div>
                   </div>
                   {client.description && (
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">Description</p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                      <p className="text-sm text-[--af-text-muted] mb-1">Description</p>
+                      <p className="text-sm text-[--af-text-secondary] dark:text-[--af-text-muted]">
                         {client.description}
                       </p>
                     </div>
@@ -416,10 +416,10 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
             </div>
 
             {/* Sub-Contacts Card */}
-            <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-              <h2 className="text-lg font-semibold mb-4">Contacts</h2>
+            <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
+              <h2 className="text-lg font-display font-bold mb-4">Contacts</h2>
               {client.contacts.length === 0 ? (
-                <p className="text-sm text-gray-400 italic py-4">
+                <p className="text-sm text-[--af-text-muted] italic py-4">
                   No additional contacts associated with this client.
                 </p>
               ) : (
@@ -440,7 +440,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
                         </TableCell>
                         <TableCell>
                           {contact.role ? (
-                            <Badge className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                            <Badge className="bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-secondary]">
                               {contact.role}
                             </Badge>
                           ) : (
@@ -457,10 +457,10 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
             </div>
 
             {/* Linked Projects Card */}
-            <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-              <h2 className="text-lg font-semibold mb-4">Projects</h2>
+            <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
+              <h2 className="text-lg font-display font-bold mb-4">Projects</h2>
               {projects.length === 0 ? (
-                <p className="text-sm text-gray-400 italic py-4">
+                <p className="text-sm text-[--af-text-muted] italic py-4">
                   No projects linked to this client yet.
                 </p>
               ) : (
@@ -484,7 +484,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
                         <TableCell className="font-medium">
                           {project.title}
                           {project.archivedAt && (
-                            <Badge className="ml-2 bg-gray-500/10 text-gray-500 text-xs">
+                            <Badge className="ml-2 bg-[--af-bg-canvas]0/10 text-[--af-text-muted] text-xs">
                               Archived
                             </Badge>
                           )}
@@ -526,13 +526,13 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
             </div>
 
             {/* Linked Contracts Card */}
-            <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+            <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
               <div className="flex items-center gap-2 mb-4">
-                <FileSignature className="w-5 h-5 text-gray-400" />
-                <h2 className="text-lg font-semibold">Contracts</h2>
+                <FileSignature className="w-5 h-5 text-[--af-text-muted]" />
+                <h2 className="text-lg font-display font-bold">Contracts</h2>
               </div>
               {contracts.length === 0 ? (
-                <p className="text-sm text-gray-400 italic py-4">
+                <p className="text-sm text-[--af-text-muted] italic py-4">
                   No contracts sent to this client yet.
                 </p>
               ) : (
@@ -559,12 +559,12 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
                         <TableCell>
                           <ContractStatusBadge status={contract.status} />
                         </TableCell>
-                        <TableCell className="text-sm text-gray-500">
+                        <TableCell className="text-sm text-[--af-text-muted]">
                           {contract.sentAt
                             ? new Date(contract.sentAt).toLocaleDateString()
                             : "—"}
                         </TableCell>
-                        <TableCell className="text-sm text-gray-500">
+                        <TableCell className="text-sm text-[--af-text-muted]">
                           {contract.signedAt
                             ? new Date(contract.signedAt).toLocaleDateString()
                             : "—"}

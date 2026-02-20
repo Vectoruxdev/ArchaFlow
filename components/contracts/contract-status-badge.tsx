@@ -3,23 +3,23 @@ import { Badge } from "@/components/ui/badge"
 const statusConfig: Record<string, { label: string; className: string }> = {
   draft: {
     label: "Draft",
-    className: "bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20",
+    className: "bg-[--af-bg-canvas]0/10 text-[--af-text-secondary] border-[--af-border-default]",
   },
   sent: {
     label: "Sent",
-    className: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+    className: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
   },
   viewed: {
     label: "Viewed",
-    className: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
+    className: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
   },
   signed: {
     label: "Signed",
-    className: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
+    className: "bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20",
   },
   declined: {
     label: "Declined",
-    className: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
+    className: "bg-[--af-danger-bg]0/10 text-[--af-danger-text] border-[--af-danger-border]/20",
   },
   expired: {
     label: "Expired",

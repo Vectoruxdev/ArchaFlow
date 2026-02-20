@@ -161,7 +161,7 @@ export function AvatarCropModal({ file, onConfirm, onCancel }: AvatarCropModalPr
         </DialogHeader>
         <div className="flex flex-col items-center gap-4">
           {imgSrc && (
-            <div className="max-h-[60vh] overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
+            <div className="max-h-[60vh] overflow-hidden rounded-lg bg-[--af-bg-surface-alt] flex items-center justify-center">
               <ReactCrop
                 crop={crop}
                 onChange={(_, percentCrop) => setCrop(percentCrop)}

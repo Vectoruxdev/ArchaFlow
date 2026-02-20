@@ -29,12 +29,12 @@ export default function AdminDashboardPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <h1 className="text-2xl font-display font-bold tracking-tight">Dashboard</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6 h-28 animate-pulse"
+              className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-6 h-28 animate-pulse"
             />
           ))}
         </div>
@@ -45,15 +45,15 @@ export default function AdminDashboardPage() {
   if (!stats) {
     return (
       <div>
-        <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-        <p className="text-gray-500">Failed to load dashboard stats.</p>
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-4">Dashboard</h1>
+        <p className="text-[--af-text-muted]">Failed to load dashboard stats.</p>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <h1 className="text-2xl font-display font-bold tracking-tight">Dashboard</h1>
 
       {/* Stats cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -86,26 +86,26 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Recent businesses */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-800">
-          <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+      <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg">
+        <div className="p-6 border-b border-[--af-border-default]">
+          <h3 className="text-sm font-medium text-[--af-text-muted]">
             Recent Businesses
           </h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-800">
-                <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+              <tr className="border-b border-[--af-border-default]">
+                <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                   Name
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+                <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                   Plan
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+                <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                   Members
                 </th>
-                <th className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 px-6 py-3">
+                <th className="text-left text-xs font-medium text-[--af-text-muted] px-6 py-3">
                   Created
                 </th>
               </tr>
@@ -114,7 +114,7 @@ export default function AdminDashboardPage() {
               {stats.recentBusinesses.map((biz) => (
                 <tr
                   key={biz.id}
-                  className="border-b border-gray-100 dark:border-gray-800/50 last:border-0"
+                  className="border-b border-[--af-border-default]/50 dark:border-warm-800/50 last:border-0"
                 >
                   <td className="px-6 py-3 text-sm font-medium">
                     {biz.name}
@@ -122,10 +122,10 @@ export default function AdminDashboardPage() {
                   <td className="px-6 py-3">
                     <PlanBadge tier={biz.planTier} />
                   </td>
-                  <td className="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
+                  <td className="px-6 py-3 text-sm text-[--af-text-secondary]">
                     {biz.memberCount}
                   </td>
-                  <td className="px-6 py-3 text-sm text-gray-600 dark:text-gray-400">
+                  <td className="px-6 py-3 text-sm text-[--af-text-secondary]">
                     {new Date(biz.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
@@ -134,7 +134,7 @@ export default function AdminDashboardPage() {
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-6 py-8 text-center text-sm text-gray-500"
+                    className="px-6 py-8 text-center text-sm text-[--af-text-muted]"
                   >
                     No businesses yet
                   </td>

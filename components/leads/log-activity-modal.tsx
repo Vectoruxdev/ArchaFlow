@@ -177,7 +177,7 @@ export function LogActivityModal({
           </div>
 
           <DialogFooter>
-            {saveError && <p className="text-sm text-red-600 flex-1">{saveError}</p>}
+            {saveError && <p className="text-sm text-[--af-danger-text] flex-1">{saveError}</p>}
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
               Cancel
             </Button>

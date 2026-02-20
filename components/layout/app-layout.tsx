@@ -122,12 +122,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       if (signOut) {
         await signOut()
       } else {
-        // Fallback if signOut is not available
         router.push("/login")
       }
     } catch (error) {
       console.error("Logout failed:", error)
-      // Redirect anyway on error
       router.push("/login")
     }
   }
@@ -138,12 +136,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   // Show loading while checking auth or redirecting to login
   if (authLoading || (isSupabaseConfigured() && !user)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
+      <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 bg-black dark:bg-white rounded-lg flex items-center justify-center animate-pulse">
-            <div className="w-5 h-5 border-2 border-white dark:border-black rotate-45" />
+          <div className="w-10 h-10 bg-warm-900 dark:bg-amber-500 rounded-lg flex items-center justify-center animate-pulse">
+            <div className="w-5 h-5 border-2 border-[--af-text-inverse] rotate-45" />
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="text-sm text-[--af-text-muted]">Loading...</p>
         </div>
       </div>
     )
@@ -151,23 +149,23 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <TooltipProvider delayDuration={0}>
-      <div className="min-h-screen bg-white dark:bg-black">
+      <div className="min-h-screen bg-[--af-bg-canvas]">
         {/* Top Bar */}
-        <header className="fixed top-0 left-0 right-0 h-16 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-black z-40">
+        <header className="fixed top-0 left-0 right-0 h-14 border-b border-[--af-border-default] bg-[--af-bg-surface] z-40">
           <div className="flex items-center justify-between h-full px-4 lg:px-6">
             {/* Logo */}
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg"
+                className="lg:hidden p-2 hover:bg-[--af-bg-surface-alt] rounded-sidebar transition-colors"
               >
-                <Workflow className="w-5 h-5" />
+                <Workflow className="w-5 h-5 text-[--af-text-secondary]" />
               </button>
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-                  <div className="w-4 h-4 border-2 border-white dark:border-black rotate-45" />
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 bg-warm-900 dark:bg-amber-500 rounded-lg flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-[--af-text-inverse] dark:border-warm-900 rotate-45" />
                 </div>
-                <span className="font-semibold text-lg hidden sm:block">ArchaFlow</span>
+                <span className="font-display font-bold text-lg tracking-tight hidden sm:block text-[--af-text-primary]">ArchaFlow</span>
               </div>
             </div>
 
@@ -175,18 +173,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
               <button
                 onClick={() => setSearchOpen(true)}
-                className="w-full flex items-center gap-3 pl-10 pr-4 py-2 text-sm text-left bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600"
+                className="w-full flex items-center gap-3 pl-10 pr-4 py-2 text-sm text-left bg-[--af-bg-surface-alt] border border-[--af-border-default] rounded-[--af-radius-input] hover:bg-[--af-bg-surface-hover] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] transition-colors"
               >
-                <Search className="w-4 h-4 text-gray-400 shrink-0" />
-                <span className="text-gray-500 dark:text-gray-400">Search pages, projects, clients...</span>
-                <kbd className="ml-auto hidden sm:inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                <Search className="w-4 h-4 text-[--af-text-muted] shrink-0" />
+                <span className="text-[--af-text-muted]">Search pages, projects, clients...</span>
+                <kbd className="ml-auto hidden sm:inline-flex h-5 items-center gap-1 rounded border border-[--af-border-default] bg-[--af-bg-surface-alt] px-1.5 font-mono text-[10px] font-medium text-[--af-text-muted]">
                   ⌘K
                 </kbd>
               </button>
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <Button
                 variant="ghost"
                 size="icon"
@@ -198,15 +196,15 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </Button>
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[--af-danger-text] rounded-full" />
               </Button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg p-1.5">
+                  <button className="flex items-center gap-2 hover:bg-[--af-bg-surface-alt] rounded-lg p-1.5 transition-colors">
                     <Avatar className="w-8 h-8">
                       <AvatarImage src={avatarUrl} alt="" />
-                      <AvatarFallback className="bg-black dark:bg-white text-white dark:text-black text-xs">
+                      <AvatarFallback className="bg-warm-900 dark:bg-amber-500 text-[--af-text-inverse] dark:text-warm-900 text-xs font-semibold">
                         {userInitials}
                       </AvatarFallback>
                     </Avatar>
@@ -216,7 +214,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
                       <span className="text-sm font-medium">My Account</span>
-                      <span className="text-xs text-gray-500 font-normal">{user?.email}</span>
+                      <span className="text-xs text-[--af-text-muted] font-normal">{user?.email}</span>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -229,22 +227,22 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        {/* Sidebar */}
+        {/* Sidebar — Dark in light mode, darker in dark mode */}
         <aside
-          className={`fixed top-16 left-0 bottom-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-black z-30 transition-all duration-300 lg:translate-x-0 ${
+          className={`fixed top-14 left-0 bottom-0 bg-[--af-bg-sidebar] border-r border-[--af-border-sidebar] z-30 transition-all duration-300 lg:translate-x-0 ${
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          } ${isCollapsed ? "lg:w-16" : "lg:w-64"} w-64`}
+          } ${isCollapsed ? "lg:w-[60px]" : "lg:w-[210px]"} w-[210px]`}
         >
           <div className="flex flex-col h-full">
             {/* Workspace Selector */}
-            <div className={`p-4 ${isCollapsed ? "lg:p-2" : ""}`}>
+            <div className={`p-3 ${isCollapsed ? "lg:p-2" : ""}`}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   {isCollapsed ? (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <button className="w-full flex items-center justify-center p-2 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg transition-colors">
-                          <span className="text-2xl">{displayWorkspace.icon}</span>
+                        <button className="w-full flex items-center justify-center p-2 hover:bg-[--af-sidebar-active-bg] rounded-sidebar transition-colors">
+                          <span className="text-xl">{displayWorkspace.icon}</span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right">
@@ -252,13 +250,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       </TooltipContent>
                     </Tooltip>
                   ) : (
-                    <button className="w-full flex items-center gap-3 p-3 hover:bg-gray-100 dark:hover:bg-gray-900 rounded-lg transition-colors group">
-                      <span className="text-2xl flex-shrink-0">{displayWorkspace.icon}</span>
+                    <button className="w-full flex items-center gap-2.5 p-2.5 hover:bg-[--af-sidebar-active-bg] rounded-sidebar transition-colors group">
+                      <span className="text-xl flex-shrink-0">{displayWorkspace.icon}</span>
                       <div className="flex-1 text-left min-w-0">
-                        <p className="font-semibold text-sm truncate">{displayWorkspace.name}</p>
-                        <p className="text-xs text-gray-500 capitalize">{displayWorkspace.role}</p>
+                        <p className="font-semibold text-[13px] truncate text-[--af-sidebar-text]">{displayWorkspace.name}</p>
+                        <p className="text-[11px] text-[--af-sidebar-muted] capitalize">{displayWorkspace.role}</p>
                       </div>
-                      <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 flex-shrink-0" />
+                      <ChevronDown className="w-3.5 h-3.5 text-[--af-sidebar-muted] group-hover:text-[--af-sidebar-text] flex-shrink-0" />
                     </button>
                   )}
                 </DropdownMenuTrigger>
@@ -271,18 +269,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       onClick={() => switchWorkspace?.(workspace.id)}
                       className="flex items-center gap-3"
                     >
-                      <span className="text-xl">{workspace.icon}</span>
+                      <span className="text-lg">{workspace.icon}</span>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm truncate">{workspace.name}</p>
-                        <p className="text-xs text-gray-500 capitalize">{workspace.role}</p>
+                        <p className="text-xs text-[--af-text-muted] capitalize">{workspace.role}</p>
                       </div>
                       {workspace.id === displayWorkspace.id && (
-                        <Check className="w-4 h-4 text-green-600" />
+                        <Check className="w-4 h-4 text-[--af-success-text]" />
                       )}
                     </DropdownMenuItem>
                   ))}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem 
+                  <DropdownMenuItem
                     onClick={() => setShowCreateWorkspace(true)}
                     className="flex items-center gap-2"
                   >
@@ -294,10 +292,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Navigation Items */}
-            <nav className={`flex-1 space-y-1 overflow-y-auto ${isCollapsed ? "lg:p-2" : "p-4"}`}>
+            <nav className={`flex-1 space-y-0.5 overflow-y-auto af-scroll ${isCollapsed ? "lg:px-2" : "px-2.5"} py-1`}>
               {navigationItems.map((item) => {
                 const isActive = pathname === item.href || pathname?.startsWith(item.href + "/")
-                
+
                 if (isCollapsed) {
                   return (
                     <Tooltip key={item.label}>
@@ -307,13 +305,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                             router.push(item.href)
                             setIsMobileMenuOpen(false)
                           }}
-                          className={`w-full flex items-center justify-center p-2 rounded-lg text-sm transition-colors ${
+                          className={`w-full flex items-center justify-center p-2 rounded-sidebar text-[13px] transition-colors ${
                             isActive
-                              ? "bg-gray-100 dark:bg-gray-900 text-black dark:text-white"
-                              : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900"
+                              ? "bg-[--af-sidebar-active-bg] text-[--af-sidebar-active]"
+                              : "text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text]"
                           }`}
                         >
-                          <item.icon className="w-5 h-5" />
+                          <item.icon className="w-[18px] h-[18px]" />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right">
@@ -330,13 +328,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       router.push(item.href)
                       setIsMobileMenuOpen(false)
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[13px] transition-colors ${
                       isActive
-                        ? "bg-gray-100 dark:bg-gray-900 text-black dark:text-white font-medium"
-                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-900"
+                        ? "bg-[--af-sidebar-active-bg] text-[--af-sidebar-active] font-semibold"
+                        : "text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text]"
                     }`}
                   >
-                    <item.icon className="w-5 h-5 shrink-0" />
+                    <item.icon className="w-[18px] h-[18px] shrink-0" />
                     <span className="flex-1 truncate">{item.label}</span>
                   </button>
                 )
@@ -344,7 +342,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </nav>
 
             {/* Bottom Section */}
-            <div className={`border-t border-gray-200 dark:border-gray-800 ${isCollapsed ? "lg:p-2" : "p-4"} space-y-1`}>
+            <div className={`border-t border-[--af-border-sidebar] ${isCollapsed ? "lg:p-2" : "p-2.5"} space-y-0.5`}>
               {/* Collapse/Close Toggle */}
               {isCollapsed ? (
                 <Tooltip>
@@ -357,10 +355,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                           setIsMobileMenuOpen(false)
                         }
                       }}
-                      className="w-full flex items-center justify-center p-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900 transition-colors"
+                      className="w-full flex items-center justify-center p-2 rounded-sidebar text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text] transition-colors"
                     >
-                      <ChevronRight className="w-5 h-5 hidden lg:block" />
-                      <X className="w-5 h-5 lg:hidden" />
+                      <ChevronRight className="w-[18px] h-[18px] hidden lg:block" />
+                      <X className="w-[18px] h-[18px] lg:hidden" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right">
@@ -377,10 +375,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       setIsMobileMenuOpen(false)
                     }
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900"
+                  className="w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[13px] text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text] transition-colors"
                 >
-                  <ChevronLeft className="w-5 h-5 hidden lg:block" />
-                  <X className="w-5 h-5 lg:hidden" />
+                  <ChevronLeft className="w-[18px] h-[18px] hidden lg:block" />
+                  <X className="w-[18px] h-[18px] lg:hidden" />
                   <span className="hidden lg:block">Collapse</span>
                   <span className="lg:hidden">Close</span>
                 </button>
@@ -392,9 +390,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   <TooltipTrigger asChild>
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center justify-center p-2 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                      className="w-full flex items-center justify-center p-2 rounded-sidebar text-[--af-danger-text] hover:bg-[rgba(168,64,64,0.12)] transition-colors"
                     >
-                      <LogOut className="w-5 h-5" />
+                      <LogOut className="w-[18px] h-[18px]" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right">
@@ -404,9 +402,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               ) : (
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                  className="w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[13px] text-[--af-danger-text] hover:bg-[rgba(168,64,64,0.12)] transition-colors"
                 >
-                  <LogOut className="w-5 h-5" />
+                  <LogOut className="w-[18px] h-[18px]" />
                   <span>Logout</span>
                 </button>
               )}
@@ -414,7 +412,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               {/* Version Number */}
               <button
                 onClick={() => setShowChangelog(true)}
-                className={`w-full text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer transition-colors ${isCollapsed ? "flex justify-center py-1" : "px-3 py-1 text-left"}`}
+                className={`w-full text-[11px] text-[--af-sidebar-muted] hover:text-[--af-sidebar-text] cursor-pointer transition-colors ${isCollapsed ? "flex justify-center py-1" : "px-2.5 py-1 text-left"}`}
               >
                 {APP_VERSION}
               </button>
@@ -423,14 +421,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Main Content */}
-        <main className={`pt-16 transition-all duration-300 ${isCollapsed ? "lg:pl-16" : "lg:pl-64"}`}>
+        <main className={`pt-14 transition-all duration-300 ${isCollapsed ? "lg:pl-[60px]" : "lg:pl-[210px]"}`}>
           {children}
         </main>
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
           <div
-            className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+            className="fixed inset-0 bg-[--af-bg-scrim] z-20 lg:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
           />
         )}

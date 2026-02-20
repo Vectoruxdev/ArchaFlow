@@ -100,7 +100,7 @@ export function ChangeOrderModal({
           <div className="space-y-2">
             <label className="text-sm font-medium">Description</label>
             <textarea
-              className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 min-h-[80px] resize-y"
+              className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-900 min-h-[80px] resize-y"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Detailed description of the scope change"
@@ -117,7 +117,7 @@ export function ChangeOrderModal({
               step="0.01"
               required
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-[--af-text-muted]">
               Use positive for additions, negative for credits/deductions
             </p>
           </div>

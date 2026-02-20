@@ -132,21 +132,21 @@ export default function SignContractPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+      <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas]">
+        <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted]" />
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas] p-4">
         <div className="max-w-md w-full text-center">
-          <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
-            <XCircle className="w-8 h-8 text-red-500" />
+          <div className="w-16 h-16 rounded-full bg-[--af-danger-bg] flex items-center justify-center mx-auto mb-4">
+            <XCircle className="w-8 h-8 text-[--af-danger-text]" />
           </div>
-          <h1 className="text-xl font-semibold mb-2">Unable to Load Contract</h1>
-          <p className="text-gray-500 text-sm">{error}</p>
+          <h1 className="text-xl font-display font-bold tracking-tight mb-2">Unable to Load Contract</h1>
+          <p className="text-[--af-text-muted] text-sm">{error}</p>
         </div>
       </div>
     )
@@ -154,13 +154,13 @@ export default function SignContractPage() {
 
   if (signed) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas] p-4">
         <div className="max-w-md w-full text-center">
-          <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-4">
-            <CheckCircle2 className="w-8 h-8 text-green-500" />
+          <div className="w-16 h-16 rounded-full bg-[--af-success-bg] flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 className="w-8 h-8 text-[--af-success-text]" />
           </div>
-          <h1 className="text-xl font-semibold mb-2">Contract Signed</h1>
-          <p className="text-gray-500 text-sm">
+          <h1 className="text-xl font-display font-bold tracking-tight mb-2">Contract Signed</h1>
+          <p className="text-[--af-text-muted] text-sm">
             {contract?.name} has been successfully signed. A confirmation email has been sent.
           </p>
         </div>
@@ -169,17 +169,17 @@ export default function SignContractPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[--af-bg-canvas]">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+      <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-warm-900 rounded-lg flex items-center justify-center">
               <div className="w-4 h-4 border-2 border-white rotate-45" />
             </div>
             <span className="font-semibold text-sm">ArchaFlow</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-2 text-sm text-[--af-text-muted]">
             <AlertTriangle className="w-4 h-4" />
             Review carefully before signing
           </div>
@@ -189,14 +189,14 @@ export default function SignContractPage() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Contract info */}
         <div className="mb-6">
-          <h1 className="text-2xl font-semibold">{contract?.name}</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-2xl font-display font-bold tracking-tight">{contract?.name}</h1>
+          <p className="text-sm text-[--af-text-muted] mt-1">
             Prepared for {contract?.signerName}
           </p>
         </div>
 
         {/* Contract content */}
-        <div className="bg-white border border-gray-200 rounded-lg p-8 mb-8 shadow-sm">
+        <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-8 mb-8 shadow-sm">
           {contract?.type === "rich_text" && contract.content ? (
             <div
               className="prose prose-sm max-w-none"
@@ -209,18 +209,18 @@ export default function SignContractPage() {
               title="Contract PDF"
             />
           ) : (
-            <p className="text-gray-400 text-sm">No contract content available.</p>
+            <p className="text-[--af-text-muted] text-sm">No contract content available.</p>
           )}
         </div>
 
         {/* Signature section */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-1">Your Signature</h2>
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6 shadow-sm">
+          <h2 className="text-lg font-display font-bold mb-1">Your Signature</h2>
+          <p className="text-sm text-[--af-text-muted] mb-4">
             Draw your signature in the box below to sign this contract.
           </p>
 
-          <div className="border-2 border-dashed border-gray-200 rounded-lg mb-3 bg-white">
+          <div className="border-2 border-dashed border-[--af-border-default] rounded-lg mb-3 bg-[--af-bg-surface]">
             <SignatureCanvas
               ref={sigCanvasRef}
               canvasProps={{
@@ -241,7 +241,7 @@ export default function SignContractPage() {
             </Button>
           </div>
 
-          <p className="text-xs text-gray-400 mt-4">
+          <p className="text-xs text-[--af-text-muted] mt-4">
             By clicking "Sign Contract", you agree that your electronic signature is the
             legal equivalent of your manual/handwritten signature.
           </p>
@@ -249,8 +249,8 @@ export default function SignContractPage() {
       </div>
 
       {/* Footer */}
-      <div className="border-t border-gray-200 mt-12 py-6 text-center">
-        <p className="text-xs text-gray-400">
+      <div className="border-t border-[--af-border-default] mt-12 py-6 text-center">
+        <p className="text-xs text-[--af-text-muted]">
           Powered by ArchaFlow · Secure electronic signing
         </p>
       </div>

@@ -52,12 +52,12 @@ export default function BusinessesListPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Businesses</h1>
+      <h1 className="text-2xl font-display font-bold tracking-tight">Businesses</h1>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[--af-text-muted]" />
           <Input
             placeholder="Search businesses..."
             value={search}
@@ -69,7 +69,7 @@ export default function BusinessesListPage() {
         <select
           value={planFilter}
           onChange={(e) => setPlanFilter(e.target.value)}
-          className="h-10 rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 text-sm"
+          className="h-10 rounded-md border border-[--af-border-default] bg-[--af-bg-surface] dark:bg-warm-900 px-3 text-sm"
         >
           <option value="">All Plans</option>
           <option value="free">Free</option>
@@ -80,7 +80,7 @@ export default function BusinessesListPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-10 rounded-md border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 text-sm"
+          className="h-10 rounded-md border border-[--af-border-default] bg-[--af-bg-surface] dark:bg-warm-900 px-3 text-sm"
         >
           <option value="">All Statuses</option>
           <option value="active">Active</option>
@@ -92,7 +92,7 @@ export default function BusinessesListPage() {
 
       {/* Table */}
       {loading ? (
-        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-8 text-center text-gray-500">
+        <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-8 text-center text-[--af-text-muted]">
           Loading businesses...
         </div>
       ) : (
@@ -102,7 +102,7 @@ export default function BusinessesListPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-[--af-text-muted]">
             Showing {(page - 1) * pageSize + 1}–
             {Math.min(page * pageSize, total)} of {total}
           </span>

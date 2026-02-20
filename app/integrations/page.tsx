@@ -217,7 +217,7 @@ export default function IntegrationsPage() {
         {/* Header */}
         <div className="max-w-3xl">
           <h1 className="text-3xl font-semibold mb-2">Integrations</h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-[--af-text-secondary]">
             Connect your favorite tools to streamline your workflow. {connectedCount} of{" "}
             {integrations.length} connected.
           </p>
@@ -226,7 +226,7 @@ export default function IntegrationsPage() {
         {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
             <Input
               placeholder="Search integrations..."
               value={searchQuery}
@@ -241,8 +241,8 @@ export default function IntegrationsPage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors capitalize ${
                   selectedCategory === category
-                    ? "bg-black text-white dark:bg-white dark:text-black"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    ? "bg-warm-900 text-white dark:bg-[--af-bg-surface] dark:text-foreground"
+                    : "bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-secondary] dark:text-[--af-text-muted] hover:bg-[--af-bg-surface-alt] dark:hover:bg-warm-700"
                 }`}
               >
                 {category}
@@ -256,7 +256,7 @@ export default function IntegrationsPage() {
           {filteredIntegrations.map((integration) => (
             <div
               key={integration.id}
-              className="bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 rounded-lg p-4 transition-all hover:shadow-md hover:border-gray-300 dark:hover:border-gray-700"
+              className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4 transition-all hover:shadow-md hover:border-[--af-border-strong]"
             >
               {/* Icon and Status */}
               <div className="flex items-start justify-between mb-3">
@@ -264,18 +264,18 @@ export default function IntegrationsPage() {
                   {integration.icon}
                 </div>
                 {integration.connected && (
-                  <div className="w-2 h-2 rounded-full bg-green-500" />
+                  <div className="w-2 h-2 rounded-full bg-[--af-success-bg]0" />
                 )}
               </div>
 
               {/* Content */}
               <div className="mb-4">
                 <h3 className="font-semibold text-sm mb-1">{integration.name}</h3>
-                <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
+                <p className="text-xs text-[--af-text-secondary] line-clamp-2">
                   {integration.description}
                 </p>
                 {integration.connected && integration.providerMetadata && (
-                  <p className="text-[10px] text-gray-400 mt-1 truncate">
+                  <p className="text-[10px] text-[--af-text-muted] mt-1 truncate">
                     {(integration.providerMetadata as any).team_name ||
                       (integration.providerMetadata as any).guild_name ||
                       "Connected"}
@@ -300,7 +300,7 @@ export default function IntegrationsPage() {
                       size="sm"
                       onClick={() => handleDisconnect(integration)}
                       disabled={disconnecting === integration.id}
-                      className="h-8 text-xs px-2 text-gray-600 dark:text-gray-400"
+                      className="h-8 text-xs px-2 text-[--af-text-secondary]"
                     >
                       {disconnecting === integration.id ? (
                         <Loader2 className="w-3 h-3 animate-spin" />
@@ -326,11 +326,11 @@ export default function IntegrationsPage() {
         {/* Empty State */}
         {filteredIntegrations.length === 0 && (
           <div className="text-center py-16">
-            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-gray-400" />
+            <div className="w-16 h-16 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search className="w-8 h-8 text-[--af-text-muted]" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">No integrations found</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <h3 className="text-lg font-display font-bold mb-2">No integrations found</h3>
+            <p className="text-[--af-text-secondary] mb-4">
               Try adjusting your search or filter
             </p>
             <Button variant="outline" onClick={() => setSearchQuery("")}>
@@ -362,7 +362,7 @@ export default function IntegrationsPage() {
                   type="password"
                   className="font-mono text-sm"
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[--af-text-muted]">
                   Your API key is encrypted and stored securely
                 </p>
               </div>
@@ -372,25 +372,25 @@ export default function IntegrationsPage() {
                   placeholder="https://your-domain.com/webhook"
                   className="font-mono text-sm"
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[--af-text-muted]">
                   Receive real-time updates from this integration
                 </p>
               </div>
-              <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
+              <div className="flex items-center justify-between p-4 bg-[--af-bg-surface-alt] rounded-card border border-[--af-border-default]">
                 <div>
                   <p className="text-sm font-medium">Enable notifications</p>
-                  <p className="text-xs text-gray-500 mt-0.5">
+                  <p className="text-xs text-[--af-text-muted] mt-0.5">
                     Get notified of important events
                   </p>
                 </div>
-                <button className="relative w-11 h-6 rounded-full bg-black dark:bg-white transition-colors">
-                  <div className="absolute top-0.5 translate-x-5 w-5 h-5 rounded-full bg-white dark:bg-black transition-transform" />
+                <button className="relative w-11 h-6 rounded-full bg-warm-900 dark:bg-[--af-bg-surface] transition-colors">
+                  <div className="absolute top-0.5 translate-x-5 w-5 h-5 rounded-full bg-[--af-bg-surface] transition-transform" />
                 </button>
               </div>
               <div className="pt-2">
                 <a
                   href="#"
-                  className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white flex items-center gap-1 transition-colors"
+                  className="text-sm text-[--af-text-secondary] hover:text-foreground dark:hover:text-white flex items-center gap-1 transition-colors"
                 >
                   View documentation
                   <ExternalLink className="w-3.5 h-3.5" />

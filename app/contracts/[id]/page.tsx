@@ -234,9 +234,9 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Sticky Header */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
+        <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
           <div className="p-4 lg:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4 min-w-0 flex-1">
@@ -250,16 +250,16 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
                 </Button>
                 {loading ? (
                   <div>
-                    <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-                    <div className="h-4 w-32 bg-gray-200 dark:bg-gray-800 rounded animate-pulse mt-2" />
+                    <div className="h-8 w-48 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse" />
+                    <div className="h-4 w-32 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse mt-2" />
                   </div>
                 ) : contract ? (
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h1 className="text-xl sm:text-2xl font-semibold truncate">{contract.name}</h1>
+                      <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight truncate">{contract.name}</h1>
                       <ContractStatusBadge status={contract.status} />
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-[--af-text-muted] mt-1">
                       {contract.signerName} · {contract.signerEmail}
                     </p>
                   </div>
@@ -324,7 +324,7 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
             {/* Timeline + Details Row */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Timeline */}
-              <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+              <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
                 <h2 className="text-sm font-semibold mb-4">Timeline</h2>
                 <div className="space-y-4">
                   {timelineEvents.map((event, i) => {
@@ -334,18 +334,18 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                             event.done
-                              ? "bg-green-50 dark:bg-green-950 text-green-600"
-                              : "bg-gray-100 dark:bg-gray-900 text-gray-400"
+                              ? "bg-[--af-success-bg] text-[--af-success-text]"
+                              : "bg-[--af-bg-surface-alt] text-[--af-text-muted]"
                           }`}
                         >
                           <Icon className="w-4 h-4" />
                         </div>
                         <div className="min-w-0">
-                          <p className={`text-sm font-medium ${event.done ? "" : "text-gray-400"}`}>
+                          <p className={`text-sm font-medium ${event.done ? "" : "text-[--af-text-muted]"}`}>
                             {event.label}
                           </p>
                           {event.date && (
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-[--af-text-muted]">
                               {new Date(event.date).toLocaleString()}
                             </p>
                           )}
@@ -356,8 +356,8 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
                 </div>
 
                 {contract.tokenExpiresAt && !["signed", "expired", "declined"].includes(contract.status) && (
-                  <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-900">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="mt-4 pt-4 border-t border-[--af-border-default]/50 dark:border-foreground">
+                    <div className="flex items-center gap-2 text-xs text-[--af-text-muted]">
                       <Clock className="w-3.5 h-3.5" />
                       Expires {new Date(contract.tokenExpiresAt).toLocaleDateString()}
                     </div>
@@ -366,16 +366,16 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
               </div>
 
               {/* Contract Details */}
-              <div className="lg:col-span-2 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+              <div className="lg:col-span-2 bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
                 <h2 className="text-sm font-semibold mb-4">Details</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-500 mb-0.5">Signer</p>
+                    <p className="text-xs text-[--af-text-muted] mb-0.5">Signer</p>
                     <p className="text-sm font-medium">{contract.signerName}</p>
-                    <p className="text-xs text-gray-500">{contract.signerEmail}</p>
+                    <p className="text-xs text-[--af-text-muted]">{contract.signerEmail}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 mb-0.5">Client</p>
+                    <p className="text-xs text-[--af-text-muted] mb-0.5">Client</p>
                     {contract.clientId ? (
                       <button
                         className="text-sm font-medium hover:underline flex items-center gap-1"
@@ -385,11 +385,11 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
                         <ExternalLink className="w-3 h-3" />
                       </button>
                     ) : (
-                      <p className="text-sm text-gray-400">—</p>
+                      <p className="text-sm text-[--af-text-muted]">—</p>
                     )}
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 mb-0.5">Project</p>
+                    <p className="text-xs text-[--af-text-muted] mb-0.5">Project</p>
                     {contract.projectId ? (
                       <button
                         className="text-sm font-medium hover:underline flex items-center gap-1"
@@ -399,12 +399,12 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
                         <ExternalLink className="w-3 h-3" />
                       </button>
                     ) : (
-                      <p className="text-sm text-gray-400">—</p>
+                      <p className="text-sm text-[--af-text-muted]">—</p>
                     )}
                   </div>
                   {contract.signerIp && (
                     <div>
-                      <p className="text-xs text-gray-500 mb-0.5">Signer IP</p>
+                      <p className="text-xs text-[--af-text-muted] mb-0.5">Signer IP</p>
                       <p className="text-sm font-mono">{contract.signerIp}</p>
                     </div>
                   )}
@@ -414,16 +414,16 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
 
             {/* Signature */}
             {contract.signatureData && (
-              <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+              <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
                 <h2 className="text-sm font-semibold mb-4">Signature</h2>
-                <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 bg-gray-50 dark:bg-gray-950 inline-block">
+                <div className="border border-[--af-border-default] rounded-lg p-4 bg-[--af-bg-canvas] dark:bg-warm-900 inline-block">
                   <img
                     src={contract.signatureData}
                     alt="Signature"
                     className="max-h-24"
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="text-xs text-[--af-text-muted] mt-2">
                   Signed by {contract.signerName} on{" "}
                   {contract.signedAt ? new Date(contract.signedAt).toLocaleString() : "—"}
                 </p>
@@ -431,7 +431,7 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
             )}
 
             {/* Contract Content */}
-            <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+            <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
               <h2 className="text-sm font-semibold mb-4">Contract Content</h2>
               {contract.type === "rich_text" && contract.content ? (
                 <div
@@ -445,7 +445,7 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
                   title="Contract PDF"
                 />
               ) : (
-                <p className="text-sm text-gray-400">No content available.</p>
+                <p className="text-sm text-[--af-text-muted]">No content available.</p>
               )}
             </div>
           </div>

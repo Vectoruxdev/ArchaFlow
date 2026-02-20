@@ -62,7 +62,7 @@ export default function WaitingPage() {
       case "pending":
         return <Badge variant="secondary">Pending</Badge>
       case "accepted":
-        return <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Accepted</Badge>
+        return <Badge className="bg-[--af-success-bg] text-[--af-success-text]">Accepted</Badge>
       case "declined":
         return <Badge variant="destructive">Declined</Badge>
       default:
@@ -73,27 +73,27 @@ export default function WaitingPage() {
   return (
     <div>
       <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-          <Clock className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+        <div className="w-10 h-10 rounded-full bg-[--af-warning-bg] flex items-center justify-center">
+          <Clock className="w-5 h-5 text-[--af-warning-text]" />
         </div>
-        <h1 className="text-2xl font-semibold">Waiting for approval</h1>
+        <h1 className="text-2xl font-display font-bold tracking-tight">Waiting for approval</h1>
       </div>
       <p className="text-muted-foreground mb-6">
         Your join request has been sent. The workspace owner will review it shortly.
       </p>
 
       {loading ? (
-        <div className="py-8 text-center text-gray-400">Loading...</div>
+        <div className="py-8 text-center text-[--af-text-muted]">Loading...</div>
       ) : requests.length === 0 ? (
         <div className="py-8 text-center">
-          <p className="text-gray-500">No pending requests</p>
+          <p className="text-[--af-text-muted]">No pending requests</p>
         </div>
       ) : (
         <div className="space-y-3 mb-6">
           {requests.map((req) => (
             <div
               key={req.id}
-              className="flex items-center gap-3 p-3 rounded-lg border border-border"
+              className="flex items-center gap-3 p-3 rounded-card border border-border"
             >
               <div className="w-8 h-8 rounded bg-secondary flex items-center justify-center flex-shrink-0">
                 <Building2 className="w-4 h-4 text-muted-foreground" />

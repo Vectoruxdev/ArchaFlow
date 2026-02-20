@@ -28,14 +28,14 @@ export function MrrChart({ data }: MrrChartProps) {
   }))
 
   return (
-    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-6">
-      <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">
+    <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-6">
+      <h3 className="text-sm font-medium text-[--af-text-muted] mb-4">
         Plan Distribution
       </h3>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={formatted}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-800" />
+            <CartesianGrid strokeDasharray="3 3" className="stroke-[--af-border-default] dark:stroke-warm-800" />
             <XAxis
               dataKey="label"
               tick={{ fill: "#9ca3af", fontSize: 12 }}

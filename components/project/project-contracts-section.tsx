@@ -58,15 +58,15 @@ export function ProjectContractsSection({ projectId }: { projectId: string }) {
   }
 
   return (
-    <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg p-6">
+    <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
       <div className="flex items-center gap-2 mb-4">
         <FileSignature className="w-5 h-5" />
-        <h2 className="text-lg font-semibold">Contracts</h2>
+        <h2 className="text-lg font-display font-bold">Contracts</h2>
       </div>
 
       {contracts.length === 0 ? (
         <div className="py-8">
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-center text-sm text-[--af-text-muted]">
             No contracts linked to this project.
           </p>
         </div>
@@ -91,13 +91,13 @@ export function ProjectContractsSection({ projectId }: { projectId: string }) {
                 <TableCell className="font-medium text-sm">
                   {contract.name}
                 </TableCell>
-                <TableCell className="text-sm text-gray-500">
+                <TableCell className="text-sm text-[--af-text-muted]">
                   {contract.signerName}
                 </TableCell>
                 <TableCell>
                   <ContractStatusBadge status={contract.status} />
                 </TableCell>
-                <TableCell className="text-sm text-gray-500">
+                <TableCell className="text-sm text-[--af-text-muted]">
                   {contract.sentAt
                     ? new Date(contract.sentAt).toLocaleDateString()
                     : "—"}

@@ -272,7 +272,7 @@ export default function DashboardPage() {
     return (
       <AppLayout>
         <div className="p-6">
-          <p className="text-sm text-gray-600 dark:text-gray-400">Dashboard requires Supabase configuration.</p>
+          <p className="text-sm text-[--af-text-secondary]">Dashboard requires Supabase configuration.</p>
         </div>
       </AppLayout>
     )
@@ -287,8 +287,8 @@ export default function DashboardPage() {
       <AppLayout>
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100 mx-auto mb-4" />
-            <p className="text-sm text-gray-600 dark:text-gray-400">Loading dashboard...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4" />
+            <p className="text-sm text-[--af-text-secondary]">Loading dashboard...</p>
           </div>
         </div>
       </AppLayout>
@@ -300,7 +300,7 @@ export default function DashboardPage() {
       <AppLayout>
         <div className="p-6">
           <div className="text-center max-w-md mx-auto">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-sm text-[--af-text-secondary] mb-4">
               No workspace selected. Select a workspace from the sidebar to view your dashboard.
             </p>
           </div>
@@ -313,8 +313,8 @@ export default function DashboardPage() {
     return (
       <AppLayout>
         <div className="p-6">
-          <div className="rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4">
-            <p className="text-sm text-red-800 dark:text-red-200">{loadError}</p>
+          <div className="rounded-card border border-[--af-danger-border] bg-[--af-danger-bg] p-4">
+            <p className="text-sm text-[--af-danger-text]">{loadError}</p>
           </div>
         </div>
       </AppLayout>
@@ -325,86 +325,86 @@ export default function DashboardPage() {
     <AppLayout>
       <div className="p-4 lg:p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Dashboard</h1>
-          <span className="text-xs text-gray-500 capitalize">{role} view</span>
+          <h1 className="text-xl font-display font-bold tracking-tight">Dashboard</h1>
+          <span className="text-xs text-[--af-text-muted] capitalize">{role} view</span>
         </div>
 
         {isCompanyView && companyStats && (
           <>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
               <Link href="/leads">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">New Leads</span>
-                    <Target className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">New Leads</span>
+                    <Target className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{companyStats.newLeads}</div>
-                  <p className="text-[10px] sm:text-xs text-green-600 dark:text-green-400 mt-1">Last 7 days</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-success-text] mt-1">Last 7 days</p>
                 </div>
               </Link>
               <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Active Projects</span>
-                    <FolderKanban className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Active Projects</span>
+                    <FolderKanban className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{companyStats.activeProjects}</div>
-                  <p className="text-[10px] sm:text-xs text-gray-500 mt-1">In progress</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-text-muted] mt-1">In progress</p>
                 </div>
               </Link>
               <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Overdue Projects</span>
-                    <AlertCircle className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Overdue Projects</span>
+                    <AlertCircle className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{companyStats.overdueProjects}</div>
-                  <p className="text-[10px] sm:text-xs text-red-600 dark:text-red-400 mt-1">Needs attention</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-danger-text] mt-1">Needs attention</p>
                 </div>
               </Link>
               <Link href="/invoices">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Overdue Invoices</span>
-                    <DollarSign className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Overdue Invoices</span>
+                    <DollarSign className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{companyStats.overdueInvoices}</div>
-                  <p className="text-[10px] sm:text-xs text-red-600 dark:text-red-400 mt-1">Past due</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-danger-text] mt-1">Past due</p>
                 </div>
               </Link>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
               <Link href="/invoices">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Pending Invoices</span>
-                    <DollarSign className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Pending Invoices</span>
+                    <DollarSign className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">
                     ${companyStats.pendingInvoiceTotal.toLocaleString()}
                   </div>
-                  <p className="text-[10px] sm:text-xs text-yellow-600 dark:text-yellow-400 mt-1">Outstanding</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-warning-text] mt-1">Outstanding</p>
                 </div>
               </Link>
               <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Overdue Tasks</span>
-                    <AlertCircle className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Overdue Tasks</span>
+                    <AlertCircle className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{companyStats.overdueTasks}</div>
-                  <p className="text-[10px] sm:text-xs text-red-600 dark:text-red-400 mt-1">Needs attention</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-danger-text] mt-1">Needs attention</p>
                 </div>
               </Link>
-              <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 col-span-2 lg:col-span-1">
+              <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 col-span-2 lg:col-span-1">
                 <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Team Workload</span>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                  <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Team Workload</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                 </div>
                 <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{companyStats.teamWorkload}%</div>
-                <div className="mt-1 sm:mt-2 h-1.5 bg-gray-100 dark:bg-gray-900 rounded-full overflow-hidden">
+                <div className="mt-1 sm:mt-2 h-1.5 bg-[--af-bg-surface-alt] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-black dark:bg-white rounded-full"
+                    className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full"
                     style={{ width: `${companyStats.teamWorkload}%` }}
                   />
                 </div>
@@ -424,53 +424,53 @@ export default function DashboardPage() {
           <>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
               <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">My Projects</span>
-                    <FolderKanban className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">My Projects</span>
+                    <FolderKanban className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{personalStats.myProjects}</div>
-                  <p className="text-[10px] sm:text-xs text-gray-500 mt-1">Assigned to you</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-text-muted] mt-1">Assigned to you</p>
                 </div>
               </Link>
               <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">My Tasks</span>
-                    <ListTodo className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">My Tasks</span>
+                    <ListTodo className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{personalStats.myTasks}</div>
-                  <p className="text-[10px] sm:text-xs text-gray-500 mt-1">In progress</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-text-muted] mt-1">In progress</p>
                 </div>
               </Link>
               <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Overdue Tasks</span>
-                    <AlertCircle className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Overdue Tasks</span>
+                    <AlertCircle className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{personalStats.overdueTasks}</div>
-                  <p className="text-[10px] sm:text-xs text-red-600 dark:text-red-400 mt-1">Needs attention</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-danger-text] mt-1">Needs attention</p>
                 </div>
               </Link>
-              <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0">
+              <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
                 <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Active Time</span>
-                  <Clock className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                  <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Active Time</span>
+                  <Clock className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                 </div>
                 <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">
                   {personalStats.activeTimeMinutes > 0 ? `${personalStats.activeTimeMinutes}m` : "—"}
                 </div>
-                <p className="text-[10px] sm:text-xs text-gray-500 mt-1">Today</p>
+                <p className="text-[10px] sm:text-xs text-[--af-text-muted] mt-1">Today</p>
               </div>
               <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black min-w-0 hover:border-gray-300 dark:hover:border-gray-700 transition-colors cursor-pointer col-span-2">
+                <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer col-span-2">
                   <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                    <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">Upcoming Due</span>
-                    <ListTodo className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Upcoming Due</span>
+                    <ListTodo className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
                   </div>
                   <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{personalStats.upcomingDueCount}</div>
-                  <p className="text-[10px] sm:text-xs text-gray-500 mt-1">Next 7 days</p>
+                  <p className="text-[10px] sm:text-xs text-[--af-text-muted] mt-1">Next 7 days</p>
                 </div>
               </Link>
             </div>
@@ -485,11 +485,11 @@ export default function DashboardPage() {
         )}
 
         {/* Recent Activity */}
-        <div className="p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black">
+        <div className="p-4 rounded-card border border-[--af-border-default] bg-[--af-bg-surface]">
           <h3 className="font-semibold mb-4">Recent Activity</h3>
           <div className="space-y-4">
             {activities.length === 0 ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400">No recent activity yet.</p>
+              <p className="text-sm text-[--af-text-muted]">No recent activity yet.</p>
             ) : (
               activities.map((activity) => {
                 const iconMap: Record<string, React.ReactElement> = {
@@ -504,14 +504,14 @@ export default function DashboardPage() {
                 const timeAgo = formatTimeAgo(activity.created_at)
                 return (
                   <div key={activity.id} className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center flex-shrink-0 text-gray-600 dark:text-gray-400">
+                    <div className="w-8 h-8 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center flex-shrink-0 text-[--af-text-secondary]">
                       {Icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-gray-900 dark:text-gray-100 line-clamp-2">
+                      <p className="text-sm text-foreground line-clamp-2">
                         {activity.message}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">{timeAgo}</p>
+                      <p className="text-xs text-[--af-text-muted] mt-1">{timeAgo}</p>
                     </div>
                   </div>
                 )

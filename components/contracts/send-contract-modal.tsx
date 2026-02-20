@@ -238,7 +238,7 @@ export function SendContractModal({ open, onOpenChange, template, onSent }: Prop
               <div className="space-y-2">
                 {template.variables.map((v) => (
                   <div key={v} className="flex items-center gap-2">
-                    <code className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded min-w-[140px]">
+                    <code className="text-xs bg-[--af-bg-surface-alt] dark:bg-warm-800 px-2 py-1 rounded min-w-[140px]">
                       {`{{${v}}}`}
                     </code>
                     <Input

@@ -67,8 +67,8 @@ function ResetPasswordContent() {
   if (!validToken && error) {
     return (
       <div className="text-center">
-        <h1 className="text-2xl font-semibold mb-2">Invalid Link</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2">Invalid Link</h1>
+        <p className="text-[--af-text-secondary] mb-6">{error}</p>
 
         <Link href="/forgot-password">
           <Button className="w-full">Request new reset link</Button>
@@ -81,13 +81,13 @@ function ResetPasswordContent() {
     return (
       <div className="text-center">
         <div className="mb-6 flex justify-center">
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+          <div className="w-16 h-16 bg-[--af-success-bg] rounded-full flex items-center justify-center">
+            <CheckCircle className="w-8 h-8 text-[--af-success-text]" />
           </div>
         </div>
 
-        <h1 className="text-2xl font-semibold mb-2">Password updated!</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2">Password updated!</h1>
+        <p className="text-[--af-text-secondary] mb-6">
           Your password has been successfully reset. Redirecting to sign in...
         </p>
       </div>
@@ -97,16 +97,16 @@ function ResetPasswordContent() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold mb-2">Set new password</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2">Set new password</h1>
+        <p className="text-[--af-text-secondary]">
           Enter your new password below
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3">
+            <p className="text-sm text-[--af-danger-text]">{error}</p>
           </div>
         )}
 
@@ -123,7 +123,7 @@ function ResetPasswordContent() {
             required
             disabled={loading}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[--af-text-muted] mt-1">
             Must be at least 8 characters
           </p>
         </div>
@@ -151,7 +151,7 @@ function ResetPasswordContent() {
       <div className="mt-6 text-center">
         <Link
           href="/login"
-          className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+          className="text-sm text-[--af-text-secondary] hover:text-foreground dark:hover:text-white"
         >
           Back to sign in
         </Link>

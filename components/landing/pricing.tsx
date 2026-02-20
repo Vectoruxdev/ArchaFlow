@@ -75,14 +75,14 @@ export function Pricing() {
     <section id="pricing" className="py-24 px-4 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
         <ScrollAnimation className="text-center mb-16">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[--af-text-muted] mb-4">
             Pricing
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-white">
             Simple, transparent{" "}
-            <span className="text-gray-500">pricing</span>
+            <span className="text-[--af-text-muted]">pricing</span>
           </h2>
-          <p className="mt-4 text-gray-400 max-w-xl mx-auto">
+          <p className="mt-4 text-[--af-text-muted] max-w-xl mx-auto">
             Start free. Upgrade when you need more. No hidden fees.
           </p>
         </ScrollAnimation>
@@ -93,19 +93,19 @@ export function Pricing() {
               <div
                 className={`relative rounded-2xl border p-8 transition-colors ${
                   plan.highlighted
-                    ? "bg-white text-black border-white shadow-2xl shadow-white/10"
-                    : "bg-white/[0.03] text-white border-white/[0.08] hover:border-white/[0.15]"
+                    ? "bg-[--af-bg-surface] text-foreground border-white shadow-2xl shadow-white/10"
+                    : "bg-[--af-bg-surface]/[0.03] text-white border-white/[0.08] hover:border-white/[0.15]"
                 }`}
               >
                 {plan.badge && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-black text-white text-xs font-medium rounded-full border border-white/20">
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-warm-900 text-white text-xs font-medium rounded-full border border-white/20">
                     {plan.badge}
                   </div>
                 )}
 
                 <h3
-                  className={`text-lg font-semibold ${
-                    plan.highlighted ? "text-black" : "text-white"
+                  className={`text-lg font-display font-bold ${
+                    plan.highlighted ? "text-foreground" : "text-white"
                   }`}
                 >
                   {plan.name}
@@ -114,7 +114,7 @@ export function Pricing() {
                   <span className="text-4xl font-bold">{plan.price}</span>
                   <span
                     className={`text-sm ${
-                      plan.highlighted ? "text-gray-500" : "text-gray-500"
+                      plan.highlighted ? "text-[--af-text-muted]" : "text-[--af-text-muted]"
                     }`}
                   >
                     {plan.period}
@@ -122,7 +122,7 @@ export function Pricing() {
                 </div>
                 <p
                   className={`text-sm mt-2 ${
-                    plan.highlighted ? "text-gray-600" : "text-gray-400"
+                    plan.highlighted ? "text-[--af-text-secondary]" : "text-[--af-text-muted]"
                   }`}
                 >
                   {plan.description}
@@ -132,8 +132,8 @@ export function Pricing() {
                   href={plan.href}
                   className={`group flex items-center justify-center gap-2 w-full py-2.5 rounded-full font-medium text-sm mt-6 transition-colors ${
                     plan.highlighted
-                      ? "bg-black text-white hover:bg-gray-800"
-                      : "bg-white/[0.08] text-white hover:bg-white/[0.12] border border-white/[0.1]"
+                      ? "bg-warm-900 text-white hover:bg-warm-800"
+                      : "bg-[--af-bg-surface]/[0.08] text-white hover:bg-[--af-bg-surface]/[0.12] border border-white/[0.1]"
                   }`}
                 >
                   {plan.cta}
@@ -145,12 +145,12 @@ export function Pricing() {
                     <li key={feature} className="flex items-center gap-2.5">
                       <Check
                         className={`w-4 h-4 flex-shrink-0 ${
-                          plan.highlighted ? "text-black" : "text-gray-500"
+                          plan.highlighted ? "text-foreground" : "text-[--af-text-muted]"
                         }`}
                       />
                       <span
                         className={`text-sm ${
-                          plan.highlighted ? "text-gray-700" : "text-gray-400"
+                          plan.highlighted ? "text-[--af-text-secondary]" : "text-[--af-text-muted]"
                         }`}
                       >
                         {feature}
@@ -163,8 +163,8 @@ export function Pricing() {
                   <p
                     className={`text-xs mt-4 pt-4 border-t ${
                       plan.highlighted
-                        ? "text-gray-500 border-gray-200"
-                        : "text-gray-500 border-white/[0.08]"
+                        ? "text-[--af-text-muted] border-[--af-border-default]"
+                        : "text-[--af-text-muted] border-white/[0.08]"
                     }`}
                   >
                     {plan.extraNote}

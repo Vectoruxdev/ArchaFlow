@@ -87,9 +87,9 @@ export function ChangeTierModal({
         </DialogHeader>
 
         {isComped && (
-          <div className="flex items-start gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/30">
-            <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-red-700 dark:text-red-400">
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-[--af-danger-bg] border border-[--af-danger-border]">
+            <AlertCircle className="w-4 h-4 text-[--af-danger-text] mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-[--af-danger-text]">
               This business is comped. Remove the comp before changing the tier.
             </p>
           </div>
@@ -121,20 +121,20 @@ export function ChangeTierModal({
             </Select>
           </div>
 
-          <div className="p-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-sm space-y-1">
+          <div className="p-3 rounded-lg bg-[--af-bg-surface-alt] border border-[--af-border-default] text-sm space-y-1">
             <p>
-              <span className="text-gray-500">Change:</span>{" "}
+              <span className="text-[--af-text-muted]">Change:</span>{" "}
               {PLAN_CONFIGS[currentTier].name} → <span className="font-medium">{newConfig.name}</span>
             </p>
-            <p><span className="text-gray-500">Price:</span> ${newConfig.basePrice}/mo</p>
-            <p><span className="text-gray-500">Seats:</span> {newConfig.includedSeats} included</p>
+            <p><span className="text-[--af-text-muted]">Price:</span> ${newConfig.basePrice}/mo</p>
+            <p><span className="text-[--af-text-muted]">Seats:</span> {newConfig.includedSeats} included</p>
             {isDowngradeToFree && hasSubscription && (
               <p className="text-orange-600 dark:text-orange-400">
                 Subscription will be canceled at end of billing period
               </p>
             )}
             {!isDowngradeToFree && hasSubscription && (
-              <p className="text-blue-600 dark:text-blue-400">
+              <p className="text-[--af-info-text]">
                 Proration will be applied
               </p>
             )}

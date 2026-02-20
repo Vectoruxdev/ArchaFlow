@@ -72,12 +72,12 @@ export function DataFlowViz() {
     <section className="relative py-32 md:py-40 px-4 overflow-hidden">
       {/* Section heading */}
       <ScrollAnimation className="text-center mb-20">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500 mb-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[--af-text-muted] mb-4">
           Data Flow
         </p>
         <h2 className="text-3xl md:text-5xl font-bold text-white">
           Everything connects to{" "}
-          <span className="text-gray-500">ArchaFlow</span>
+          <span className="text-[--af-text-muted]">ArchaFlow</span>
         </h2>
       </ScrollAnimation>
 
@@ -97,14 +97,14 @@ export function DataFlowViz() {
         {/* Legend */}
         <div className="flex items-center justify-center gap-8 mb-16">
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-white" />
-            <span className="text-xs text-gray-500 uppercase tracking-wider">
+            <div className="w-2 h-2 rounded-full bg-[--af-bg-surface]" />
+            <span className="text-xs text-[--af-text-muted] uppercase tracking-wider">
               Data In
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
-            <span className="text-xs text-gray-500 uppercase tracking-wider">
+            <div className="w-2 h-2 rounded-full bg-[--af-success-bg]0" />
+            <span className="text-xs text-[--af-text-muted] uppercase tracking-wider">
               Insights Out
             </span>
           </div>
@@ -119,10 +119,10 @@ export function DataFlowViz() {
                   key={node}
                   className="group flex items-center gap-2 md:gap-3"
                 >
-                  <span className="text-sm md:text-base text-gray-400 group-hover:text-white transition-colors">
+                  <span className="text-sm md:text-base text-[--af-text-muted] group-hover:text-white transition-colors">
                     {node}
                   </span>
-                  <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-white/80 ring-4 ring-white/10 group-hover:ring-white/20 transition-all" />
+                  <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-[--af-bg-surface]/80 ring-4 ring-white/10 group-hover:ring-white/20 transition-all" />
                 </div>
               ))}
             </div>
@@ -217,24 +217,24 @@ export function DataFlowViz() {
                 >
                   {/* Front face */}
                   <div
-                    className="absolute inset-0 border border-white/25 bg-white/[0.04]"
+                    className="absolute inset-0 border border-white/25 bg-[--af-bg-surface]/[0.04]"
                     style={{ transform: "rotateZ(45deg) translateZ(30px)" }}
                   />
                   {/* Back face */}
                   <div
-                    className="absolute inset-0 border border-white/10 bg-white/[0.02]"
+                    className="absolute inset-0 border border-white/10 bg-[--af-bg-surface]/[0.02]"
                     style={{ transform: "rotateZ(45deg) translateZ(-30px)" }}
                   />
                   {/* Top */}
                   <div
-                    className="absolute inset-0 border border-white/15 bg-white/[0.03]"
+                    className="absolute inset-0 border border-white/15 bg-[--af-bg-surface]/[0.03]"
                     style={{
                       transform: "rotateZ(45deg) rotateX(90deg) translateZ(30px)",
                     }}
                   />
                   {/* Bottom */}
                   <div
-                    className="absolute inset-0 border border-white/8 bg-white/[0.02]"
+                    className="absolute inset-0 border border-white/8 bg-[--af-bg-surface]/[0.02]"
                     style={{
                       transform:
                         "rotateZ(45deg) rotateX(-90deg) translateZ(30px)",
@@ -247,8 +247,8 @@ export function DataFlowViz() {
                   className="absolute inset-0 flex items-center justify-center"
                   style={{ transform: "translateZ(35px)" }}
                 >
-                  <div className="w-10 h-10 md:w-14 md:h-14 bg-white rounded-xl flex items-center justify-center shadow-2xl shadow-white/10">
-                    <div className="w-5 h-5 md:w-7 md:h-7 border-2 border-black rotate-45" />
+                  <div className="w-10 h-10 md:w-14 md:h-14 bg-[--af-bg-surface] rounded-xl flex items-center justify-center shadow-2xl shadow-white/10">
+                    <div className="w-5 h-5 md:w-7 md:h-7 border-2 border-foreground rotate-45" />
                   </div>
                 </div>
               </div>
@@ -264,7 +264,7 @@ export function DataFlowViz() {
                   className="group flex items-center gap-2 md:gap-3"
                 >
                   <div className="w-2 h-2 md:w-3 md:h-3 rounded-full bg-green-400/80 ring-4 ring-green-400/10 group-hover:ring-green-400/20 transition-all" />
-                  <span className="text-sm md:text-base text-gray-400 group-hover:text-white transition-colors">
+                  <span className="text-sm md:text-base text-[--af-text-muted] group-hover:text-white transition-colors">
                     {node}
                   </span>
                 </div>

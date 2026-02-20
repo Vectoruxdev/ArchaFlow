@@ -9,48 +9,48 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-12 px-4">
+    <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-900 py-12 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-              <div className="w-5 h-5 border-2 border-white dark:border-black rotate-45" />
+            <div className="w-10 h-10 bg-warm-900 dark:bg-[--af-bg-surface] rounded-lg flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-white dark:border-foreground rotate-45" />
             </div>
             <span className="font-semibold text-2xl">ArchaFlow</span>
           </Link>
           <Link
             href="/"
-            className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+            className="text-sm text-[--af-text-secondary] hover:text-foreground dark:hover:text-white"
           >
             &larr; Back to Home
           </Link>
         </div>
 
         {/* Content */}
-        <div className="bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg p-8 md:p-12">
-          <h1 className="text-3xl font-bold mb-2">Contact Us</h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-8">
+        <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg shadow-lg p-8 md:p-12">
+          <h1 className="text-3xl font-display font-bold tracking-tight mb-2">Contact Us</h1>
+          <p className="text-[--af-text-muted] mb-8">
             Have a question, feedback, or interested in ArchaFlow? We&apos;d love
             to hear from you.
           </p>
 
-          <div className="flex items-center gap-4 p-6 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 mb-8">
-            <div className="w-12 h-12 rounded-full bg-black dark:bg-white flex items-center justify-center flex-shrink-0">
-              <Mail className="w-5 h-5 text-white dark:text-black" />
+          <div className="flex items-center gap-4 p-6 rounded-lg bg-[--af-bg-surface-alt] border border-[--af-border-default] mb-8">
+            <div className="w-12 h-12 rounded-full bg-warm-900 dark:bg-[--af-bg-surface] flex items-center justify-center flex-shrink-0">
+              <Mail className="w-5 h-5 text-white dark:text-foreground" />
             </div>
             <div>
-              <p className="font-medium text-black dark:text-white">Email Us</p>
+              <p className="font-medium text-foreground">Email Us</p>
               <a
                 href="mailto:jared@archaflow.com"
-                className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+                className="text-[--af-text-secondary] hover:text-foreground dark:hover:text-white transition-colors"
               >
                 jared@archaflow.com
               </a>
             </div>
           </div>
 
-          <div className="prose prose-gray dark:prose-invert max-w-none space-y-4 text-gray-700 dark:text-gray-300">
+          <div className="prose prose-gray dark:prose-invert max-w-none space-y-4 text-[--af-text-secondary] dark:text-[--af-text-muted]">
             <p>
               Whether you&apos;re an architecture firm looking for a better way to
               manage projects, have a feature request, or want to report an issue —
@@ -63,7 +63,7 @@ export default function ContactPage() {
           </div>
         </div>
 
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
+        <p className="text-center text-sm text-[--af-text-secondary] mt-6">
           &copy; 2026 ArchaFlow. All rights reserved.
         </p>
       </div>

@@ -14,13 +14,13 @@ interface InvoiceTableProps {
 }
 
 const statusColors: Record<string, string> = {
-  draft: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
-  sent: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-  viewed: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-  partially_paid: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
-  paid: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400",
-  overdue: "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400",
-  void: "bg-gray-100 dark:bg-gray-800 text-gray-500",
+  draft: "bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-secondary]",
+  sent: "bg-[--af-info-bg] text-[--af-info-text]",
+  viewed: "bg-[--af-info-bg] text-[--af-info-text]",
+  partially_paid: "bg-[--af-warning-bg] text-[--af-warning-text]",
+  paid: "bg-[--af-success-bg] text-[--af-success-text]",
+  overdue: "bg-[--af-danger-bg] text-[--af-danger-text]",
+  void: "bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-muted]",
 }
 
 function formatCurrency(val: number): string {
@@ -63,8 +63,8 @@ export function InvoiceTable({ projectId, clientId }: InvoiceTableProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Invoices</h3>
-          <p className="text-sm text-gray-500">
+          <h3 className="text-lg font-display font-bold">Invoices</h3>
+          <p className="text-sm text-[--af-text-muted]">
             {invoices.length} invoice{invoices.length !== 1 ? "s" : ""} · Total: {formatCurrency(totalAmount)}
           </p>
         </div>
@@ -77,47 +77,47 @@ export function InvoiceTable({ projectId, clientId }: InvoiceTableProps) {
       {/* Table */}
       {loading ? (
         <div className="flex justify-center py-8">
-          <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+          <Loader2 className="w-5 h-5 animate-spin text-[--af-text-muted]" />
         </div>
       ) : invoices.length === 0 ? (
-        <div className="text-center py-8 text-sm text-gray-500">
+        <div className="text-center py-8 text-sm text-[--af-text-muted]">
           No invoices for this project yet.
         </div>
       ) : (
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+        <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+              <thead className="bg-[--af-bg-surface-alt]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Invoice #
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Amount
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
                     Status
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-800">
+              <tbody className="divide-y divide-[--af-border-default] dark:divide-warm-800">
                 {invoices.map((inv) => (
                   <tr
                     key={inv.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-900 cursor-pointer"
+                    className="hover:bg-[--af-bg-surface-alt] cursor-pointer"
                     onClick={() => {
                       setSelectedInvoiceId(inv.id)
                       setDetailOpen(true)
                     }}
                   >
                     <td className="px-4 py-3 text-sm font-medium">{inv.invoice_number}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-sm text-[--af-text-muted]">
                       {inv.issue_date
                         ? new Date(inv.issue_date).toLocaleDateString()
                         : "—"}
@@ -125,7 +125,7 @@ export function InvoiceTable({ projectId, clientId }: InvoiceTableProps) {
                     <td className="px-4 py-3 text-sm font-medium text-right">
                       {formatCurrency(inv.total)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-500">
+                    <td className="px-4 py-3 text-sm text-[--af-text-muted]">
                       {inv.due_date
                         ? new Date(inv.due_date).toLocaleDateString()
                         : "—"}

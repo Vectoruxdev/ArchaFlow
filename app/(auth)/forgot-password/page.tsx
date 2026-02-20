@@ -36,24 +36,24 @@ export default function ForgotPasswordPage() {
     return (
       <div className="text-center">
         <div className="mb-6 flex justify-center">
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
+          <div className="w-16 h-16 bg-[--af-success-bg] rounded-full flex items-center justify-center">
+            <CheckCircle className="w-8 h-8 text-[--af-success-text]" />
           </div>
         </div>
 
-        <h1 className="text-2xl font-semibold mb-2">Check your email</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2">Check your email</h1>
+        <p className="text-[--af-text-secondary] mb-6">
           We've sent a password reset link to <strong>{email}</strong>
         </p>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+        <p className="text-sm text-[--af-text-secondary] mb-6">
           Didn't receive the email? Check your spam folder or{" "}
           <button
             onClick={() => {
               setSuccess(false)
               setEmail("")
             }}
-            className="text-black dark:text-white hover:underline"
+            className="text-foreground hover:underline"
           >
             try again
           </button>
@@ -71,16 +71,16 @@ export default function ForgotPasswordPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold mb-2">Reset your password</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2">Reset your password</h1>
+        <p className="text-[--af-text-secondary]">
           Enter your email address and we'll send you a link to reset your password
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3">
+            <p className="text-sm text-[--af-danger-text]">{error}</p>
           </div>
         )}
 
@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
       <div className="mt-6 text-center">
         <Link
           href="/login"
-          className="text-sm text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white"
+          className="text-sm text-[--af-text-secondary] hover:text-foreground dark:hover:text-white"
         >
           Back to sign in
         </Link>

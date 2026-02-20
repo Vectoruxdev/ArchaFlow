@@ -67,14 +67,14 @@ export function ContractTemplateEditor({ content, onChange, customVariables = []
   }
 
   return (
-    <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden bg-white dark:bg-black">
+    <div className="border border-[--af-border-default] rounded-lg overflow-hidden bg-[--af-bg-surface]">
       {/* Toolbar */}
-      <div className="flex items-center gap-0.5 px-3 py-2 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 flex-wrap">
+      <div className="flex items-center gap-0.5 px-3 py-2 border-b border-[--af-border-default] bg-[--af-bg-canvas] dark:bg-warm-900 flex-wrap">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive("bold") ? "bg-gray-200 dark:bg-gray-800" : ""}
+          className={editor.isActive("bold") ? "bg-[--af-bg-surface-alt] dark:bg-warm-800" : ""}
         >
           <Bold className="w-4 h-4" />
         </Button>
@@ -82,16 +82,16 @@ export function ContractTemplateEditor({ content, onChange, customVariables = []
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive("italic") ? "bg-gray-200 dark:bg-gray-800" : ""}
+          className={editor.isActive("italic") ? "bg-[--af-bg-surface-alt] dark:bg-warm-800" : ""}
         >
           <Italic className="w-4 h-4" />
         </Button>
-        <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 mx-1" />
+        <div className="w-px h-5 bg-[--af-bg-surface-alt] dark:bg-warm-800 mx-1" />
         <Button
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={editor.isActive("heading", { level: 1 }) ? "bg-gray-200 dark:bg-gray-800" : ""}
+          className={editor.isActive("heading", { level: 1 }) ? "bg-[--af-bg-surface-alt] dark:bg-warm-800" : ""}
         >
           <Heading1 className="w-4 h-4" />
         </Button>
@@ -99,16 +99,16 @@ export function ContractTemplateEditor({ content, onChange, customVariables = []
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor.isActive("heading", { level: 2 }) ? "bg-gray-200 dark:bg-gray-800" : ""}
+          className={editor.isActive("heading", { level: 2 }) ? "bg-[--af-bg-surface-alt] dark:bg-warm-800" : ""}
         >
           <Heading2 className="w-4 h-4" />
         </Button>
-        <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 mx-1" />
+        <div className="w-px h-5 bg-[--af-bg-surface-alt] dark:bg-warm-800 mx-1" />
         <Button
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive("bulletList") ? "bg-gray-200 dark:bg-gray-800" : ""}
+          className={editor.isActive("bulletList") ? "bg-[--af-bg-surface-alt] dark:bg-warm-800" : ""}
         >
           <List className="w-4 h-4" />
         </Button>
@@ -116,11 +116,11 @@ export function ContractTemplateEditor({ content, onChange, customVariables = []
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive("orderedList") ? "bg-gray-200 dark:bg-gray-800" : ""}
+          className={editor.isActive("orderedList") ? "bg-[--af-bg-surface-alt] dark:bg-warm-800" : ""}
         >
           <ListOrdered className="w-4 h-4" />
         </Button>
-        <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 mx-1" />
+        <div className="w-px h-5 bg-[--af-bg-surface-alt] dark:bg-warm-800 mx-1" />
         <Button
           variant="ghost"
           size="sm"
@@ -137,7 +137,7 @@ export function ContractTemplateEditor({ content, onChange, customVariables = []
         >
           <Redo className="w-4 h-4" />
         </Button>
-        <div className="w-px h-5 bg-gray-200 dark:bg-gray-800 mx-1" />
+        <div className="w-px h-5 bg-[--af-bg-surface-alt] dark:bg-warm-800 mx-1" />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">
@@ -148,7 +148,7 @@ export function ContractTemplateEditor({ content, onChange, customVariables = []
           <DropdownMenuContent align="start" className="max-h-64 overflow-y-auto">
             {allVariables.map((v) => (
               <DropdownMenuItem key={v} onClick={() => insertVariable(v)}>
-                <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
+                <code className="text-xs bg-[--af-bg-surface-alt] dark:bg-warm-800 px-1.5 py-0.5 rounded">
                   {`{{${v}}}`}
                 </code>
               </DropdownMenuItem>

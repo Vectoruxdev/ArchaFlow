@@ -258,7 +258,7 @@ export default function ProfilePage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-gray-100" />
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand]" />
         </div>
       </AppLayout>
     )
@@ -281,24 +281,24 @@ export default function ProfilePage() {
       />
       <div className="p-4 lg:p-6 max-w-2xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Profile</h1>
+          <h1 className="text-2xl font-display font-bold tracking-tight">Profile</h1>
           {saved && (
-            <span className="text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+            <span className="text-sm text-[--af-success-text] flex items-center gap-1">
               <Check className="w-4 h-4" /> Saved
             </span>
           )}
         </div>
 
         {/* Profile Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                <User className="w-5 h-5 text-[--af-text-secondary]" />
               </div>
               <div>
                 <h2 className="font-semibold">Profile</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[--af-text-secondary]">
                   Your personal information
                 </p>
               </div>
@@ -306,8 +306,8 @@ export default function ProfilePage() {
           </div>
           <form onSubmit={handleSaveProfile} className="p-6 space-y-4">
             {profileError && (
-              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-                <p className="text-sm text-red-600 dark:text-red-400">{profileError}</p>
+              <div className="p-3 rounded-lg bg-[--af-danger-bg] border border-[--af-danger-border]">
+                <p className="text-sm text-[--af-danger-text]">{profileError}</p>
               </div>
             )}
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
@@ -316,11 +316,11 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => setIsAvatarPickerOpen(true)}
                   disabled={avatarUploading}
-                  className="block rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 focus:ring-offset-2"
+                  className="block rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] focus:ring-offset-2"
                 >
                   <Avatar className="w-20 h-20 cursor-pointer hover:opacity-90 transition-opacity">
                     <AvatarImage src={avatarUrl} alt="Avatar" />
-                    <AvatarFallback className="bg-gray-200 dark:bg-gray-800 text-lg">
+                    <AvatarFallback className="bg-[--af-bg-surface-alt] dark:bg-warm-800 text-lg">
                       {[firstName, lastName].filter(Boolean).join(" ").slice(0, 2).toUpperCase() ||
                         user.email?.slice(0, 2).toUpperCase() ||
                         "?"}
@@ -331,7 +331,7 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => setIsAvatarPickerOpen(true)}
                   disabled={avatarUploading}
-                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center hover:opacity-90 disabled:opacity-50"
+                  className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-warm-900 dark:bg-[--af-bg-surface] text-white dark:text-foreground flex items-center justify-center hover:opacity-90 disabled:opacity-50"
                 >
                   {avatarUploading ? (
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -361,8 +361,8 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <label className="text-sm font-medium block mb-1">Email</label>
-                  <Input value={user.email || ""} disabled className="bg-gray-50 dark:bg-gray-900" />
-                  <p className="text-xs text-gray-500 mt-0.5">Email cannot be changed here</p>
+                  <Input value={user.email || ""} disabled className="bg-[--af-bg-surface-alt]" />
+                  <p className="text-xs text-[--af-text-muted] mt-0.5">Email cannot be changed here</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium block mb-1">Phone</label>
@@ -381,15 +381,15 @@ export default function ProfilePage() {
         </div>
 
         {/* Appearance Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Palette className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                <Palette className="w-5 h-5 text-[--af-text-secondary]" />
               </div>
               <div>
                 <h2 className="font-semibold">Appearance</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[--af-text-secondary]">
                   Customize how ArchaFlow looks
                 </p>
               </div>
@@ -403,8 +403,8 @@ export default function ProfilePage() {
                 onClick={() => handleThemeChange("light")}
                 className={`p-4 border-2 rounded-lg transition-all text-left ${
                   theme === "light"
-                    ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
-                    : "border-gray-200 dark:border-gray-800 hover:border-gray-300"
+                    ? "border-foreground dark:border-white bg-[--af-bg-surface-alt]"
+                    : "border-[--af-border-default] hover:border-[--af-border-default]"
                 }`}
               >
                 <span className="font-medium text-sm">Light</span>
@@ -414,8 +414,8 @@ export default function ProfilePage() {
                 onClick={() => handleThemeChange("dark")}
                 className={`p-4 border-2 rounded-lg transition-all text-left ${
                   theme === "dark"
-                    ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
-                    : "border-gray-200 dark:border-gray-800 hover:border-gray-300"
+                    ? "border-foreground dark:border-white bg-[--af-bg-surface-alt]"
+                    : "border-[--af-border-default] hover:border-[--af-border-default]"
                 }`}
               >
                 <span className="font-medium text-sm">Dark</span>
@@ -425,15 +425,15 @@ export default function ProfilePage() {
         </div>
 
         {/* Password Section */}
-        <div id="password" className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div id="password" className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                <Lock className="w-5 h-5 text-[--af-text-secondary]" />
               </div>
               <div>
                 <h2 className="font-semibold">Password</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[--af-text-secondary]">
                   Change your password
                 </p>
               </div>
@@ -441,13 +441,13 @@ export default function ProfilePage() {
           </div>
           <form onSubmit={handlePasswordUpdate} className="p-6 space-y-4">
             {passwordError && (
-              <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-                <p className="text-sm text-red-600 dark:text-red-400">{passwordError}</p>
+              <div className="p-3 rounded-lg bg-[--af-danger-bg] border border-[--af-danger-border]">
+                <p className="text-sm text-[--af-danger-text]">{passwordError}</p>
               </div>
             )}
             {passwordSuccess && (
-              <div className="p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                <p className="text-sm text-green-600 dark:text-green-400">Password updated.</p>
+              <div className="p-3 rounded-lg bg-[--af-success-bg] border border-[--af-success-border]">
+                <p className="text-sm text-[--af-success-text]">Password updated.</p>
               </div>
             )}
             <div>
@@ -460,7 +460,7 @@ export default function ProfilePage() {
                 minLength={8}
                 disabled={passwordLoading}
               />
-              <p className="text-xs text-gray-500 mt-0.5">At least 8 characters</p>
+              <p className="text-xs text-[--af-text-muted] mt-0.5">At least 8 characters</p>
             </div>
             <div>
               <label className="text-sm font-medium block mb-1">Confirm new password</label>
@@ -479,15 +479,15 @@ export default function ProfilePage() {
         </div>
 
         {/* Notifications Section */}
-        <div id="notifications" className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div id="notifications" className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                <Bell className="w-5 h-5 text-[--af-text-secondary]" />
               </div>
               <div>
                 <h2 className="font-semibold">Notifications</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[--af-text-secondary]">
                   Manage your notification preferences
                 </p>
               </div>
@@ -518,11 +518,11 @@ export default function ProfilePage() {
             ].map((n) => (
               <div
                 key={n.key}
-                className="flex items-center justify-between py-3 border-b border-gray-100 dark:border-gray-900 last:border-0"
+                className="flex items-center justify-between py-3 border-b border-[--af-border-default]/50 dark:border-foreground last:border-0"
               >
                 <div className="flex-1">
                   <p className="font-medium text-sm">{n.title}</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                  <p className="text-xs text-[--af-text-secondary] mt-0.5">
                     {n.description}
                   </p>
                 </div>
@@ -531,12 +531,12 @@ export default function ProfilePage() {
                   onClick={() => handleNotifToggle(n.key, !notifPrefs[n.key])}
                   className={`relative w-11 h-6 rounded-full transition-colors ${
                     notifPrefs[n.key]
-                      ? "bg-black dark:bg-white"
-                      : "bg-gray-200 dark:bg-gray-800"
+                      ? "bg-warm-900 dark:bg-[--af-bg-surface]"
+                      : "bg-[--af-bg-surface-alt] dark:bg-warm-800"
                   }`}
                 >
                   <div
-                    className={`absolute top-0.5 w-5 h-5 rounded-full bg-white dark:bg-black transition-transform ${
+                    className={`absolute top-0.5 w-5 h-5 rounded-full bg-[--af-bg-surface] transition-transform ${
                       notifPrefs[n.key] ? "translate-x-5" : "translate-x-0.5"
                     }`}
                   />
@@ -547,10 +547,10 @@ export default function ProfilePage() {
         </div>
 
         {/* Danger Zone */}
-        <div className="border border-red-200 dark:border-red-900/30 rounded-lg">
-          <div className="p-6 border-b border-red-200 dark:border-red-900/30">
-            <h2 className="font-semibold text-red-600 dark:text-red-400">Danger Zone</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <div className="border border-[--af-danger-border] rounded-lg">
+          <div className="p-6 border-b border-[--af-danger-border] ">
+            <h2 className="font-semibold text-[--af-danger-text]">Danger Zone</h2>
+            <p className="text-sm text-[--af-text-secondary] mt-1">
               Irreversible actions
             </p>
           </div>
@@ -558,13 +558,13 @@ export default function ProfilePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-sm">Delete Account</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                <p className="text-xs text-[--af-text-secondary] mt-0.5">
                   Permanently delete your account and all data
                 </p>
               </div>
               <Button
                 variant="outline"
-                className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/10"
+                className="text-[--af-danger-text] border-[--af-danger-border] hover:bg-[--af-danger-bg] "
                 disabled
               >
                 <Trash2 className="w-4 h-4 mr-2" />

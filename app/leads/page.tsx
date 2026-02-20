@@ -187,12 +187,12 @@ const statusLabels: Record<string, string> = {
 
 function TemperatureBadge({ temperature }: { temperature: string }) {
   const colors: Record<string, string> = {
-    cold: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-    warm: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400",
-    hot: "bg-red-500/10 text-red-600 dark:text-red-400",
+    cold: "bg-[--af-info-bg]0/10 text-[--af-info-text]",
+    warm: "bg-[--af-warning-bg]0/10 text-[--af-warning-text]",
+    hot: "bg-[--af-danger-bg]0/10 text-[--af-danger-text]",
   }
   return (
-    <Badge className={colors[temperature] || "bg-gray-100 text-gray-600"}>
+    <Badge className={colors[temperature] || "bg-[--af-bg-surface-alt] text-[--af-text-secondary]"}>
       {temperature.charAt(0).toUpperCase() + temperature.slice(1)}
     </Badge>
   )
@@ -201,15 +201,15 @@ function TemperatureBadge({ temperature }: { temperature: string }) {
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
     new: "bg-purple-500/10 text-purple-600",
-    contacted: "bg-blue-500/10 text-blue-600",
-    qualified: "bg-green-500/10 text-green-600",
+    contacted: "bg-[--af-info-bg]0/10 text-[--af-info-text]",
+    qualified: "bg-[--af-success-bg]0/10 text-[--af-success-text]",
     proposal: "bg-orange-500/10 text-orange-600",
-    negotiation: "bg-yellow-500/10 text-yellow-600",
+    negotiation: "bg-[--af-warning-bg]0/10 text-[--af-warning-text]",
     won: "bg-emerald-500/10 text-emerald-600",
-    lost: "bg-gray-500/10 text-gray-500",
+    lost: "bg-[--af-bg-canvas]0/10 text-[--af-text-muted]",
   }
   return (
-    <Badge className={colors[status] || "bg-gray-100 text-gray-600"}>
+    <Badge className={colors[status] || "bg-[--af-bg-surface-alt] text-[--af-text-secondary]"}>
       {statusLabels[status] || status}
     </Badge>
   )
@@ -618,7 +618,7 @@ export default function LeadsPage() {
       <AppLayout>
         <div className="p-6">
           <div className="flex items-center justify-center py-20">
-            <div className="text-gray-500">Loading leads...</div>
+            <div className="text-[--af-text-muted]">Loading leads...</div>
           </div>
         </div>
       </AppLayout>
@@ -661,12 +661,12 @@ export default function LeadsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex-1">
-            <h1 className="text-2xl font-semibold">Leads</h1>
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-gray-500 mt-1">
+            <h1 className="text-2xl font-display font-bold tracking-tight">Leads</h1>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs sm:text-sm text-[--af-text-muted] mt-1">
               <span>{activeLeads.length} active</span>
-              <span className="text-gray-300">•</span>
+              <span className="text-[--af-text-muted]">•</span>
               <span>{convertedLeads.length} converted</span>
-              <span className="text-gray-300">•</span>
+              <span className="text-[--af-text-muted]">•</span>
               <span>{archivedLeads.length} archived</span>
             </div>
           </div>
@@ -677,7 +677,7 @@ export default function LeadsPage() {
         </div>
 
         {/* Date filter and stats */}
-        <div className="rounded-lg border bg-card p-3 sm:p-4 space-y-3">
+        <div className="rounded-card border bg-card p-3 sm:p-4 space-y-3">
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <span className="text-xs sm:text-sm font-medium text-muted-foreground">Date range:</span>
             <Select value={datePreset} onValueChange={(v) => setDatePreset(v as DatePreset)}>
@@ -757,21 +757,21 @@ export default function LeadsPage() {
                     <LayoutList className="w-4 h-4" />
                     <span className="text-sm font-medium">Total leads</span>
                   </div>
-                  <p className="text-2xl font-semibold">{leads.length}</p>
+                  <p className="text-2xl font-display font-bold tracking-tight">{leads.length}</p>
                 </div>
                 <div className="rounded-md border bg-muted/30 p-3">
                   <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Target className="w-4 h-4" />
                     <span className="text-sm font-medium">New leads</span>
                   </div>
-                  <p className="text-2xl font-semibold">{leadsStats.newLeadsCount}</p>
+                  <p className="text-2xl font-display font-bold tracking-tight">{leadsStats.newLeadsCount}</p>
                 </div>
                 <div className="rounded-md border bg-muted/30 p-3">
                   <div className="flex items-center gap-2 text-muted-foreground mb-1">
                     <Activity className="w-4 h-4" />
                     <span className="text-sm font-medium">Follow-ups</span>
                   </div>
-                  <p className="text-2xl font-semibold">{leadsStats.followUpsCount}</p>
+                  <p className="text-2xl font-display font-bold tracking-tight">{leadsStats.followUpsCount}</p>
                 </div>
               </div>
             </div>
@@ -783,7 +783,7 @@ export default function LeadsPage() {
         {/* Search and Filters */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
             <Input
               placeholder="Search leads..."
               value={searchQuery}
@@ -955,7 +955,7 @@ export default function LeadsPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs sm:text-sm text-gray-500 order-2 sm:order-1">
+            <p className="text-xs sm:text-sm text-[--af-text-muted] order-2 sm:order-1">
               Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
               {Math.min(currentPage * itemsPerPage, displayLeads.length)} of{" "}
               {displayLeads.length} leads
@@ -1035,8 +1035,8 @@ export default function LeadsPage() {
   function renderTable(leadsList: Lead[]) {
     if (leadsList.length === 0) {
       return (
-        <div className="text-center py-12 border border-gray-200 dark:border-gray-800 rounded-lg">
-          <p className="text-gray-500 dark:text-gray-400">
+        <div className="text-center py-12 border border-[--af-border-default] rounded-lg">
+          <p className="text-[--af-text-muted]">
             {searchQuery || temperatureFilter !== "all" || statusFilter !== "all" || lifecycleFilter !== "all" || assignedToFilter !== "all"
               ? "No leads found matching your filters."
               : "No leads yet."}
@@ -1046,7 +1046,7 @@ export default function LeadsPage() {
     }
 
     return (
-      <div className="border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+      <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
           <TableHeader>
@@ -1073,12 +1073,12 @@ export default function LeadsPage() {
                   <div>
                     <div className="text-sm">{lead.firstName} {lead.lastName}</div>
                     {lead.email && (
-                      <p className="text-xs text-gray-500">{lead.email}</p>
+                      <p className="text-xs text-[--af-text-muted]">{lead.email}</p>
                     )}
-                    <p className="text-xs text-gray-500 sm:hidden mt-0.5">{lead.companyName || "No company"}</p>
+                    <p className="text-xs text-[--af-text-muted] sm:hidden mt-0.5">{lead.companyName || "No company"}</p>
                   </div>
                 </TableCell>
-                <TableCell className="hidden sm:table-cell text-sm text-gray-600 dark:text-gray-400">
+                <TableCell className="hidden sm:table-cell text-sm text-[--af-text-secondary]">
                   {lead.companyName || "---"}
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-sm">
@@ -1092,22 +1092,22 @@ export default function LeadsPage() {
                 </TableCell>
                 <TableCell className="hidden lg:table-cell text-center">
                   <span className={`text-sm font-medium ${
-                    lead.leadScore >= 70 ? "text-green-600" :
-                    lead.leadScore >= 40 ? "text-yellow-600" :
-                    "text-gray-500"
+                    lead.leadScore >= 70 ? "text-[--af-success-text]" :
+                    lead.leadScore >= 40 ? "text-[--af-warning-text]" :
+                    "text-[--af-text-muted]"
                   }`}>
                     {lead.leadScore}
                   </span>
                 </TableCell>
-                <TableCell className="hidden lg:table-cell text-sm text-gray-600 dark:text-gray-400">
+                <TableCell className="hidden lg:table-cell text-sm text-[--af-text-secondary]">
                   {lead.nextAction || "---"}
                   {lead.nextActionDate && (
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-[--af-text-muted]">
                       {new Date(lead.nextActionDate).toLocaleDateString()}
                     </p>
                   )}
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-gray-500">
+                <TableCell className="hidden md:table-cell text-sm text-[--af-text-muted]">
                   {new Date(lead.createdAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell>
@@ -1171,7 +1171,7 @@ export default function LeadsPage() {
                               e.stopPropagation()
                               unarchiveLead(lead.id)
                             }}
-                            className="text-blue-600"
+                            className="text-[--af-info-text]"
                           >
                             <ArchiveRestore className="w-4 h-4 mr-2" />
                             Unarchive Lead
@@ -1181,7 +1181,7 @@ export default function LeadsPage() {
                               e.stopPropagation()
                               setDeleteConfirm(lead.id)
                             }}
-                            className="text-red-600"
+                            className="text-[--af-danger-text]"
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Delete Permanently

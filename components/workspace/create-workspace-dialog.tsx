@@ -59,8 +59,8 @@ export function CreateWorkspaceDialog({ open, onOpenChange }: CreateWorkspaceDia
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {error && (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3">
-              <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+            <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3">
+              <p className="text-sm text-[--af-danger-text]">{error}</p>
             </div>
           )}
 
@@ -89,10 +89,10 @@ export function CreateWorkspaceDialog({ open, onOpenChange }: CreateWorkspaceDia
                   key={icon}
                   type="button"
                   onClick={() => setSelectedIcon(icon)}
-                  className={`text-2xl p-2 rounded-lg border-2 transition-all ${
+                  className={`text-2xl p-2 rounded-card border-2 transition-all ${
                     selectedIcon === icon
-                      ? "border-black dark:border-white bg-gray-100 dark:bg-gray-800"
-                      : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                      ? "border-foreground dark:border-white bg-[--af-bg-surface-alt] dark:bg-warm-800"
+                      : "border-[--af-border-default] dark:border-warm-700 hover:border-[--af-border-default] dark:hover:border-warm-600"
                   }`}
                   disabled={loading}
                 >

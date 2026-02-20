@@ -35,8 +35,8 @@ export default function BusinessDetailPage() {
   if (loading) {
     return (
       <div className="space-y-4">
-        <div className="h-8 w-48 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
-        <div className="h-64 bg-gray-200 dark:bg-gray-800 rounded animate-pulse" />
+        <div className="h-8 w-48 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse" />
+        <div className="h-64 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded animate-pulse" />
       </div>
     )
   }
@@ -53,7 +53,7 @@ export default function BusinessDetailPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Businesses
         </Button>
-        <p className="text-gray-500">{error || "Business not found"}</p>
+        <p className="text-[--af-text-muted]">{error || "Business not found"}</p>
       </div>
     )
   }
@@ -69,7 +69,7 @@ export default function BusinessDetailPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back
         </Button>
-        <h1 className="text-2xl font-bold">{business.name}</h1>
+        <h1 className="text-2xl font-display font-bold tracking-tight">{business.name}</h1>
       </div>
 
       <BusinessDetailTabs business={business} onRefresh={fetchBusiness} />

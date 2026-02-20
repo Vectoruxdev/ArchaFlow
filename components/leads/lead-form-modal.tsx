@@ -365,20 +365,20 @@ export function LeadFormModal({
                 const finalTotal = total != null ? total - discount : null
                 const hasDiscount = discount > 0
                 return (
-                  <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 py-3 px-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800">
+                  <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 py-3 px-4 rounded-lg bg-[--af-bg-surface-alt]/50 border border-[--af-border-default]/50 dark:border-warm-800">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-500">Total Price</span>
+                      <span className="text-sm text-[--af-text-muted]">Total Price</span>
                       <span className="text-sm font-medium tabular-nums">
                         {total != null ? `$${total.toLocaleString()}` : "---"}
                         {hasDiscount && (
-                          <span className="text-xs text-gray-500 font-normal ml-1">
+                          <span className="text-xs text-[--af-text-muted] font-normal ml-1">
                             (− {discountType === "percent" ? `${discountVal}%` : `$${discount.toLocaleString()}`})
                           </span>
                         )}
                       </span>
                     </div>
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                      <span className="text-sm text-gray-500">Discount</span>
+                      <span className="text-sm text-[--af-text-muted]">Discount</span>
                       <div className="flex gap-2">
                         <Select value={formData.discountType || "_none"} onValueChange={(v) => update("discountType", v === "_none" ? "" : v)}>
                           <SelectTrigger className="w-[120px] h-9 shrink-0"><SelectValue placeholder="Type" /></SelectTrigger>
@@ -398,7 +398,7 @@ export function LeadFormModal({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-500">Final Total</span>
+                      <span className="text-sm text-[--af-text-muted]">Final Total</span>
                       <span className="text-sm font-semibold tabular-nums">{finalTotal != null ? `$${finalTotal.toLocaleString()}` : "---"}</span>
                     </div>
                   </div>
@@ -416,14 +416,14 @@ export function LeadFormModal({
                       key={temp}
                       type="button"
                       onClick={() => update("temperature", temp)}
-                      className={`flex-1 py-2 px-4 rounded-lg border text-sm font-medium capitalize transition-colors ${
+                      className={`flex-1 py-2 px-4 rounded-card border text-sm font-medium capitalize transition-colors ${
                         formData.temperature === temp
                           ? temp === "cold"
-                            ? "border-blue-500 bg-blue-500/10 text-blue-600"
+                            ? "border-[--af-info-border] bg-[--af-info-bg]0/10 text-[--af-info-text]"
                             : temp === "warm"
-                              ? "border-yellow-500 bg-yellow-500/10 text-yellow-600"
-                              : "border-red-500 bg-red-500/10 text-red-600"
-                          : "border-gray-200 dark:border-gray-800 text-gray-500"
+                              ? "border-[--af-warning-border] bg-[--af-warning-bg]0/10 text-[--af-warning-text]"
+                              : "border-[--af-danger-border] bg-[--af-danger-bg]0/10 text-[--af-danger-text]"
+                          : "border-[--af-border-default] text-[--af-text-muted]"
                       }`}
                     >
                       {temp}
@@ -496,7 +496,7 @@ export function LeadFormModal({
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[--af-text-muted]">
                   Assign a team member to manage this lead.
                 </p>
               </div>
@@ -504,7 +504,7 @@ export function LeadFormModal({
           </Tabs>
 
           <DialogFooter className="mt-6 flex-col sm:flex-row gap-2">
-            {saveError && <p className="text-sm text-red-600 w-full order-first">{saveError}</p>}
+            {saveError && <p className="text-sm text-[--af-danger-text] w-full order-first">{saveError}</p>}
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving} className="w-full sm:w-auto">
               Cancel
             </Button>

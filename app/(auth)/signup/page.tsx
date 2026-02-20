@@ -79,16 +79,16 @@ function SignupContent() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold mb-2">Create your account</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2">Create your account</h1>
+        <p className="text-[--af-text-secondary]">
           Get started with ArchaFlow today
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-[--af-radius-input] p-3">
+            <p className="text-sm text-[--af-danger-text]">{error}</p>
           </div>
         )}
 
@@ -125,7 +125,7 @@ function SignupContent() {
         {isInviteFlow && (
           <div>
             <label htmlFor="workspaceName" className="block text-sm font-medium mb-2">
-              Workspace Name <span className="text-gray-500">(Optional)</span>
+              Workspace Name <span className="text-[--af-text-muted]">(Optional)</span>
             </label>
             <Input
               id="workspaceName"
@@ -135,7 +135,7 @@ function SignupContent() {
               placeholder=""
               disabled={loading}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-[--af-text-muted] mt-1">
               You&apos;re joining an existing workspace — leave blank.
             </p>
           </div>
@@ -154,7 +154,7 @@ function SignupContent() {
             required
             disabled={loading}
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-[--af-text-muted] mt-1">
             Must be at least 8 characters
           </p>
         </div>
@@ -207,9 +207,9 @@ function SignupContent() {
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-[--af-text-secondary]">
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-black dark:text-white hover:underline">
+          <Link href="/login" className="font-medium text-foreground hover:underline">
             Sign in
           </Link>
         </p>

@@ -633,13 +633,13 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold">Settings</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            <h1 className="text-2xl font-display font-bold tracking-tight">Settings</h1>
+            <p className="text-sm text-[--af-text-secondary] mt-1">
               Manage workspace settings, roles, and team configuration
             </p>
           </div>
           {saved && (
-            <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20">
+            <Badge className="bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20">
               <Check className="w-3 h-3 mr-1" />
               Saved
             </Badge>
@@ -647,15 +647,15 @@ export default function SettingsPage() {
         </div>
 
         {/* Roles & Permissions Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                <Shield className="w-5 h-5 text-[--af-text-secondary]" />
               </div>
               <div>
                 <h2 className="font-semibold">Roles & Permissions</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[--af-text-secondary]">
                   Control access to features across your business
                 </p>
               </div>
@@ -663,7 +663,7 @@ export default function SettingsPage() {
           </div>
           <div className="p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-[--af-text-secondary]">
                 Manage role access for this business
               </p>
               <Button size="sm" onClick={() => setIsRoleModalOpen(true)}>
@@ -673,15 +673,15 @@ export default function SettingsPage() {
             </div>
 
             {rolesError && (
-              <div className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-md p-3">
+              <div className="text-sm text-[--af-danger-text] bg-[--af-danger-bg] border border-[--af-danger-border] rounded-md p-3">
                 {rolesError}
               </div>
             )}
 
             {rolesLoading ? (
-              <div className="text-sm text-gray-500">Loading roles...</div>
+              <div className="text-sm text-[--af-text-muted]">Loading roles...</div>
             ) : roles.length === 0 ? (
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-[--af-text-muted]">
                 No roles found for this business yet.
               </div>
             ) : (
@@ -708,8 +708,8 @@ export default function SettingsPage() {
                                   {...provided.draggableProps}
                                   className={`border rounded-lg px-3 py-2 group relative ${
                                     isSelected
-                                      ? "border-black dark:border-white bg-gray-50 dark:bg-gray-900"
-                                      : "border-gray-200 dark:border-gray-800"
+                                      ? "border-foreground dark:border-white bg-[--af-bg-surface-alt]"
+                                      : "border-[--af-border-default]"
                                   } ${snapshot.isDragging ? "shadow-lg" : ""}`}
                                 >
                                   {/* Drag handle */}
@@ -717,7 +717,7 @@ export default function SettingsPage() {
                                     {...provided.dragHandleProps}
                                     className="absolute left-0 top-1/2 -translate-y-1/2 -ml-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing"
                                   >
-                                    <GripVertical className="w-4 h-4 text-gray-400" />
+                                    <GripVertical className="w-4 h-4 text-[--af-text-muted]" />
                                   </div>
 
                                   <div className="flex items-center justify-between gap-2">
@@ -764,7 +764,7 @@ export default function SettingsPage() {
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      className="h-6 w-6 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                      className="h-6 w-6 text-[--af-danger-text] hover:text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                                       disabled={isProtected}
                                       onClick={(e) => {
                                         e.stopPropagation()
@@ -786,13 +786,13 @@ export default function SettingsPage() {
                 </DragDropContext>
 
                 {/* Permissions matrix */}
-                <div className="lg:col-span-2 border border-gray-200 dark:border-gray-800 rounded-lg">
-                  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                <div className="lg:col-span-2 border border-[--af-border-default] rounded-lg">
+                  <div className="px-4 py-3 border-b border-[--af-border-default] flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium">
                         {selectedRole?.name || "Select a role"}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-[--af-text-muted]">
                         Set access levels by feature
                       </p>
                     </div>
@@ -818,7 +818,7 @@ export default function SettingsPage() {
                     {selectedRole ? (
                       <>
                         {/* Master CRUD row */}
-                        <div className="border-b-2 border-gray-200 dark:border-gray-800 pb-4">
+                        <div className="border-b-2 border-[--af-border-default] pb-4">
                           <div className="flex items-center justify-between mb-2">
                             <p className="text-sm font-semibold">Select All</p>
                           </div>
@@ -831,7 +831,7 @@ export default function SettingsPage() {
                               return (
                                 <label
                                   key={`master-${action}`}
-                                  className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                                  className="flex items-center gap-2 text-sm font-medium text-foreground"
                                 >
                                   <Checkbox
                                     checked={allChecked}
@@ -849,7 +849,7 @@ export default function SettingsPage() {
 
                         {/* Feature rows */}
                         {featureList.map((feature) => (
-                          <div key={feature.key} className="border-b border-gray-100 dark:border-gray-900 pb-4 last:border-0 last:pb-0">
+                          <div key={feature.key} className="border-b border-[--af-border-default]/50 dark:border-foreground pb-4 last:border-0 last:pb-0">
                             <div className="flex items-center justify-between mb-2">
                               <p className="text-sm font-medium">{feature.label}</p>
                             </div>
@@ -861,7 +861,7 @@ export default function SettingsPage() {
                                 return (
                                   <label
                                     key={`${feature.key}-${action}`}
-                                    className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+                                    className="flex items-center gap-2 text-sm text-[--af-text-secondary]"
                                   >
                                     <Checkbox
                                       checked={isChecked}
@@ -879,7 +879,7 @@ export default function SettingsPage() {
                         ))}
                       </>
                     ) : (
-                      <p className="text-sm text-gray-500">Select a role to edit permissions.</p>
+                      <p className="text-sm text-[--af-text-muted]">Select a role to edit permissions.</p>
                     )}
                   </div>
                 </div>
@@ -889,15 +889,15 @@ export default function SettingsPage() {
         </div>
 
         {/* Lead Types Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Target className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                <Target className="w-5 h-5 text-[--af-text-secondary]" />
               </div>
               <div>
                 <h2 className="font-semibold">Lead Types</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[--af-text-secondary]">
                   Manage lead types for categorizing leads (e.g., Structural Engineering, Interior Design)
                 </p>
               </div>
@@ -905,7 +905,7 @@ export default function SettingsPage() {
           </div>
           <div className="p-6 space-y-4">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-[--af-text-secondary]">
                 {leadTypes.length} lead types configured
               </p>
               <Button size="sm" onClick={() => setIsAddLeadTypeOpen(true)} disabled={!businessId}>
@@ -915,19 +915,19 @@ export default function SettingsPage() {
             </div>
 
             {leadTypesError && (
-              <div className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-md p-3">
+              <div className="text-sm text-[--af-danger-text] bg-[--af-danger-bg] border border-[--af-danger-border] rounded-md p-3">
                 {leadTypesError}
               </div>
             )}
 
             {leadTypesLoading ? (
-              <div className="text-sm text-gray-500">Loading lead types...</div>
+              <div className="text-sm text-[--af-text-muted]">Loading lead types...</div>
             ) : (
               <div className="space-y-2">
                 {leadTypes.map((lt) => (
                   <div
                     key={lt.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
+                    className="flex items-center justify-between p-3 bg-[--af-bg-surface-alt] rounded-card border border-[--af-border-default]"
                   >
                     <span className="font-medium text-sm">{lt.label}</span>
                     <div className="flex gap-2">
@@ -942,7 +942,7 @@ export default function SettingsPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        className="h-8 w-8 text-[--af-danger-text] hover:text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                         onClick={() => handleDeleteLeadType(lt.id)}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -956,15 +956,15 @@ export default function SettingsPage() {
         </div>
 
         {/* Team Positions Section */}
-        <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                <Briefcase className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                <Briefcase className="w-5 h-5 text-[--af-text-secondary]" />
               </div>
               <div>
                 <h2 className="font-semibold">Team Positions</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-[--af-text-secondary]">
                   Manage job positions for your team members
                 </p>
               </div>
@@ -972,7 +972,7 @@ export default function SettingsPage() {
           </div>
           <div className="p-6 space-y-4">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-[--af-text-secondary]">
                 {positions.length} positions configured
               </p>
               <Button size="sm" onClick={() => setIsAddPositionOpen(true)} disabled={!businessId}>
@@ -982,19 +982,19 @@ export default function SettingsPage() {
             </div>
 
             {positionsError && (
-              <div className="text-sm text-red-600 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-md p-3">
+              <div className="text-sm text-[--af-danger-text] bg-[--af-danger-bg] border border-[--af-danger-border] rounded-md p-3">
                 {positionsError}
               </div>
             )}
 
             {positionsLoading ? (
-              <div className="text-sm text-gray-500">Loading positions...</div>
+              <div className="text-sm text-[--af-text-muted]">Loading positions...</div>
             ) : (
               <div className="space-y-2">
                 {positions.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
+                    className="flex items-center justify-between p-3 bg-[--af-bg-surface-alt] rounded-card border border-[--af-border-default]"
                   >
                     <span className="font-medium text-sm">{p.label}</span>
                     <div className="flex gap-2">
@@ -1009,7 +1009,7 @@ export default function SettingsPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                        className="h-8 w-8 text-[--af-danger-text] hover:text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                         onClick={() => handleDeletePosition(p.id)}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1024,15 +1024,15 @@ export default function SettingsPage() {
 
         {/* Workspace Access Section (Owner/Admin only) */}
         {isOwner && (
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <div className="border border-[--af-border-default] rounded-lg">
+            <div className="p-6 border-b border-[--af-border-default]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                  <Globe className="w-5 h-5 text-[--af-text-secondary]" />
                 </div>
                 <div>
                   <h2 className="font-semibold">Workspace Access</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[--af-text-secondary]">
                     Control how new users can join this workspace
                   </p>
                 </div>
@@ -1040,7 +1040,7 @@ export default function SettingsPage() {
             </div>
             <div className="p-6 space-y-4">
               {domainSettingsLoading ? (
-                <div className="text-sm text-gray-500">Loading...</div>
+                <div className="text-sm text-[--af-text-muted]">Loading...</div>
               ) : (
                 <>
                   <div className="space-y-2">
@@ -1050,12 +1050,12 @@ export default function SettingsPage() {
                       value={allowedDomains}
                       onChange={(e) => setAllowedDomains(e.target.value)}
                     />
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-[--af-text-muted]">
                       Comma-separated list of email domains. Users with matching domains will see this workspace as &quot;Recommended&quot; when searching.
                     </p>
                   </div>
 
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                  <div className="flex items-start gap-3 p-3 bg-[--af-bg-surface-alt] rounded-lg">
                     <Checkbox
                       id="autoAddByDomain"
                       checked={autoAddByDomain}
@@ -1065,7 +1065,7 @@ export default function SettingsPage() {
                       <label htmlFor="autoAddByDomain" className="text-sm font-medium cursor-pointer">
                         Auto-add users with matching email domain
                       </label>
-                      <p className="text-xs text-gray-500 mt-0.5">
+                      <p className="text-xs text-[--af-text-muted] mt-0.5">
                         When enabled, users with a matching email domain will be automatically added to the workspace when they send a join request, without requiring manual approval.
                       </p>
                     </div>
@@ -1088,16 +1088,16 @@ export default function SettingsPage() {
 
         {/* Billing & Plan Section */}
         {currentWorkspace && (
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
+          <div className="border border-[--af-border-default] rounded-lg">
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                    <CreditCard className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                    <CreditCard className="w-5 h-5 text-[--af-text-secondary]" />
                   </div>
                   <div>
                     <h2 className="font-semibold">Billing & Plan</h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-[--af-text-secondary]">
                       Manage your subscription and billing details
                     </p>
                   </div>
@@ -1118,15 +1118,15 @@ export default function SettingsPage() {
 
         {/* Workspace Section */}
         {currentWorkspace && (
-          <div className="border border-gray-200 dark:border-gray-800 rounded-lg">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-800">
+          <div className="border border-[--af-border-default] rounded-lg">
+            <div className="p-6 border-b border-[--af-border-default]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-[--af-text-secondary]" />
                 </div>
                 <div>
                   <h2 className="font-semibold">Workspace</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[--af-text-secondary]">
                     Manage your current workspace
                   </p>
                 </div>
@@ -1134,11 +1134,11 @@ export default function SettingsPage() {
             </div>
             <div className="p-6 space-y-4">
               {/* Workspace info */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-[--af-bg-surface-alt] rounded-lg">
                 <div className="flex items-center gap-2">
                   <div>
                     <p className="font-medium">{currentWorkspace.name}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">
+                    <p className="text-sm text-[--af-text-secondary] mt-0.5">
                       Your role in this workspace
                     </p>
                   </div>
@@ -1157,24 +1157,24 @@ export default function SettingsPage() {
                     </Button>
                   )}
                 </div>
-                <Badge className="capitalize bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+                <Badge className="capitalize bg-[--af-bg-surface-alt] dark:bg-warm-800 text-[--af-text-secondary] dark:text-[--af-text-muted]">
                   {currentWorkspace.role}
                 </Badge>
               </div>
 
               {/* Owner: Delete workspace */}
               {isOwner && (
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 border border-red-200 dark:border-red-900/30 rounded-lg">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 border border-[--af-danger-border] rounded-lg">
                   <div>
-                    <p className="font-medium text-sm text-red-600 dark:text-red-400">Delete Workspace</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                    <p className="font-medium text-sm text-[--af-danger-text]">Delete Workspace</p>
+                    <p className="text-xs text-[--af-text-secondary] mt-0.5">
                       Permanently delete this workspace and all its data including projects, clients, and team members.
                       {isLastWorkspace && " This is your only workspace -- a new one will be created on next login."}
                     </p>
                   </div>
                   <Button
                     variant="outline"
-                    className="text-red-600 border-red-200 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/10 shrink-0"
+                    className="text-[--af-danger-text] border-[--af-danger-border] hover:bg-[--af-danger-bg]  shrink-0"
                     onClick={() => {
                       setIsDeleteWorkspaceOpen(true)
                       setDeleteConfirmName("")
@@ -1192,7 +1192,7 @@ export default function SettingsPage() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 border border-orange-200 dark:border-orange-900/30 rounded-lg">
                   <div>
                     <p className="font-medium text-sm text-orange-600 dark:text-orange-400">Leave Workspace</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                    <p className="text-xs text-[--af-text-secondary] mt-0.5">
                       Remove yourself from this workspace. You will lose access to all projects and data.
                     </p>
                   </div>
@@ -1255,7 +1255,7 @@ export default function SettingsPage() {
               Cancel
             </Button>
             <Button
-              className="bg-red-600 text-white hover:bg-red-700"
+              className="bg-[--af-danger-text] text-white hover:opacity-90"
               onClick={handleDeleteRole}
             >
               Delete Role
@@ -1422,7 +1422,7 @@ export default function SettingsPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1 list-disc list-inside">
+            <ul className="text-sm text-[--af-text-secondary] space-y-1 list-disc list-inside">
               <li>All projects and project data</li>
               <li>All clients and client contacts</li>
               <li>All team member access and roles</li>
@@ -1439,7 +1439,7 @@ export default function SettingsPage() {
               />
             </div>
             {workspaceActionError && (
-              <p className="text-sm text-red-600">{workspaceActionError}</p>
+              <p className="text-sm text-[--af-danger-text]">{workspaceActionError}</p>
             )}
           </div>
           <DialogFooter>
@@ -1474,11 +1474,11 @@ export default function SettingsPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-[--af-text-secondary]">
               You will immediately lose access to all projects, clients, and data in this workspace. You will be removed from the team list. To rejoin, an owner or admin will need to invite you again.
             </p>
             {workspaceActionError && (
-              <p className="text-sm text-red-600">{workspaceActionError}</p>
+              <p className="text-sm text-[--af-danger-text]">{workspaceActionError}</p>
             )}
           </div>
           <DialogFooter>
@@ -1528,7 +1528,7 @@ export default function SettingsPage() {
               />
             </div>
             {workspaceActionError && (
-              <p className="text-sm text-red-600">{workspaceActionError}</p>
+              <p className="text-sm text-[--af-danger-text]">{workspaceActionError}</p>
             )}
           </div>
           <DialogFooter>

@@ -35,14 +35,14 @@ export default function OnboardingPage() {
   if (showCreateForm) {
     return (
       <div>
-        <h1 className="text-2xl font-semibold mb-2 text-card-foreground">Create your workspace</h1>
+        <h1 className="text-2xl font-display font-bold tracking-tight mb-2 text-card-foreground">Create your workspace</h1>
         <p className="text-muted-foreground mb-6">
           Give your workspace a name to get started.
         </p>
 
         {error && (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900/30 rounded-lg p-3 mb-4">
-            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <div className="bg-[--af-danger-bg] border border-[--af-danger-border] rounded-lg p-3 mb-4">
+            <p className="text-sm text-[--af-danger-text]">{error}</p>
           </div>
         )}
 
@@ -86,7 +86,7 @@ export default function OnboardingPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-2 text-card-foreground">Welcome to ArchaFlow</h1>
+      <h1 className="text-2xl font-display font-bold tracking-tight mb-2 text-card-foreground">Welcome to ArchaFlow</h1>
       <p className="text-muted-foreground mb-6">
         How would you like to get started?
       </p>
@@ -94,7 +94,7 @@ export default function OnboardingPage() {
       <div className="space-y-3">
         <button
           onClick={() => setShowCreateForm(true)}
-          className="w-full flex items-start gap-4 p-4 rounded-lg border border-border hover:bg-accent transition-colors text-left"
+          className="w-full flex items-start gap-4 p-4 rounded-card border border-border hover:bg-accent transition-colors text-left"
         >
           <div className="w-11 h-11 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
             <Building2 className="w-5 h-5 text-primary-foreground" />
@@ -109,7 +109,7 @@ export default function OnboardingPage() {
 
         <button
           onClick={() => router.push("/onboarding/join")}
-          className="w-full flex items-start gap-4 p-4 rounded-lg border border-border hover:bg-accent transition-colors text-left"
+          className="w-full flex items-start gap-4 p-4 rounded-card border border-border hover:bg-accent transition-colors text-left"
         >
           <div className="w-11 h-11 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
             <Users className="w-5 h-5 text-secondary-foreground" />

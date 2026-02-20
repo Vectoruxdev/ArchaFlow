@@ -104,12 +104,12 @@ export default function ContractsPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800">
+        <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
           <div className="p-4 lg:p-6">
-            <h1 className="text-xl sm:text-2xl font-semibold">Contracts</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight">Contracts</h1>
+            <p className="text-sm text-[--af-text-muted] mt-1">
               Create templates, send contracts, and collect signatures
             </p>
           </div>
@@ -122,8 +122,8 @@ export default function ContractsPage() {
                 className={cn(
                   "px-4 py-2.5 text-sm font-medium border-b-2 transition-colors capitalize",
                   tab === t
-                    ? "border-black dark:border-white text-black dark:text-white"
-                    : "border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    ? "border-foreground dark:border-white text-foreground"
+                    : "border-transparent text-[--af-text-muted] hover:text-[--af-text-secondary] dark:hover:text-[--af-text-muted]"
                 )}
               >
                 {t === "templates" ? "Templates" : "All Contracts"}
@@ -137,7 +137,7 @@ export default function ContractsPage() {
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-20 bg-gray-200 dark:bg-gray-800 rounded-lg animate-pulse" />
+                <div key={i} className="h-20 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded-lg animate-pulse" />
               ))}
             </div>
           ) : tab === "templates" ? (

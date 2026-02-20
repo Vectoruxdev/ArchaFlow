@@ -23,8 +23,8 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
 
   if (loading || !workspacesLoaded) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
-        <div className="animate-pulse text-gray-400">Loading...</div>
+      <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-900 flex items-center justify-center">
+        <div className="animate-pulse text-[--af-text-muted]">Loading...</div>
       </div>
     )
   }

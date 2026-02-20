@@ -90,8 +90,8 @@ export function ContractList({ contracts }: Props) {
 
   if (contracts.length === 0) {
     return (
-      <div className="text-center py-12 border border-dashed border-gray-200 dark:border-gray-800 rounded-lg">
-        <p className="text-sm text-gray-500">
+      <div className="text-center py-12 border border-dashed border-[--af-border-default] rounded-lg">
+        <p className="text-sm text-[--af-text-muted]">
           No contracts yet. Send your first contract from a template.
         </p>
       </div>
@@ -103,7 +103,7 @@ export function ContractList({ contracts }: Props) {
       {/* Search & Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[--af-text-muted]" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -158,7 +158,7 @@ export function ContractList({ contracts }: Props) {
           className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
         />
         {hasFilters && (
-          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-gray-500">
+          <Button variant="ghost" size="sm" onClick={clearFilters} className="text-[--af-text-muted]">
             <X className="w-4 h-4 mr-1" />
             Clear
           </Button>
@@ -166,8 +166,8 @@ export function ContractList({ contracts }: Props) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="text-center py-12 border border-dashed border-gray-200 dark:border-gray-800 rounded-lg">
-          <p className="text-sm text-gray-500">
+        <div className="text-center py-12 border border-dashed border-[--af-border-default] rounded-lg">
+          <p className="text-sm text-[--af-text-muted]">
             No contracts match your filters.
           </p>
         </div>
@@ -194,20 +194,20 @@ export function ContractList({ contracts }: Props) {
               <div>
                 <p className="font-medium text-sm">{contract.name}</p>
                 {contract.signerEmail && (
-                  <p className="text-xs text-gray-500">{contract.signerEmail}</p>
+                  <p className="text-xs text-[--af-text-muted]">{contract.signerEmail}</p>
                 )}
               </div>
             </TableCell>
-            <TableCell className="text-sm text-gray-500">
+            <TableCell className="text-sm text-[--af-text-muted]">
               {contract.clientName || "—"}
             </TableCell>
-            <TableCell className="text-sm text-gray-500">
+            <TableCell className="text-sm text-[--af-text-muted]">
               {contract.projectTitle || "—"}
             </TableCell>
             <TableCell>
               <ContractStatusBadge status={contract.status} />
             </TableCell>
-            <TableCell className="text-sm text-gray-500">
+            <TableCell className="text-sm text-[--af-text-muted]">
               {contract.sentAt
                 ? new Date(contract.sentAt).toLocaleDateString()
                 : "—"}
