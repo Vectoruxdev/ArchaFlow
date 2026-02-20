@@ -16,9 +16,11 @@ export function AdminSidebar() {
       <nav className="flex-1 p-3 space-y-1">
         {adminNavItems.map((item) => {
           const Icon = item.icon
-          // Match if pathname starts with the nav href (handles nested routes)
-          // For admin subdomain, pathname will be /admin-portal/dashboard etc.
+          // usePathname() returns the browser URL on admin subdomain (e.g. "/dashboard")
+          // or the rewritten path without subdomain ("/admin-portal/dashboard")
           const isActive =
+            pathname === item.href ||
+            pathname.startsWith(`${item.href}/`) ||
             pathname === `/admin-portal${item.href}` ||
             pathname.startsWith(`/admin-portal${item.href}/`)
           return (

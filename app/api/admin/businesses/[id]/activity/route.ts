@@ -33,20 +33,15 @@ export async function GET(
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  // Get performer emails
-  const performerIds = (activities || [])
+  // Get performer emails from auth.users
+  const performerIds = [...new Set((activities || [])
     .map((a: any) => a.performed_by)
-    .filter(Boolean)
+    .filter(Boolean))]
   let performerEmails: Record<string, string> = {}
-  if (performerIds.length > 0) {
-    const { data: profiles } = await admin
-      .from("user_profiles")
-      .select("id, email")
-      .in("id", performerIds)
-    if (profiles) {
-      for (const p of profiles) {
-        performerEmails[p.id] = p.email
-      }
+  for (const pid of performerIds) {
+    const { data: { user: pUser } } = await admin.auth.admin.getUserById(pid)
+    if (pUser?.email) {
+      performerEmails[pid] = pUser.email
     }
   }
 

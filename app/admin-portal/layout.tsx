@@ -16,7 +16,9 @@ export default function AdminPortalLayout({
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const pathname = usePathname()
-  const isLoginPage = pathname === "/admin-portal/login"
+  // usePathname() returns the browser URL path (e.g. "/login" on admin subdomain),
+  // not the rewritten path ("/admin-portal/login"), so check both
+  const isLoginPage = pathname === "/admin-portal/login" || pathname === "/login"
 
   const verifyAdmin = useCallback(async () => {
     try {

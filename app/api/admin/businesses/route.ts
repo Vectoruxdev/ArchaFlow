@@ -84,22 +84,12 @@ export async function GET(request: NextRequest) {
         .eq("role_id", ownerRole.id)
 
       if (ownerAssignments) {
-        const ownerUserIds = ownerAssignments.map((o) => o.user_id).filter(Boolean)
-        if (ownerUserIds.length > 0) {
-          const { data: profiles } = await admin
-            .from("user_profiles")
-            .select("id, email")
-            .in("id", ownerUserIds)
-
-          if (profiles) {
-            const emailMap: Record<string, string> = {}
-            for (const p of profiles) {
-              emailMap[p.id] = p.email
-            }
-            for (const o of ownerAssignments) {
-              if (o.user_id && emailMap[o.user_id]) {
-                ownerEmailMap[o.business_id] = emailMap[o.user_id]
-              }
+        // Email lives in auth.users, not user_profiles
+        for (const o of ownerAssignments) {
+          if (o.user_id) {
+            const { data: { user: ownerUser } } = await admin.auth.admin.getUserById(o.user_id)
+            if (ownerUser?.email) {
+              ownerEmailMap[o.business_id] = ownerUser.email
             }
           }
         }

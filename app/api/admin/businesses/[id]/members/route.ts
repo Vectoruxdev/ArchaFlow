@@ -15,10 +15,10 @@ export async function GET(
   const admin = getSupabaseAdmin()
   const businessId = params.id
 
-  // Get user_roles for the business
+  // Get user_roles for the business (position lives on user_roles)
   const { data: userRoles, error } = await admin
     .from("user_roles")
-    .select("user_id, role_id, assigned_at")
+    .select("user_id, role_id, position, assigned_at")
     .eq("business_id", businessId)
     .order("assigned_at", { ascending: true })
 
@@ -44,11 +44,11 @@ export async function GET(
     }
   }
 
-  // Get all user profiles
+  // Get user profiles (first_name, last_name — NOT email or position)
   const userIds = userRoles.map((ur) => ur.user_id)
   const { data: profiles } = await admin
     .from("user_profiles")
-    .select("id, email, full_name, position")
+    .select("id, first_name, last_name")
     .in("id", userIds)
 
   const profileMap: Record<string, any> = {}
@@ -58,14 +58,28 @@ export async function GET(
     }
   }
 
+  // Get emails from auth.users via admin API
+  const emailMap: Record<string, string> = {}
+  const { data: { users } } = await admin.auth.admin.listUsers()
+  if (users) {
+    for (const u of users) {
+      if (userIds.includes(u.id)) {
+        emailMap[u.id] = u.email || ""
+      }
+    }
+  }
+
   const members: AdminMember[] = userRoles.map((ur) => {
     const profile = profileMap[ur.user_id] || {}
+    const firstName = profile.first_name || ""
+    const lastName = profile.last_name || ""
+    const fullName = [firstName, lastName].filter(Boolean).join(" ") || null
     return {
       userId: ur.user_id,
-      email: profile.email || "",
-      fullName: profile.full_name || null,
+      email: emailMap[ur.user_id] || "",
+      fullName,
       roleName: roleMap[ur.role_id] || "Unknown",
-      position: profile.position || null,
+      position: ur.position || null,
       assignedAt: ur.assigned_at,
     }
   })

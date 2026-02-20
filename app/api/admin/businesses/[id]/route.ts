@@ -49,14 +49,10 @@ export async function GET(
       .single()
 
     if (ownerAssignment) {
-      const { data: ownerProfile } = await admin
-        .from("user_profiles")
-        .select("email")
-        .eq("id", ownerAssignment.user_id)
-        .single()
-
-      if (ownerProfile) {
-        ownerEmail = ownerProfile.email
+      // Email lives in auth.users, not user_profiles
+      const { data: { user: ownerUser } } = await admin.auth.admin.getUserById(ownerAssignment.user_id)
+      if (ownerUser) {
+        ownerEmail = ownerUser.email || null
       }
     }
   }
@@ -69,20 +65,15 @@ export async function GET(
     .order("created_at", { ascending: false })
     .limit(10)
 
-  // Get performer emails for activity
-  const performerIds = (activity || [])
+  // Get performer emails from auth.users
+  const performerIds = [...new Set((activity || [])
     .map((a: any) => a.performed_by)
-    .filter(Boolean)
+    .filter(Boolean))]
   let performerEmails: Record<string, string> = {}
-  if (performerIds.length > 0) {
-    const { data: profiles } = await admin
-      .from("user_profiles")
-      .select("id, email")
-      .in("id", performerIds)
-    if (profiles) {
-      for (const p of profiles) {
-        performerEmails[p.id] = p.email
-      }
+  for (const pid of performerIds) {
+    const { data: { user: pUser } } = await admin.auth.admin.getUserById(pid)
+    if (pUser?.email) {
+      performerEmails[pid] = pUser.email
     }
   }
 
