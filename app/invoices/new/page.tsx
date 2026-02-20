@@ -10,6 +10,7 @@ import { toast } from "sonner"
 import { useAuth } from "@/lib/auth/auth-context"
 import { supabase } from "@/lib/supabase/client"
 import { ClientSelect } from "@/components/ui/client-select"
+import { ProjectSelect } from "@/components/ui/project-select"
 
 interface LineItem {
   description: string
@@ -24,12 +25,11 @@ export default function NewInvoicePage() {
   const [savingAndSending, setSavingAndSending] = useState(false)
 
   // Options
-  const [projects, setProjects] = useState<any[]>([])
   const [settings, setSettings] = useState<any>(null)
 
   // Form state
   const [clientValue, setClientValue] = useState<{ clientId: string | null; displayName: string }>({ clientId: null, displayName: "" })
-  const [projectId, setProjectId] = useState("")
+  const [projectValue, setProjectValue] = useState<{ projectId: string | null; displayName: string }>({ projectId: null, displayName: "" })
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split("T")[0])
   const [dueDate, setDueDate] = useState("")
   const [paymentTerms, setPaymentTerms] = useState("Net 30")
@@ -59,18 +59,6 @@ export default function NewInvoicePage() {
 
   const loadOptions = async () => {
     if (!currentWorkspace) return
-    try {
-      // Load projects
-      const { data: projectsData } = await supabase
-        .from("projects")
-        .select("id, title")
-        .eq("business_id", currentWorkspace.id)
-        .order("title", { ascending: true })
-      if (projectsData) setProjects(projectsData)
-    } catch (err) {
-      console.error("Projects fetch error:", err)
-    }
-
     try {
       // Load invoice settings
       const settingsRes = await fetch(`/api/invoices/settings?businessId=${currentWorkspace.id}`)
@@ -125,7 +113,7 @@ export default function NewInvoicePage() {
         body: JSON.stringify({
           businessId: currentWorkspace.id,
           clientId: clientValue.clientId || null,
-          projectId: projectId || null,
+          projectId: projectValue.projectId || null,
           lineItems: validItems,
           issueDate,
           dueDate: dueDate || null,
@@ -297,18 +285,11 @@ export default function NewInvoicePage() {
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-medium text-gray-400 uppercase tracking-wider">Project</label>
-                <select
-                  className="w-full border border-gray-200 dark:border-gray-800 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-950 h-9"
-                  value={projectId}
-                  onChange={(e) => setProjectId(e.target.value)}
-                >
-                  <option value="">None</option>
-                  {projects.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.title}
-                    </option>
-                  ))}
-                </select>
+                <ProjectSelect
+                  value={projectValue}
+                  onChange={setProjectValue}
+                  placeholder="Search for a project..."
+                />
               </div>
             </div>
 
