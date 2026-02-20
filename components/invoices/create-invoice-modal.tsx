@@ -12,6 +12,7 @@ import {
 import { Plus, Trash2, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from "@/lib/auth/auth-context"
+import { supabase } from "@/lib/supabase/client"
 
 interface LineItem {
   description: string
@@ -76,15 +77,26 @@ export function CreateInvoiceModal({
     setLoadingOptions(true)
     try {
       const [clientsRes, projectsRes, settingsRes] = await Promise.all([
-        fetch(`/api/clients?businessId=${currentWorkspace.id}`),
-        fetch(`/api/projects?businessId=${currentWorkspace.id}`),
+        supabase
+          .from("clients")
+          .select("id, first_name, last_name, email, company_name")
+          .eq("business_id", currentWorkspace.id)
+          .is("archived_at", null)
+          .order("first_name", { ascending: true }),
+        supabase
+          .from("projects")
+          .select("id, name")
+          .eq("business_id", currentWorkspace.id)
+          .order("name", { ascending: true }),
         fetch(`/api/invoices/settings?businessId=${currentWorkspace.id}`),
       ])
-      if (clientsRes.ok) setClients(await clientsRes.json())
-      if (projectsRes.ok) {
-        const data = await projectsRes.json()
-        setProjects(Array.isArray(data) ? data : data.projects || [])
+      if (clientsRes.data) {
+        setClients(clientsRes.data.map((c: any) => ({
+          ...c,
+          name: `${c.first_name || ""} ${c.last_name || ""}`.trim() || c.email || "Unnamed",
+        })))
       }
+      if (projectsRes.data) setProjects(projectsRes.data)
       if (settingsRes.ok) {
         const settings = await settingsRes.json()
         setPaymentTerms(settings.default_payment_terms || "Net 30")
