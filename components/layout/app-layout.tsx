@@ -147,7 +147,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas]">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 bg-warm-900 dark:bg-amber-500 rounded-lg flex items-center justify-center animate-pulse">
+          <div className="w-10 h-10 bg-[--af-brand] rounded-lg flex items-center justify-center animate-pulse">
             <div className="w-5 h-5 border-2 border-[--af-text-inverse] rotate-45" />
           </div>
           <p className="text-sm text-[--af-text-muted]">Loading...</p>
@@ -171,8 +171,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 <Workflow className="w-5 h-5 text-[--af-text-secondary]" />
               </button>
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 bg-warm-900 dark:bg-amber-500 rounded-lg flex items-center justify-center">
-                  <div className="w-4 h-4 border-2 border-[--af-text-inverse] dark:border-warm-900 rotate-45" />
+                <div className="w-8 h-8 bg-[--af-brand] rounded-lg flex items-center justify-center">
+                  <div className="w-4 h-4 border-2 border-[--af-text-inverse] dark:border-[--af-text-inverse] rotate-45" />
                 </div>
                 <span className="font-display font-bold text-lg tracking-tight hidden sm:block text-[--af-text-primary]">ArchaFlow</span>
               </div>
@@ -213,7 +213,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   <button className="flex items-center gap-2 hover:bg-[--af-bg-surface-alt] rounded-lg p-1.5 transition-colors">
                     <Avatar className="w-8 h-8">
                       <AvatarImage src={avatarUrl} alt="" />
-                      <AvatarFallback className="bg-warm-900 dark:bg-amber-500 text-[--af-text-inverse] dark:text-warm-900 text-xs font-semibold">
+                      <AvatarFallback className="bg-[--af-brand] text-[--af-text-inverse] dark:text-[--af-text-inverse] text-xs font-semibold">
                         {userInitials}
                       </AvatarFallback>
                     </Avatar>
@@ -251,7 +251,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button className="w-full flex items-center justify-center p-2 hover:bg-[--af-sidebar-active-bg] rounded-sidebar transition-colors">
-                          <span className="w-8 h-8 rounded-lg bg-warm-900 dark:bg-warm-800 flex items-center justify-center text-[11px] font-semibold tracking-wide text-amber-300 flex-shrink-0">
+                          <span className="w-8 h-8 rounded-lg bg-[--af-brand] flex items-center justify-center text-[11px] font-semibold tracking-wide text-[--af-text-inverse] flex-shrink-0">
                             {getInitials(displayWorkspace.name)}
                           </span>
                         </button>
@@ -262,7 +262,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     </Tooltip>
                   ) : (
                     <button className="w-full flex items-center gap-2.5 p-2.5 hover:bg-[--af-sidebar-active-bg] rounded-sidebar transition-colors group">
-                      <span className="w-8 h-8 rounded-lg bg-warm-900 dark:bg-warm-800 flex items-center justify-center text-[11px] font-semibold tracking-wide text-amber-300 flex-shrink-0">
+                      <span className="w-8 h-8 rounded-lg bg-[--af-brand] flex items-center justify-center text-[11px] font-semibold tracking-wide text-[--af-text-inverse] flex-shrink-0">
                         {getInitials(displayWorkspace.name)}
                       </span>
                       <div className="flex-1 text-left min-w-0">
@@ -282,7 +282,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       onClick={() => switchWorkspace?.(workspace.id)}
                       className="flex items-center gap-3"
                     >
-                      <span className="w-7 h-7 rounded-md bg-warm-900 dark:bg-warm-800 flex items-center justify-center text-[10px] font-semibold tracking-wide text-amber-300 flex-shrink-0">
+                      <span className="w-7 h-7 rounded-md bg-[--af-brand] flex items-center justify-center text-[10px] font-semibold tracking-wide text-[--af-text-inverse] flex-shrink-0">
                         {getInitials(workspace.name)}
                       </span>
                       <div className="flex-1 min-w-0">

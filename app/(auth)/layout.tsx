@@ -21,8 +21,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 bg-warm-900 dark:bg-amber-500 rounded-lg flex items-center justify-center">
-              <div className="w-5 h-5 border-2 border-white dark:border-warm-900 rotate-45" />
+            <div className="w-10 h-10 bg-[--af-brand] rounded-lg flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-[--af-text-inverse] dark:border-[--af-text-inverse] rotate-45" />
             </div>
             <span className="font-display font-bold text-2xl tracking-tight">ArchaFlow</span>
           </div>

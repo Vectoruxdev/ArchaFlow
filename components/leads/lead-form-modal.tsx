@@ -190,7 +190,7 @@ export function LeadFormModal({
             </TabsList>
 
             {/* Contact Tab */}
-            <TabsContent value="contact" className="space-y-4 mt-4">
+            <TabsContent value="contact" className="space-y-4 mt-4 min-h-[420px]">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Unique Customer ID</label>
@@ -293,7 +293,7 @@ export function LeadFormModal({
             </TabsContent>
 
             {/* Details Tab */}
-            <TabsContent value="details" className="space-y-4 mt-4">
+            <TabsContent value="details" className="space-y-4 mt-4 min-h-[420px]">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Lead Source</label>
                 <Select value={formData.source} onValueChange={(v) => update("source", v)}>
@@ -407,7 +407,7 @@ export function LeadFormModal({
             </TabsContent>
 
             {/* Status Tab */}
-            <TabsContent value="status" className="space-y-4 mt-4">
+            <TabsContent value="status" className="space-y-4 mt-4 min-h-[420px]">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Temperature</label>
                 <div className="flex flex-col sm:flex-row gap-2">
@@ -482,7 +482,7 @@ export function LeadFormModal({
             </TabsContent>
 
             {/* Assignment Tab */}
-            <TabsContent value="assignment" className="space-y-4 mt-4">
+            <TabsContent value="assignment" className="space-y-4 mt-4 min-h-[420px]">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Assign to Sales Agent</label>
                 <Select value={formData.assignedTo} onValueChange={(v) => update("assignedTo", v)}>

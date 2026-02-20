@@ -4047,7 +4047,7 @@
       "type": "frame",
       "id": "AhxBD",
       "x": -38,
-      "y": 4260,
+      "y": 4307,
       "name": "Screen: Signup",
       "width": 480,
       "fill": "$--accent",
@@ -6118,6 +6118,593 @@
           "fontFamily": "Inter",
           "fontSize": 14,
           "fontWeight": "normal"
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "Xusd0",
+      "x": -38,
+      "y": 5332,
+      "name": "Landing Page v2",
+      "clip": true,
+      "width": 1440,
+      "fill": "#000000",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "PMWbB",
+          "name": "FloatingNav",
+          "width": 900,
+          "fill": "#0A0A0A",
+          "cornerRadius": 999,
+          "stroke": {
+            "align": "inside",
+            "thickness": 1,
+            "fill": "rgba(255,255,255,0.08)"
+          },
+          "padding": [
+            6,
+            6,
+            6,
+            20
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "khj6l",
+              "name": "NavLogo",
+              "gap": 10,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "QsRuW",
+                  "name": "logoIcon",
+                  "width": 36,
+                  "height": 36,
+                  "fill": "#FAFAFA",
+                  "cornerRadius": 10,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "xv7Us",
+                      "name": "logoInner",
+                      "rotation": 45,
+                      "width": 16,
+                      "height": 16,
+                      "stroke": {
+                        "align": "inside",
+                        "thickness": 2,
+                        "fill": "#000000"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "MNaSG",
+                  "name": "logoName",
+                  "fill": "#FFFFFF",
+                  "content": "ArchaFlow",
+                  "fontFamily": "Inter",
+                  "fontSize": 15,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lR0qU",
+              "name": "NavLinks",
+              "gap": 32,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "uLkZv",
+                  "name": "navL1",
+                  "fill": "#A1A1AA",
+                  "content": "Features",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "MseZD",
+                  "name": "navL2",
+                  "fill": "#A1A1AA",
+                  "content": "Pricing",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "QaJI4",
+                  "name": "navL3",
+                  "fill": "#A1A1AA",
+                  "content": "About",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "0nyg8",
+                  "name": "navL4",
+                  "fill": "#A1A1AA",
+                  "content": "Blog",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "rdYyL",
+              "name": "NavRight",
+              "stroke": {
+                "align": "inside",
+                "thickness": 0,
+                "fill": "rgba(255,255,255,0.1)"
+              },
+              "gap": 16,
+              "padding": [
+                0,
+                0,
+                0,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Y1RXW",
+                  "name": "NavCTA",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 999,
+                  "gap": 6,
+                  "padding": [
+                    10,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "47etg",
+                      "name": "navCtaText",
+                      "fill": "#000000",
+                      "content": "Start Free",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Jvq4Z",
+                      "name": "navCtaArrow",
+                      "fill": "#000000",
+                      "content": "→",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "4cw3M",
+          "name": "HeroSection",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 32,
+          "padding": [
+            120,
+            80,
+            60,
+            80
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "v6xVL",
+              "name": "HeroBadge",
+              "fill": "rgba(255,255,255,0.03)",
+              "cornerRadius": 999,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "rgba(255,255,255,0.1)"
+              },
+              "gap": 8,
+              "padding": [
+                6,
+                16
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "nlMRz",
+                  "name": "badgeDot",
+                  "fill": "#FAFAFA",
+                  "width": 6,
+                  "height": 6
+                },
+                {
+                  "type": "text",
+                  "id": "TPvLn",
+                  "name": "badgeText",
+                  "fill": "#A1A1AA",
+                  "content": "Now with AI-powered project insights",
+                  "fontFamily": "Inter",
+                  "fontSize": 11,
+                  "fontWeight": "600",
+                  "letterSpacing": 0.8
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "id": "ygPha",
+              "name": "headline",
+              "fill": "#FFFFFF",
+              "content": "Manage projects.\nDeliver on time.",
+              "lineHeight": 1.05,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 80,
+              "fontWeight": "700",
+              "letterSpacing": -2
+            },
+            {
+              "type": "text",
+              "id": "zbV4c",
+              "name": "subheadline",
+              "fill": "#71717A",
+              "content": "ArchaFlow gives architecture firms a single platform to plan projects,\ntrack budgets, assign tasks, and collaborate — from concept to completion.",
+              "lineHeight": 1.6,
+              "textAlign": "center",
+              "fontFamily": "Inter",
+              "fontSize": 18,
+              "fontWeight": "300"
+            },
+            {
+              "type": "frame",
+              "id": "nT79b",
+              "name": "HeroCTAs",
+              "gap": 16,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "N0dt6",
+                  "name": "PrimaryCTA",
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 999,
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    32
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XS9yQ",
+                      "name": "ctaPText",
+                      "fill": "#000000",
+                      "content": "Start Free",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "2HJoM",
+                  "name": "SecondaryCTA",
+                  "fill": "rgba(255,255,255,0.05)",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "rgba(255,255,255,0.1)"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    14,
+                    32
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HL2EB",
+                      "name": "ctaSText",
+                      "fill": "#FFFFFF",
+                      "content": "Watch Demo (2 min)",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "R7YPX",
+              "name": "DataFlowViz",
+              "width": "fill_container",
+              "height": 450,
+              "fill": "#050505",
+              "cornerRadius": 16,
+              "stroke": {
+                "align": "inside",
+                "thickness": 1,
+                "fill": "rgba(255,255,255,0.05)"
+              },
+              "layout": "none",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "A9A93",
+                  "x": 610,
+                  "y": 165,
+                  "name": "CentralEngine",
+                  "rotation": 45,
+                  "width": 120,
+                  "height": 120,
+                  "fill": "#000000",
+                  "cornerRadius": 16,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "rgba(255,255,255,0.15)"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "1hfnM",
+                      "name": "vizInner",
+                      "rotation": -45,
+                      "width": 50,
+                      "height": 50,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "QiO2x",
+                          "name": "vizDiamond",
+                          "rotation": 45,
+                          "width": 22,
+                          "height": 22,
+                          "stroke": {
+                            "align": "inside",
+                            "thickness": 2,
+                            "fill": "#000000"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dCGo3",
+                  "x": 80,
+                  "y": 80,
+                  "name": "SrcRevit",
+                  "fill": "#09090B",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "rgba(255,255,255,0.1)"
+                  },
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "273FY",
+                      "name": "srcL1Text",
+                      "fill": "#A1A1AA",
+                      "content": "Revit",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "c1zRR",
+                  "x": 60,
+                  "y": 200,
+                  "name": "SrcAutoCAD",
+                  "fill": "#09090B",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "rgba(255,255,255,0.1)"
+                  },
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "PODWL",
+                      "name": "srcL2Text",
+                      "fill": "#A1A1AA",
+                      "content": "AutoCAD",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "OPQtE",
+                  "x": 90,
+                  "y": 320,
+                  "name": "SrcSketchUp",
+                  "fill": "#09090B",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "rgba(255,255,255,0.1)"
+                  },
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "XNmv6",
+                      "name": "srcL3Text",
+                      "fill": "#A1A1AA",
+                      "content": "SketchUp",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tglsb",
+                  "x": 1100,
+                  "y": 80,
+                  "name": "OutTimeline",
+                  "fill": "rgba(255,255,255,0.05)",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "rgba(255,255,255,0.15)"
+                  },
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QXrqm",
+                      "name": "outL1Text",
+                      "fill": "#FAFAFA",
+                      "content": "Timelines",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xyrGb",
+                  "x": 1120,
+                  "y": 200,
+                  "name": "OutBudget",
+                  "fill": "rgba(255,255,255,0.05)",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "rgba(255,255,255,0.15)"
+                  },
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WCODX",
+                      "name": "outL2Text",
+                      "fill": "#FAFAFA",
+                      "content": "Budgets",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "JclTS",
+                  "x": 1110,
+                  "y": 320,
+                  "name": "OutReports",
+                  "fill": "rgba(255,255,255,0.05)",
+                  "cornerRadius": 999,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "rgba(255,255,255,0.15)"
+                  },
+                  "gap": 6,
+                  "padding": [
+                    6,
+                    12
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "3Wk4h",
+                      "name": "outL3Text",
+                      "fill": "#FAFAFA",
+                      "content": "Reports",
+                      "fontFamily": "Inter",
+                      "fontSize": 11,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     }

@@ -1429,7 +1429,7 @@ export default function WorkflowPage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col" style={{ padding: "var(--af-density-page-padding)", gap: "var(--af-density-section-gap)" }}>
+      <div className="flex flex-col min-h-[calc(100vh-3.5rem)]" style={{ padding: "var(--af-density-page-padding)", gap: "var(--af-density-section-gap)" }}>
         {/* Error toast — only when there is a load error */}
         {loadError && isAuthReady && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
@@ -1599,7 +1599,7 @@ export default function WorkflowPage() {
         {/* Board/List container - can be fullscreened */}
         <div
           ref={fullscreenRef}
-          className="flex flex-col flex-1 space-y-6 bg-[--af-bg-surface] rounded-lg min-h-0 [&:fullscreen]:p-6"
+          className="flex flex-col flex-1 space-y-6 min-h-0 [&:fullscreen]:p-6 [&:fullscreen]:bg-[--af-bg-surface]"
         >
         {/* Filter Bar */}
         <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-4">
@@ -1927,10 +1927,10 @@ export default function WorkflowPage() {
                         <div
                           ref={provided.innerRef}
                           {...provided.droppableProps}
-                          className={`flex-1 space-y-3 p-3 rounded-card border-2 border-dashed min-h-[200px] transition-colors ${
+                          className={`flex-1 space-y-3 p-3 rounded-card border transition-colors ${
                             snapshot.isDraggingOver
-                              ? "border-[--af-border-strong] dark:border-warm-600 bg-[--af-bg-surface-alt]"
-                              : "border-[--af-border-default]"
+                              ? "border-[--af-border-strong] bg-[--af-bg-surface-alt]"
+                              : "border-[--af-border-default] bg-[--af-bg-surface]"
                           }`}
                         >
                           {getProjectsByStatus(column.id).map((project, index) => (
