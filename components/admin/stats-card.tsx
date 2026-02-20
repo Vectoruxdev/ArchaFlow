@@ -13,7 +13,7 @@ export function StatsCard({ title, value, icon: Icon, description }: StatsCardPr
   return (
     <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card relative overflow-hidden">
       {/* Decorative accent blob */}
-      <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+      <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
       <div className="flex items-center justify-between mb-3 relative">
         <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
           {title}
