@@ -12,6 +12,7 @@ export interface PlanConfig {
   hasAI: boolean
   hasSSO: boolean
   hasAPI: boolean
+  maxInvoicesPerMonth: number // -1 = unlimited
 }
 
 export const PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
@@ -27,6 +28,7 @@ export const PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
     hasAI: false,
     hasSSO: false,
     hasAPI: false,
+    maxInvoicesPerMonth: 5,
   },
   pro: {
     name: "Pro",
@@ -40,6 +42,7 @@ export const PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
     hasAI: true,
     hasSSO: false,
     hasAPI: false,
+    maxInvoicesPerMonth: -1,
   },
   enterprise: {
     name: "Enterprise",
@@ -53,6 +56,7 @@ export const PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
     hasAI: true,
     hasSSO: true,
     hasAPI: true,
+    maxInvoicesPerMonth: -1,
   },
 }
 

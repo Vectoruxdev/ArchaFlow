@@ -19,6 +19,11 @@ export type ActivityType =
   | "contract_sent"
   | "contract_signed"
   | "contract_voided"
+  | "invoice_created"
+  | "invoice_sent"
+  | "invoice_paid"
+  | "invoice_voided"
+  | "change_order_created"
 
 export interface RecordActivityParams {
   businessId: string

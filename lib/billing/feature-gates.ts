@@ -41,3 +41,13 @@ export function getAICreditsLimit(tier: PlanTier): number {
 export function getIncludedSeats(tier: PlanTier): number {
   return PLAN_CONFIGS[tier].includedSeats
 }
+
+export function canCreateInvoice(tier: PlanTier, currentMonthCount: number): boolean {
+  const config = PLAN_CONFIGS[tier]
+  if (config.maxInvoicesPerMonth === -1) return true
+  return currentMonthCount < config.maxInvoicesPerMonth
+}
+
+export function getInvoiceLimit(tier: PlanTier): number {
+  return PLAN_CONFIGS[tier].maxInvoicesPerMonth
+}
