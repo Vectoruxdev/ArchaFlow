@@ -79,6 +79,12 @@ interface Project {
 // No mock data - application starts clean
 const allProjects: Project[] = []
 
+function fmtCurrency(v: number) {
+  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`
+  if (v >= 1000) return `${(v / 1000).toFixed(1)}k`
+  return String(v)
+}
+
 const statusColors = {
   lead: "bg-[--af-info-bg] text-[--af-info-text] border border-[--af-info-border]",
   sale: "bg-[--af-warning-bg] text-[--af-warning-text] border border-[--af-warning-border]",
@@ -471,13 +477,14 @@ export default function ProjectsPage() {
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-display font-bold tracking-tight">All Projects</h1>
-            <p className="text-sm text-[--af-text-muted] mt-1">
+            <span className="text-[10px] font-mono font-medium text-[--af-text-muted] uppercase tracking-[2.5px]">Management</span>
+            <h1 className="text-[28px] font-display font-bold tracking-tight leading-tight">All Projects</h1>
+            <p className="text-[12.5px] text-[--af-text-muted] mt-1">
               {activeProjects.length} active, {archivedProjects.length} archived
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
@@ -489,46 +496,46 @@ export default function ProjectsPage() {
           </div>
         </div>
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Total Projects</span>
-              <UsersIcon className="w-4 h-4 text-[--af-text-muted]" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {[
+            {
+              label: "Total Projects",
+              value: String(stats.total),
+              sub: `${stats.active} active`,
+              icon: <UsersIcon className="w-4 h-4 text-[--af-text-muted] opacity-50" />,
+            },
+            {
+              label: "Total Budget",
+              value: `$${fmtCurrency(stats.totalBudget)}`,
+              sub: "Across all projects",
+              icon: <DollarSign className="w-4 h-4 text-[--af-text-muted] opacity-50" />,
+            },
+            {
+              label: "Total Spent",
+              value: `$${fmtCurrency(stats.totalSpent)}`,
+              sub: `${stats.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : 0}% of budget`,
+              icon: <DollarSign className="w-4 h-4 text-[--af-text-muted] opacity-50" />,
+            },
+            {
+              label: "Avg. Progress",
+              value: `${activeProjects.length ? Math.round(activeProjects.reduce((sum, p) => sum + p.progress, 0) / activeProjects.length) : 0}%`,
+              sub: "Across all projects",
+              icon: <Calendar className="w-4 h-4 text-[--af-text-muted] opacity-50" />,
+            },
+          ].map((card) => (
+            <div key={card.label} className="relative overflow-hidden bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+              {/* Decorative accent bubble */}
+              <div className="absolute -top-5 -right-5 w-[70px] h-[70px] rounded-full bg-[--af-brand]/10 pointer-events-none" />
+              <div className="relative">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-mono font-medium uppercase tracking-[0.5px] text-[--af-text-muted]">{card.label}</span>
+                  {card.icon}
+                </div>
+                <div className="text-[32px] font-display font-bold tracking-tight leading-none mb-1">{card.value}</div>
+                <p className="text-[11.5px] text-[--af-text-muted]">{card.sub}</p>
+              </div>
             </div>
-            <div className="text-2xl font-display font-bold tracking-tight">{stats.total}</div>
-            <p className="text-[11px] text-[--af-text-muted] mt-1">{stats.active} active</p>
-          </div>
-
-          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Total Budget</span>
-              <DollarSign className="w-4 h-4 text-[--af-text-muted]" />
-            </div>
-            <div className="text-2xl font-display font-bold tracking-tight">${((stats.totalBudget || 0) / 1000000).toFixed(1)}M</div>
-            <p className="text-[11px] text-[--af-text-muted] mt-1">Across all projects</p>
-          </div>
-
-          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Total Spent</span>
-              <DollarSign className="w-4 h-4 text-[--af-text-muted]" />
-            </div>
-            <div className="text-2xl font-display font-bold tracking-tight">${((stats.totalSpent || 0) / 1000000).toFixed(1)}M</div>
-            <p className="text-[11px] text-[--af-text-muted] mt-1">
-              {stats.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : 0}% of budget
-            </p>
-          </div>
-
-          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Avg. Progress</span>
-              <Calendar className="w-4 h-4 text-[--af-text-muted]" />
-            </div>
-            <div className="text-2xl font-display font-bold tracking-tight">
-              {projects.length ? Math.round(projects.reduce((sum, p) => sum + p.progress, 0) / projects.length) : 0}%
-            </div>
-            <p className="text-[11px] text-[--af-text-muted] mt-1">Across all projects</p>
-          </div>
+          ))}
         </div>
 
         {/* Filters and Search */}
@@ -575,7 +582,7 @@ export default function ProjectsPage() {
           </div>
 
           <TabsContent value="active" className="mt-0">
-            <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
+            <div className="border border-[--af-border-default] rounded-card overflow-hidden shadow-af-card">
               <div className="overflow-x-auto">
                 <table className="w-full">
               <thead className="bg-[--af-bg-surface-alt]">
@@ -619,7 +626,7 @@ export default function ProjectsPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div>
-                          <p className="text-sm font-medium">{project.title}</p>
+                          <p className="text-sm font-display font-semibold tracking-tight">{project.title}</p>
                           <p className="text-xs text-[--af-text-muted] sm:hidden">{project.client}</p>
                           <Badge className={`text-xs mt-1 ${priorityColors[project.priority]}`}>
                             {project.priority}
@@ -637,40 +644,46 @@ export default function ProjectsPage() {
                     </td>
                     <td className="hidden md:table-cell px-6 py-4">
                       <div className="text-sm">
-                        <p className="font-medium">${(project.budget / 1000).toFixed(0)}k</p>
+                        <p className="font-display font-semibold tracking-tight">${fmtCurrency(project.budget)}</p>
                         <p className="text-xs text-[--af-text-muted]">
-                          ${(project.spent / 1000).toFixed(0)}k spent
+                          ${fmtCurrency(project.spent)} spent
                         </p>
                       </div>
                     </td>
                     <td className="hidden md:table-cell px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 bg-[--af-bg-surface-alt] rounded-full overflow-hidden min-w-[60px]">
+                        <div className="flex-1 h-[5px] bg-[--af-bg-surface-alt] rounded-full overflow-hidden min-w-[60px]">
                           <div
-                            className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full"
+                            className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full transition-all duration-500"
                             style={{ width: `${project.progress}%` }}
                           />
                         </div>
-                        <span className="text-xs text-[--af-text-secondary] min-w-[35px]">
+                        <span className="text-[11px] font-mono text-[--af-text-muted] min-w-[28px] text-right">
                           {project.progress}%
                         </span>
                       </div>
                     </td>
                     <td className="hidden lg:table-cell px-6 py-4">
-                      <p className="text-sm text-[--af-text-secondary]">
-                        {new Date(project.dueDate).toLocaleDateString()}
-                      </p>
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-[--af-text-muted] opacity-70" />
+                        <span className="text-[13px] text-[--af-text-secondary]">
+                          {new Date(project.dueDate).toLocaleDateString()}
+                        </span>
+                      </div>
                     </td>
                     <td className="hidden lg:table-cell px-6 py-4">
                       <div className="flex -space-x-2">
-                        {project.assignees.map((assignee, i) => (
-                          <Avatar key={i} className="w-8 h-8 border-2 border-white dark:border-foreground">
-                            <AvatarImage src={assignee.avatar} alt="" />
-                            <AvatarFallback className="text-xs bg-[--af-bg-surface-alt] dark:bg-warm-800">
-                              {assignee.name.slice(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                        ))}
+                        {project.assignees.length > 0
+                          ? project.assignees.map((assignee, i) => (
+                              <Avatar key={i} className="w-7 h-7 border-2 border-[--af-bg-surface]">
+                                <AvatarImage src={assignee.avatar} alt="" />
+                                <AvatarFallback className="text-[9px] font-bold bg-[--af-brand] text-white">
+                                  {assignee.name.slice(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                            ))
+                          : <span className="text-[--af-text-muted] text-xs">&mdash;</span>
+                        }
                       </div>
                     </td>
                     <td className="hidden sm:table-cell px-6 py-4">
@@ -729,7 +742,7 @@ export default function ProjectsPage() {
           </TabsContent>
 
           <TabsContent value="archived" className="mt-0">
-            <div className="border border-[--af-border-default] rounded-lg overflow-hidden">
+            <div className="border border-[--af-border-default] rounded-card overflow-hidden shadow-af-card">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-[--af-bg-surface-alt]">
@@ -1015,10 +1028,10 @@ export default function ProjectsPage() {
                         className={`flex-1 py-2 px-4 rounded-card border text-sm font-medium capitalize transition-colors ${
                           newProject.temperature === temp
                             ? temp === "cold"
-                              ? "border-[--af-info-border] bg-[--af-info-bg]0/10 text-[--af-info-text]"
+                              ? "border-[--af-info-border] bg-[--af-info-bg] text-[--af-info-text]"
                               : temp === "warm"
-                                ? "border-[--af-warning-border] bg-[--af-warning-bg]0/10 text-[--af-warning-text]"
-                                : "border-[--af-danger-border] bg-[--af-danger-bg]0/10 text-[--af-danger-text]"
+                                ? "border-[--af-warning-border] bg-[--af-warning-bg] text-[--af-warning-text]"
+                                : "border-[--af-danger-border] bg-[--af-danger-bg] text-[--af-danger-text]"
                             : "border-[--af-border-default] text-[--af-text-muted]"
                         }`}
                       >
