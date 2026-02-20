@@ -524,9 +524,10 @@ export default function ProjectsPage() {
             },
           ].map((card) => (
             <div key={card.label} className="relative overflow-hidden bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-              <div className="flex items-center justify-between mb-3">
+              <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between mb-3 relative">
                 <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">{card.label}</span>
-                <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center">
                   {card.icon}
                 </div>
               </div>

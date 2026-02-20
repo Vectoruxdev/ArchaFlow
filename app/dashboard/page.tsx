@@ -338,9 +338,10 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
               <Link href="/leads">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">New Leads</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <Target className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -350,9 +351,10 @@ export default function DashboardPage() {
               </Link>
               <Link href="/workflow">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Active Projects</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <FolderKanban className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -362,9 +364,10 @@ export default function DashboardPage() {
               </Link>
               <Link href="/workflow">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Projects</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <AlertCircle className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -374,9 +377,10 @@ export default function DashboardPage() {
               </Link>
               <Link href="/invoices">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Invoices</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -388,9 +392,10 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
               <Link href="/invoices">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Pending Invoices</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -402,9 +407,10 @@ export default function DashboardPage() {
               </Link>
               <Link href="/workflow">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Tasks</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <AlertCircle className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -413,9 +419,10 @@ export default function DashboardPage() {
                 </div>
               </Link>
               <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 col-span-2 lg:col-span-1 relative overflow-hidden">
-                <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                   <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Team Workload</span>
-                  <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                     <CheckCircle2 className="w-[18px] h-[18px] text-[--af-brand-text]" />
                   </div>
                 </div>
@@ -443,9 +450,10 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
               <Link href="/workflow">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">My Projects</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <FolderKanban className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -455,9 +463,10 @@ export default function DashboardPage() {
               </Link>
               <Link href="/workflow">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">My Tasks</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <ListTodo className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -467,9 +476,10 @@ export default function DashboardPage() {
               </Link>
               <Link href="/workflow">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Tasks</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <AlertCircle className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
@@ -478,9 +488,10 @@ export default function DashboardPage() {
                 </div>
               </Link>
               <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
-                <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                   <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Active Time</span>
-                  <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                     <Clock className="w-[18px] h-[18px] text-[--af-brand-text]" />
                   </div>
                 </div>
@@ -491,9 +502,10 @@ export default function DashboardPage() {
               </div>
               <Link href="/workflow">
                 <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer col-span-2 relative overflow-hidden">
-                  <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                  <div className="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-[--af-brand]/10" />
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
                     <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Upcoming Due</span>
-                    <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
                       <ListTodo className="w-[18px] h-[18px] text-[--af-brand-text]" />
                     </div>
                   </div>
