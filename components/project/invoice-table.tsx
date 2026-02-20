@@ -1,11 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth/auth-context"
-import { CreateInvoiceModal } from "@/components/invoices/create-invoice-modal"
 import { InvoiceDetailPanel } from "@/components/invoices/invoice-detail-panel"
 
 interface InvoiceTableProps {
@@ -28,10 +28,10 @@ function formatCurrency(val: number): string {
 }
 
 export function InvoiceTable({ projectId, clientId }: InvoiceTableProps) {
+  const router = useRouter()
   const { currentWorkspace } = useAuth()
   const [invoices, setInvoices] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [createModalOpen, setCreateModalOpen] = useState(false)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
 
@@ -68,7 +68,7 @@ export function InvoiceTable({ projectId, clientId }: InvoiceTableProps) {
             {invoices.length} invoice{invoices.length !== 1 ? "s" : ""} · Total: {formatCurrency(totalAmount)}
           </p>
         </div>
-        <Button onClick={() => setCreateModalOpen(true)}>
+        <Button onClick={() => router.push("/invoices/new")}>
           <Plus className="w-4 h-4 mr-2" />
           Create Invoice
         </Button>
@@ -142,15 +142,6 @@ export function InvoiceTable({ projectId, clientId }: InvoiceTableProps) {
           </div>
         </div>
       )}
-
-      {/* Modals */}
-      <CreateInvoiceModal
-        open={createModalOpen}
-        onOpenChange={setCreateModalOpen}
-        onCreated={loadInvoices}
-        defaultProjectId={projectId}
-        defaultClientId={clientId}
-      />
 
       <InvoiceDetailPanel
         invoiceId={selectedInvoiceId}

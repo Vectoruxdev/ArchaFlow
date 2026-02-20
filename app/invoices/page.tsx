@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,7 +18,6 @@ import {
   Loader2,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth/auth-context"
-import { CreateInvoiceModal } from "@/components/invoices/create-invoice-modal"
 import { InvoiceDetailPanel } from "@/components/invoices/invoice-detail-panel"
 import { InvoiceSettingsForm } from "@/components/invoices/invoice-settings-form"
 
@@ -50,12 +50,12 @@ function formatCurrency(val: number): string {
 }
 
 export default function InvoicesPage() {
+  const router = useRouter()
   const { currentWorkspace } = useAuth()
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
-  const [createModalOpen, setCreateModalOpen] = useState(false)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
@@ -133,7 +133,7 @@ export default function InvoicesPage() {
             <Button variant="outline" size="sm" onClick={() => setShowSettings(true)}>
               <Settings className="w-4 h-4 mr-1" /> Settings
             </Button>
-            <Button onClick={() => setCreateModalOpen(true)}>
+            <Button onClick={() => router.push("/invoices/new")}>
               <Plus className="w-4 h-4 mr-1" /> Create Invoice
             </Button>
           </div>
@@ -276,13 +276,6 @@ export default function InvoicesPage() {
           </div>
         )}
       </div>
-
-      {/* Modals */}
-      <CreateInvoiceModal
-        open={createModalOpen}
-        onOpenChange={setCreateModalOpen}
-        onCreated={loadInvoices}
-      />
 
       <InvoiceDetailPanel
         invoiceId={selectedInvoiceId}
