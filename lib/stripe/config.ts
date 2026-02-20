@@ -28,7 +28,7 @@ export const PLAN_CONFIGS: Record<PlanTier, PlanConfig> = {
     hasAI: false,
     hasSSO: false,
     hasAPI: false,
-    maxInvoicesPerMonth: 25,
+    maxInvoicesPerMonth: -1,
   },
   pro: {
     name: "Pro",
