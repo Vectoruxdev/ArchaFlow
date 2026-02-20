@@ -21,10 +21,10 @@ export async function GET(
 
     const admin = getSupabaseAdmin()
 
-    // Get invoice with relations
+    // Get invoice (no JOINs)
     const { data: invoice, error: invoiceError } = await admin
       .from("invoices")
-      .select("*, client:clients(id, first_name, last_name, email, phone), project:projects(id, name)")
+      .select("*")
       .eq("id", params.id)
       .single()
 
@@ -44,8 +44,8 @@ export async function GET(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    // Get line items, payments, change orders in parallel
-    const [lineItemsRes, paymentsRes, changeOrdersRes] = await Promise.all([
+    // Get line items, payments, change orders, client, project in parallel
+    const [lineItemsRes, paymentsRes, changeOrdersRes, clientRes, projectRes] = await Promise.all([
       admin
         .from("invoice_line_items")
         .select("*")
@@ -61,10 +61,18 @@ export async function GET(
         .select("*")
         .eq("invoice_id", params.id)
         .order("created_at", { ascending: false }),
+      invoice.client_id
+        ? admin.from("clients").select("id, first_name, last_name, email, phone").eq("id", invoice.client_id).single()
+        : Promise.resolve({ data: null }),
+      invoice.project_id
+        ? admin.from("projects").select("id, name").eq("id", invoice.project_id).single()
+        : Promise.resolve({ data: null }),
     ])
 
     return NextResponse.json({
       ...invoice,
+      client: clientRes.data || null,
+      project: projectRes.data || null,
       line_items: lineItemsRes.data || [],
       payments: paymentsRes.data || [],
       change_orders: changeOrdersRes.data || [],
