@@ -320,13 +320,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                             router.push(item.href)
                             setIsMobileMenuOpen(false)
                           }}
-                          className={`w-full flex items-center justify-center p-2 rounded-sidebar text-[13px] transition-colors ${
+                          className={`w-full flex items-center justify-center p-2 rounded-sidebar text-sm transition-colors ${
                             isActive
                               ? "bg-[--af-sidebar-active-bg] text-[--af-sidebar-active]"
                               : "text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text]"
                           }`}
                         >
-                          <item.icon className="w-[18px] h-[18px]" />
+                          <item.icon className="w-5 h-5" />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right">
@@ -343,13 +343,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       router.push(item.href)
                       setIsMobileMenuOpen(false)
                     }}
-                    className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[13px] transition-colors ${
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[14px] transition-colors ${
                       isActive
                         ? "bg-[--af-sidebar-active-bg] text-[--af-sidebar-active] font-semibold"
                         : "text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text]"
                     }`}
                   >
-                    <item.icon className="w-[18px] h-[18px] shrink-0" />
+                    <item.icon className="w-5 h-5 shrink-0" />
                     <span className="flex-1 truncate">{item.label}</span>
                   </button>
                 )
@@ -372,8 +372,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       }}
                       className="w-full flex items-center justify-center p-2 rounded-sidebar text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text] transition-colors"
                     >
-                      <ChevronRight className="w-[18px] h-[18px] hidden lg:block" />
-                      <X className="w-[18px] h-[18px] lg:hidden" />
+                      <ChevronRight className="w-5 h-5 hidden lg:block" />
+                      <X className="w-5 h-5 lg:hidden" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right">
@@ -390,10 +390,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       setIsMobileMenuOpen(false)
                     }
                   }}
-                  className="w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[13px] text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text] transition-colors"
+                  className="w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[14px] text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text] transition-colors"
                 >
-                  <ChevronLeft className="w-[18px] h-[18px] hidden lg:block" />
-                  <X className="w-[18px] h-[18px] lg:hidden" />
+                  <ChevronLeft className="w-5 h-5 hidden lg:block" />
+                  <X className="w-5 h-5 lg:hidden" />
                   <span className="hidden lg:block">Collapse</span>
                   <span className="lg:hidden">Close</span>
                 </button>
@@ -407,7 +407,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       onClick={handleLogout}
                       className="w-full flex items-center justify-center p-2 rounded-sidebar text-[--af-danger-text] hover:bg-[rgba(168,64,64,0.12)] transition-colors"
                     >
-                      <LogOut className="w-[18px] h-[18px]" />
+                      <LogOut className="w-5 h-5" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right">
@@ -417,9 +417,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               ) : (
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[13px] text-[--af-danger-text] hover:bg-[rgba(168,64,64,0.12)] transition-colors"
+                  className="w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[14px] text-[--af-danger-text] hover:bg-[rgba(168,64,64,0.12)] transition-colors"
                 >
-                  <LogOut className="w-[18px] h-[18px]" />
+                  <LogOut className="w-5 h-5" />
                   <span>Logout</span>
                 </button>
               )}

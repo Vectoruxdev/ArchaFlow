@@ -86,6 +86,53 @@ export default function SettingsPage() {
 
   const effectiveTheme = themeMode === "system" ? (systemIsDark ? "dark" : "light") : themeMode
 
+  // Accent color state
+  type AccentColor = "amber" | "forest" | "slate" | "rust" | "plum" | "stone"
+  const [accentColor, setAccentColor] = useState<AccentColor>("amber")
+
+  useEffect(() => {
+    const stored = localStorage.getItem("archaflow-accent") as AccentColor | null
+    if (stored) setAccentColor(stored)
+  }, [])
+
+  const applyAccent = (color: AccentColor) => {
+    setAccentColor(color)
+    localStorage.setItem("archaflow-accent", color)
+    if (color === "amber") {
+      delete document.documentElement.dataset.accent
+    } else {
+      document.documentElement.dataset.accent = color
+    }
+  }
+
+  const accentOptions: { id: AccentColor; label: string; swatch: string }[] = [
+    { id: "amber", label: "Amber", swatch: "#8B5E2A" },
+    { id: "forest", label: "Forest", swatch: "#2D6A4F" },
+    { id: "slate", label: "Slate", swatch: "#475569" },
+    { id: "rust", label: "Rust", swatch: "#9A3412" },
+    { id: "plum", label: "Plum", swatch: "#7E22CE" },
+    { id: "stone", label: "Stone", swatch: "#78716C" },
+  ]
+
+  // Density state
+  type DensityMode = "compact" | "default" | "comfortable"
+  const [density, setDensity] = useState<DensityMode>("default")
+
+  useEffect(() => {
+    const stored = localStorage.getItem("archaflow-density") as DensityMode | null
+    if (stored) setDensity(stored)
+  }, [])
+
+  const applyDensity = (mode: DensityMode) => {
+    setDensity(mode)
+    localStorage.setItem("archaflow-density", mode)
+    if (mode === "default") {
+      delete document.documentElement.dataset.density
+    } else {
+      document.documentElement.dataset.density = mode
+    }
+  }
+
   // Workspace action state
   const [isDeleteWorkspaceOpen, setIsDeleteWorkspaceOpen] = useState(false)
   const [isLeaveWorkspaceOpen, setIsLeaveWorkspaceOpen] = useState(false)
@@ -673,7 +720,7 @@ export default function SettingsPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 max-w-4xl mx-auto space-y-8">
+      <div className="max-w-4xl mx-auto" style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -800,6 +847,122 @@ export default function SettingsPage() {
                   Changes are applied instantly across the entire app
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Accent Color Section */}
+        <div className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
+            <h2 className="font-semibold">Accent Color</h2>
+            <p className="text-sm text-[--af-text-secondary] mt-1">
+              Choose a brand color that appears across buttons, links, and highlights
+            </p>
+          </div>
+          <div className="p-6">
+            <div className="flex flex-wrap gap-3">
+              {accentOptions.map((opt) => {
+                const isSelected = accentColor === opt.id
+                return (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => applyAccent(opt.id)}
+                    className="flex flex-col items-center gap-2 group"
+                    title={opt.label}
+                  >
+                    <div
+                      className={`w-10 h-10 rounded-full border-2 transition-all ${
+                        isSelected
+                          ? "border-[--af-brand] scale-110 shadow-md"
+                          : "border-[--af-border-default] hover:border-[--af-text-muted] hover:scale-105"
+                      }`}
+                      style={{ backgroundColor: opt.swatch }}
+                    />
+                    <span className={`text-xs ${isSelected ? "font-semibold text-[--af-text-primary]" : "text-[--af-text-muted]"}`}>
+                      {opt.label}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Density Section */}
+        <div className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
+            <h2 className="font-semibold">Density</h2>
+            <p className="text-sm text-[--af-text-secondary] mt-1">
+              Control how much content is shown at once by adjusting spacing
+            </p>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {([
+                {
+                  mode: "compact" as DensityMode,
+                  label: "Compact",
+                  description: "Tighter spacing, more content visible",
+                  lines: [2, 2, 2, 2, 2],
+                },
+                {
+                  mode: "default" as DensityMode,
+                  label: "Default",
+                  description: "Balanced spacing for everyday use",
+                  lines: [3, 3, 3, 3],
+                },
+                {
+                  mode: "comfortable" as DensityMode,
+                  label: "Comfortable",
+                  description: "Generous spacing, easier scanning",
+                  lines: [4, 4, 4],
+                },
+              ]).map((opt) => {
+                const isSelected = density === opt.mode
+                return (
+                  <button
+                    key={opt.mode}
+                    type="button"
+                    onClick={() => applyDensity(opt.mode)}
+                    className={`group relative rounded-xl border-2 p-3 text-left transition-all ${
+                      isSelected
+                        ? "border-[--af-brand] bg-[--af-bg-surface-alt]"
+                        : "border-[--af-border-default] hover:border-[--af-text-muted]"
+                    }`}
+                  >
+                    {/* Density preview */}
+                    <div className="mb-3 overflow-hidden rounded-lg border border-[--af-border-default] bg-[--af-bg-surface-alt] p-2">
+                      <div className="flex flex-col" style={{ gap: `${opt.lines[0]}px` }}>
+                        {opt.lines.map((h, i) => (
+                          <div key={i} className="flex items-center" style={{ gap: `${h}px` }}>
+                            <div className="w-3 h-3 rounded-sm bg-[--af-border-strong] shrink-0" />
+                            <div className="h-2 rounded bg-[--af-border-strong] flex-1" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium">{opt.label}</p>
+                        <p className="text-xs text-[--af-text-muted]">{opt.description}</p>
+                      </div>
+                      <div
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? "border-[--af-brand]"
+                            : "border-[--af-text-muted]"
+                        }`}
+                      >
+                        {isSelected && (
+                          <div className="w-2 h-2 rounded-full bg-[--af-brand]" />
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>

@@ -191,6 +191,153 @@
     /* ── Scrollbar ── */
     --af-scroll-thumb: #2A2A24;
   }
+
+  /* ── Density System ── */
+  :root {
+    --af-density-page-padding: 24px;
+    --af-density-section-gap: 24px;
+    --af-density-card-padding: 24px;
+    --af-density-cell-py: 12px;
+    --af-density-gap: 16px;
+  }
+
+  [data-density="compact"] {
+    --af-density-page-padding: 16px;
+    --af-density-section-gap: 16px;
+    --af-density-card-padding: 16px;
+    --af-density-cell-py: 8px;
+    --af-density-gap: 12px;
+  }
+
+  [data-density="comfortable"] {
+    --af-density-page-padding: 32px;
+    --af-density-section-gap: 32px;
+    --af-density-card-padding: 32px;
+    --af-density-cell-py: 16px;
+    --af-density-gap: 20px;
+  }
+
+  /* ── Accent Color Palettes ── */
+
+  /* Forest */
+  [data-accent="forest"] {
+    --af-brand: #2D6A4F;
+    --af-brand-light: #D8F3DC;
+    --af-brand-border: rgba(45,106,79,0.25);
+    --af-brand-text: #2D6A4F;
+    --af-text-link: #2D6A4F;
+    --af-border-focus: #2D6A4F;
+    --af-sidebar-active: #52B788;
+    --af-sidebar-active-bg: rgba(82,183,136,0.15);
+    --ring: 153 40% 33%;
+  }
+  .dark[data-accent="forest"] {
+    --af-brand: #52B788;
+    --af-brand-light: rgba(82,183,136,0.12);
+    --af-brand-border: rgba(82,183,136,0.30);
+    --af-brand-text: #52B788;
+    --af-text-link: #52B788;
+    --af-border-focus: #52B788;
+    --af-sidebar-active: #52B788;
+    --af-sidebar-active-bg: rgba(82,183,136,0.15);
+    --ring: 153 46% 51%;
+  }
+
+  /* Slate */
+  [data-accent="slate"] {
+    --af-brand: #475569;
+    --af-brand-light: #E2E8F0;
+    --af-brand-border: rgba(71,85,105,0.25);
+    --af-brand-text: #475569;
+    --af-text-link: #475569;
+    --af-border-focus: #475569;
+    --af-sidebar-active: #94A3B8;
+    --af-sidebar-active-bg: rgba(148,163,184,0.15);
+    --ring: 215 16% 47%;
+  }
+  .dark[data-accent="slate"] {
+    --af-brand: #94A3B8;
+    --af-brand-light: rgba(148,163,184,0.12);
+    --af-brand-border: rgba(148,163,184,0.30);
+    --af-brand-text: #94A3B8;
+    --af-text-link: #94A3B8;
+    --af-border-focus: #94A3B8;
+    --af-sidebar-active: #94A3B8;
+    --af-sidebar-active-bg: rgba(148,163,184,0.15);
+    --ring: 215 25% 65%;
+  }
+
+  /* Rust */
+  [data-accent="rust"] {
+    --af-brand: #9A3412;
+    --af-brand-light: #FFEDD5;
+    --af-brand-border: rgba(154,52,18,0.25);
+    --af-brand-text: #9A3412;
+    --af-text-link: #9A3412;
+    --af-border-focus: #9A3412;
+    --af-sidebar-active: #EA580C;
+    --af-sidebar-active-bg: rgba(234,88,12,0.15);
+    --ring: 18 79% 34%;
+  }
+  .dark[data-accent="rust"] {
+    --af-brand: #EA580C;
+    --af-brand-light: rgba(234,88,12,0.12);
+    --af-brand-border: rgba(234,88,12,0.30);
+    --af-brand-text: #EA580C;
+    --af-text-link: #EA580C;
+    --af-border-focus: #EA580C;
+    --af-sidebar-active: #EA580C;
+    --af-sidebar-active-bg: rgba(234,88,12,0.15);
+    --ring: 21 90% 48%;
+  }
+
+  /* Plum */
+  [data-accent="plum"] {
+    --af-brand: #7E22CE;
+    --af-brand-light: #F3E8FF;
+    --af-brand-border: rgba(126,34,206,0.25);
+    --af-brand-text: #7E22CE;
+    --af-text-link: #7E22CE;
+    --af-border-focus: #7E22CE;
+    --af-sidebar-active: #A855F7;
+    --af-sidebar-active-bg: rgba(168,85,247,0.15);
+    --ring: 271 76% 53%;
+  }
+  .dark[data-accent="plum"] {
+    --af-brand: #A855F7;
+    --af-brand-light: rgba(168,85,247,0.12);
+    --af-brand-border: rgba(168,85,247,0.30);
+    --af-brand-text: #A855F7;
+    --af-text-link: #A855F7;
+    --af-border-focus: #A855F7;
+    --af-sidebar-active: #A855F7;
+    --af-sidebar-active-bg: rgba(168,85,247,0.15);
+    --ring: 271 91% 65%;
+  }
+
+  /* Stone */
+  [data-accent="stone"] {
+    --af-brand: #78716C;
+    --af-brand-light: #F5F5F4;
+    --af-brand-border: rgba(120,113,108,0.25);
+    --af-brand-text: #78716C;
+    --af-text-link: #78716C;
+    --af-border-focus: #78716C;
+    --af-sidebar-active: #A8A29E;
+    --af-sidebar-active-bg: rgba(168,162,158,0.15);
+    --ring: 15 4% 47%;
+  }
+  .dark[data-accent="stone"] {
+    --af-brand: #A8A29E;
+    --af-brand-light: rgba(168,162,158,0.12);
+    --af-brand-border: rgba(168,162,158,0.30);
+    --af-brand-text: #A8A29E;
+    --af-text-link: #A8A29E;
+    --af-border-focus: #A8A29E;
+    --af-sidebar-active: #A8A29E;
+    --af-sidebar-active-bg: rgba(168,162,158,0.15);
+    --ring: 20 6% 64%;
+  }
 }
 
 @layer base {

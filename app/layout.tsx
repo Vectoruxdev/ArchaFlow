@@ -35,14 +35,19 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Inline script to prevent flash of wrong theme on load
+  // Inline script to prevent flash of wrong theme/accent/density on load
   const themeScript = `
     (function() {
       try {
+        var d = document.documentElement;
         var pref = localStorage.getItem('archaflow-theme') || 'system';
         var isDark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        if (isDark) document.documentElement.classList.add('dark');
-        else document.documentElement.classList.remove('dark');
+        if (isDark) d.classList.add('dark');
+        else d.classList.remove('dark');
+        var accent = localStorage.getItem('archaflow-accent');
+        if (accent && accent !== 'amber') d.dataset.accent = accent;
+        var density = localStorage.getItem('archaflow-density');
+        if (density && density !== 'default') d.dataset.density = density;
       } catch(e) {}
     })();
   `

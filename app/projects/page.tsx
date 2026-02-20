@@ -473,7 +473,7 @@ export default function ProjectsPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 space-y-6">
+      <div style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -502,38 +502,36 @@ export default function ProjectsPage() {
               label: "Total Projects",
               value: String(stats.total),
               sub: `${stats.active} active`,
-              icon: <UsersIcon className="w-4 h-4 text-[--af-text-muted] opacity-50" />,
+              icon: <UsersIcon className="w-[18px] h-[18px] text-[--af-brand-text]" />,
             },
             {
               label: "Total Budget",
               value: `$${fmtCurrency(stats.totalBudget)}`,
               sub: "Across all projects",
-              icon: <DollarSign className="w-4 h-4 text-[--af-text-muted] opacity-50" />,
+              icon: <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />,
             },
             {
               label: "Total Spent",
               value: `$${fmtCurrency(stats.totalSpent)}`,
               sub: `${stats.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : 0}% of budget`,
-              icon: <DollarSign className="w-4 h-4 text-[--af-text-muted] opacity-50" />,
+              icon: <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />,
             },
             {
               label: "Avg. Progress",
               value: `${activeProjects.length ? Math.round(activeProjects.reduce((sum, p) => sum + p.progress, 0) / activeProjects.length) : 0}%`,
               sub: "Across all projects",
-              icon: <Calendar className="w-4 h-4 text-[--af-text-muted] opacity-50" />,
+              icon: <Calendar className="w-[18px] h-[18px] text-[--af-brand-text]" />,
             },
           ].map((card) => (
             <div key={card.label} className="relative overflow-hidden bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-              {/* Decorative accent bubble */}
-              <div className="absolute -top-5 -right-5 w-[70px] h-[70px] rounded-full bg-[--af-brand]/10 pointer-events-none" />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[10px] font-mono font-medium uppercase tracking-[0.5px] text-[--af-text-muted]">{card.label}</span>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">{card.label}</span>
+                <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center">
                   {card.icon}
                 </div>
-                <div className="text-[32px] font-display font-bold tracking-tight leading-none mb-1">{card.value}</div>
-                <p className="text-[11.5px] text-[--af-text-muted]">{card.sub}</p>
               </div>
+              <div className="text-[28px] font-display font-bold tracking-tight leading-none mb-1">{card.value}</div>
+              <p className="text-[11px] text-[--af-text-muted]">{card.sub}</p>
             </div>
           ))}
         </div>

@@ -1429,7 +1429,7 @@ export default function WorkflowPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 space-y-6">
+      <div className="flex flex-col" style={{ padding: "var(--af-density-page-padding)", gap: "var(--af-density-section-gap)" }}>
         {/* Error toast — only when there is a load error */}
         {loadError && isAuthReady && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
@@ -1530,55 +1530,63 @@ export default function WorkflowPage() {
           <>
         {/* Stats Row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
-            <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Active Projects</span>
-                <FolderKanban className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
+            <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Active Projects</span>
+                <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                  <FolderKanban className="w-[18px] h-[18px] text-[--af-brand-text]" />
+                </div>
               </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">
+              <div className="text-[28px] font-display font-bold tracking-tight leading-none">
                 {stats.activeProjects}
                 {hasActiveFilters && (
-                  <span className="text-xs text-[--af-text-muted] ml-2">(filtered)</span>
+                  <span className="text-xs text-[--af-text-muted] ml-2 font-normal">(filtered)</span>
                 )}
               </div>
               {stats.newThisWeek > 0 && (
-                <p className="text-[10px] sm:text-xs text-[--af-success-text] mt-1">+{stats.newThisWeek} this week</p>
+                <p className="text-[11px] text-[--af-success-text] mt-1">+{stats.newThisWeek} this week</p>
               )}
             </div>
 
-            <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Pending Invoices</span>
-                <DollarSign className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
+            <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Pending Invoices</span>
+                <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                  <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />
+                </div>
               </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">
+              <div className="text-[28px] font-display font-bold tracking-tight leading-none">
                 {filteredProjects.filter((p) => p.paymentStatus === "pending").length}
                 {hasActiveFilters && (
-                  <span className="text-xs text-[--af-text-muted] ml-2">(filtered)</span>
+                  <span className="text-xs text-[--af-text-muted] ml-2 font-normal">(filtered)</span>
                 )}
               </div>
-              <p className="text-[10px] sm:text-xs text-[--af-warning-text] mt-1">
+              <p className="text-[11px] text-[--af-warning-text] mt-1">
                 {filteredProjects.filter((p) => p.paymentStatus === "pending").length} invoices
               </p>
             </div>
 
-            <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Overdue Tasks</span>
-                <AlertCircle className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
+            <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Tasks</span>
+                <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-[18px] h-[18px] text-[--af-brand-text]" />
+                </div>
               </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{stats.overdueTasks}</div>
-              <p className="text-[10px] sm:text-xs text-[--af-danger-text] mt-1">
+              <div className="text-[28px] font-display font-bold tracking-tight leading-none">{stats.overdueTasks}</div>
+              <p className="text-[11px] text-[--af-danger-text] mt-1">
                 {stats.overdueTasks > 0 ? "Needs attention" : "All on track"}
               </p>
             </div>
 
-            <div className="p-3 sm:p-4 lg:p-6 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0">
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-1">
-                <span className="text-xs sm:text-sm text-[--af-text-secondary] truncate min-w-0">Team Workload</span>
-                <CheckCircle2 className="w-3.5 h-3.5 text-[--af-text-muted] shrink-0" />
+            <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
+              <div className="flex items-center justify-between gap-2 min-w-0 mb-3">
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Team Workload</span>
+                <div className="w-9 h-9 rounded-full bg-[--af-brand]/10 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-[18px] h-[18px] text-[--af-brand-text]" />
+                </div>
               </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl font-semibold">{stats.teamWorkload}%</div>
+              <div className="text-[28px] font-display font-bold tracking-tight leading-none">{stats.teamWorkload}%</div>
               <div className="mt-1 sm:mt-2 h-1.5 bg-[--af-bg-surface-alt] rounded-full overflow-hidden">
                 <div
                   className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full"
@@ -1591,7 +1599,7 @@ export default function WorkflowPage() {
         {/* Board/List container - can be fullscreened */}
         <div
           ref={fullscreenRef}
-          className="space-y-6 bg-[--af-bg-surface] rounded-lg min-h-0 [&:fullscreen]:p-6"
+          className="flex flex-col flex-1 space-y-6 bg-[--af-bg-surface] rounded-lg min-h-0 [&:fullscreen]:p-6"
         >
         {/* Filter Bar */}
         <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-4">
@@ -1856,11 +1864,11 @@ export default function WorkflowPage() {
               }}
             />
           ) : (
-          <div className="flex gap-4 lg:gap-6">
+          <div className="flex gap-4 lg:gap-6 flex-1 min-h-0">
             <div
               ref={boardScrollRef}
               onWheel={handleBoardWheel}
-              className="flex-1 min-w-0 overflow-x-auto no-scrollbar"
+              className="flex-1 min-w-0 overflow-x-auto no-scrollbar h-full"
             >
               <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable droppableId="all-columns" direction="horizontal" type="column">
@@ -1868,7 +1876,7 @@ export default function WorkflowPage() {
                     <div
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      className="flex gap-4 pb-2 min-w-max"
+                      className="flex gap-4 pb-2 min-w-max h-full"
                     >
                       {columns.map((column, index) => (
                         <Draggable key={column.id} draggableId={column.id} index={index}>
@@ -1876,7 +1884,7 @@ export default function WorkflowPage() {
                             <div
                               ref={provided.innerRef}
                               {...provided.draggableProps}
-                              className={`flex flex-col min-w-[280px] max-w-[320px] shrink-0 ${
+                              className={`flex flex-col min-w-[280px] max-w-[320px] shrink-0 h-full ${
                                 snapshot.isDragging ? "opacity-50" : ""
                               }`}
                             >

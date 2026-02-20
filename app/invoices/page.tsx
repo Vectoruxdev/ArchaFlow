@@ -160,7 +160,7 @@ export default function InvoicesPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 space-y-6">
+      <div style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>

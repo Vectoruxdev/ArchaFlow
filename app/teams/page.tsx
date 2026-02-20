@@ -571,7 +571,7 @@ export default function TeamsPage() {
 
   return (
     <AppLayout>
-      <div className="p-6 space-y-6">
+      <div style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>

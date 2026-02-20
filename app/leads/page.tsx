@@ -657,7 +657,7 @@ export default function LeadsPage() {
 
   return (
     <AppLayout>
-      <div className="p-4 sm:p-6 space-y-4">
+      <div style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex-1">

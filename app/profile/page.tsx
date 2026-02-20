@@ -295,7 +295,7 @@ export default function ProfilePage() {
         onValidationError={setProfileError}
         isUploading={avatarUploading}
       />
-      <div className="p-6 max-w-2xl mx-auto space-y-8">
+      <div className="max-w-2xl mx-auto" style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-display font-bold tracking-tight">Profile</h1>
           {saved && (

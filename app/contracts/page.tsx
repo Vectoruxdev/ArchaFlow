@@ -133,7 +133,7 @@ export default function ContractsPage() {
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div style={{ padding: "var(--af-density-page-padding)" }}>
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
