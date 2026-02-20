@@ -71,6 +71,7 @@ import {
   Filter,
   SlidersHorizontal,
 } from "lucide-react"
+import { StatsCard } from "@/components/admin/stats-card"
 
 // Types
 interface Lead {
@@ -752,27 +753,9 @@ export default function LeadsPage() {
               
               {/* Desktop: Card stats */}
               <div className="hidden md:grid gap-4 sm:grid-cols-3">
-                <div className="rounded-md border bg-muted/30 p-3">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                    <LayoutList className="w-4 h-4" />
-                    <span className="text-sm font-medium">Total leads</span>
-                  </div>
-                  <p className="text-2xl font-display font-bold tracking-tight">{leads.length}</p>
-                </div>
-                <div className="rounded-md border bg-muted/30 p-3">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                    <Target className="w-4 h-4" />
-                    <span className="text-sm font-medium">New leads</span>
-                  </div>
-                  <p className="text-2xl font-display font-bold tracking-tight">{leadsStats.newLeadsCount}</p>
-                </div>
-                <div className="rounded-md border bg-muted/30 p-3">
-                  <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                    <Activity className="w-4 h-4" />
-                    <span className="text-sm font-medium">Follow-ups</span>
-                  </div>
-                  <p className="text-2xl font-display font-bold tracking-tight">{leadsStats.followUpsCount}</p>
-                </div>
+                <StatsCard title="Total Leads" value={leads.length} icon={LayoutList} />
+                <StatsCard title="New Leads" value={leadsStats.newLeadsCount} icon={Target} />
+                <StatsCard title="Follow-ups" value={leadsStats.followUpsCount} icon={Activity} />
               </div>
             </div>
           ) : datePreset === "custom" && (!customStart || !customEnd) ? (
