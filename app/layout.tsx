@@ -35,8 +35,23 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Inline script to prevent flash of wrong theme on load
+  const themeScript = `
+    (function() {
+      try {
+        var pref = localStorage.getItem('archaflow-theme') || 'system';
+        var isDark = pref === 'dark' || (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      } catch(e) {}
+    })();
+  `
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className={`${inter.variable} ${cormorant.variable} ${ibmPlexMono.variable} ${inter.className}`}>
         <AuthProvider>{children}</AuthProvider>
         <Toaster />

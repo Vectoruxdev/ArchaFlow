@@ -19,6 +19,9 @@ import {
   Upload,
   Trash2,
   Loader2,
+  Monitor,
+  Sun,
+  Moon,
 } from "lucide-react"
 
 type NotificationPrefs = {
@@ -48,7 +51,9 @@ export default function ProfilePage() {
   const [lastName, setLastName] = useState("")
   const [phone, setPhone] = useState("")
   const [avatarUrl, setAvatarUrl] = useState("")
-  const [theme, setTheme] = useState<"light" | "dark">("dark")
+  type ThemeMode = "system" | "light" | "dark"
+  const [themeMode, setThemeMode] = useState<ThemeMode>("system")
+  const [systemIsDark, setSystemIsDark] = useState(false)
   const [notifPrefs, setNotifPrefs] = useState<NotificationPrefs>(DEFAULT_NOTIF_PREFS)
   const [saved, setSaved] = useState(false)
   const [profileError, setProfileError] = useState<string | null>(null)
@@ -70,8 +75,19 @@ export default function ProfilePage() {
   }, [user?.id, authLoading])
 
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains("dark")
-    setTheme(isDark ? "dark" : "light")
+    const stored = (localStorage.getItem("archaflow-theme") || "system") as ThemeMode
+    setThemeMode(stored)
+    setSystemIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+    const mql = window.matchMedia("(prefers-color-scheme: dark)")
+    const handler = (e: MediaQueryListEvent) => {
+      setSystemIsDark(e.matches)
+      if ((localStorage.getItem("archaflow-theme") || "system") === "system") {
+        document.documentElement.classList.toggle("dark", e.matches)
+      }
+    }
+    mql.addEventListener("change", handler)
+    return () => mql.removeEventListener("change", handler)
   }, [])
 
   const loadProfile = async () => {
@@ -121,13 +137,12 @@ export default function ProfilePage() {
     setTimeout(() => setSaved(false), 2000)
   }
 
-  const handleThemeChange = (newTheme: "light" | "dark") => {
-    setTheme(newTheme)
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark")
-    } else {
-      document.documentElement.classList.remove("dark")
-    }
+  const handleThemeChange = (mode: ThemeMode) => {
+    setThemeMode(mode)
+    localStorage.setItem("archaflow-theme", mode)
+    const isDark = mode === "dark" || (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    document.documentElement.classList.toggle("dark", isDark)
+    window.dispatchEvent(new CustomEvent("theme-changed", { detail: { mode } }))
     showSaved()
   }
 
@@ -398,29 +413,29 @@ export default function ProfilePage() {
           </div>
           <div className="p-6">
             <label className="text-sm font-medium block mb-3">Theme</label>
-            <div className="grid grid-cols-2 gap-4">
-              <button
-                type="button"
-                onClick={() => handleThemeChange("light")}
-                className={`p-4 border-2 rounded-lg transition-all text-left ${
-                  theme === "light"
-                    ? "border-foreground dark:border-white bg-[--af-bg-surface-alt]"
-                    : "border-[--af-border-default] hover:border-[--af-border-default]"
-                }`}
-              >
-                <span className="font-medium text-sm">Light</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleThemeChange("dark")}
-                className={`p-4 border-2 rounded-lg transition-all text-left ${
-                  theme === "dark"
-                    ? "border-foreground dark:border-white bg-[--af-bg-surface-alt]"
-                    : "border-[--af-border-default] hover:border-[--af-border-default]"
-                }`}
-              >
-                <span className="font-medium text-sm">Dark</span>
-              </button>
+            <div className="grid grid-cols-3 gap-3">
+              {([
+                { mode: "system" as ThemeMode, label: "System", icon: Monitor },
+                { mode: "light" as ThemeMode, label: "Light", icon: Sun },
+                { mode: "dark" as ThemeMode, label: "Dark", icon: Moon },
+              ]).map((opt) => {
+                const isSelected = themeMode === opt.mode
+                return (
+                  <button
+                    key={opt.mode}
+                    type="button"
+                    onClick={() => handleThemeChange(opt.mode)}
+                    className={`flex items-center gap-2 p-3 border-2 rounded-lg transition-all text-left ${
+                      isSelected
+                        ? "border-[--af-brand] bg-[--af-bg-surface-alt]"
+                        : "border-[--af-border-default] hover:border-[--af-text-muted]"
+                    }`}
+                  >
+                    <opt.icon className="w-4 h-4 text-[--af-text-secondary]" />
+                    <span className="font-medium text-sm">{opt.label}</span>
+                  </button>
+                )
+              })}
             </div>
           </div>
         </div>

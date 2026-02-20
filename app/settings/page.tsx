@@ -32,6 +32,9 @@ import {
   Globe,
   CreditCard,
   ArrowRight,
+  Monitor,
+  Sun,
+  Moon,
 } from "lucide-react"
 import { PlanBadge } from "@/components/billing/plan-badge"
 import Link from "next/link"
@@ -41,6 +44,47 @@ export default function SettingsPage() {
   const router = useRouter()
   const { currentWorkspace, workspaces, user, deleteWorkspace, leaveWorkspace, renameWorkspace } = useAuth()
   const [saved, setSaved] = useState(false)
+
+  // Theme state
+  type ThemeMode = "system" | "light" | "dark"
+  const [themeMode, setThemeMode] = useState<ThemeMode>("system")
+  const [systemIsDark, setSystemIsDark] = useState(false)
+
+  useEffect(() => {
+    const stored = (localStorage.getItem("archaflow-theme") || "system") as ThemeMode
+    setThemeMode(stored)
+    setSystemIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches)
+
+    const mql = window.matchMedia("(prefers-color-scheme: dark)")
+    const osHandler = (e: MediaQueryListEvent) => {
+      setSystemIsDark(e.matches)
+      if ((localStorage.getItem("archaflow-theme") || "system") === "system") {
+        document.documentElement.classList.toggle("dark", e.matches)
+      }
+    }
+    mql.addEventListener("change", osHandler)
+
+    const syncHandler = (e: Event) => {
+      const mode = (e as CustomEvent).detail?.mode as ThemeMode
+      if (mode) setThemeMode(mode)
+    }
+    window.addEventListener("theme-changed", syncHandler)
+
+    return () => {
+      mql.removeEventListener("change", osHandler)
+      window.removeEventListener("theme-changed", syncHandler)
+    }
+  }, [])
+
+  const applyTheme = (mode: ThemeMode) => {
+    setThemeMode(mode)
+    localStorage.setItem("archaflow-theme", mode)
+    const isDark = mode === "dark" || (mode === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    document.documentElement.classList.toggle("dark", isDark)
+    window.dispatchEvent(new CustomEvent("theme-changed", { detail: { mode } }))
+  }
+
+  const effectiveTheme = themeMode === "system" ? (systemIsDark ? "dark" : "light") : themeMode
 
   // Workspace action state
   const [isDeleteWorkspaceOpen, setIsDeleteWorkspaceOpen] = useState(false)
@@ -639,11 +683,125 @@ export default function SettingsPage() {
             </p>
           </div>
           {saved && (
-            <Badge className="bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20">
+            <Badge className="bg-[--af-success-bg] text-[--af-success-text] border border-[--af-success-border]">
               <Check className="w-3 h-3 mr-1" />
               Saved
             </Badge>
           )}
+        </div>
+
+        {/* Theme Section */}
+        <div className="border border-[--af-border-default] rounded-lg">
+          <div className="p-6 border-b border-[--af-border-default]">
+            <h2 className="font-semibold">Theme</h2>
+            <p className="text-sm text-[--af-text-secondary] mt-1">
+              Choose how ArchaFlow looks on your device
+            </p>
+          </div>
+          <div className="p-6 space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {([
+                {
+                  mode: "system" as ThemeMode,
+                  label: "System",
+                  description: "Follows your OS preference",
+                  icon: Monitor,
+                },
+                {
+                  mode: "light" as ThemeMode,
+                  label: "Light",
+                  description: "Always use light theme",
+                  icon: Sun,
+                },
+                {
+                  mode: "dark" as ThemeMode,
+                  label: "Dark",
+                  description: "Always use dark theme",
+                  icon: Moon,
+                },
+              ]).map((opt) => {
+                const isSelected = themeMode === opt.mode
+                return (
+                  <button
+                    key={opt.mode}
+                    type="button"
+                    onClick={() => applyTheme(opt.mode)}
+                    className={`group relative rounded-xl border-2 p-3 text-left transition-all ${
+                      isSelected
+                        ? "border-[--af-brand] bg-[--af-bg-surface-alt]"
+                        : "border-[--af-border-default] hover:border-[--af-text-muted]"
+                    }`}
+                  >
+                    {/* Theme preview */}
+                    <div className="mb-3 overflow-hidden rounded-lg border border-[--af-border-default]">
+                      {opt.mode === "system" ? (
+                        <div className="flex h-[72px]">
+                          <div className="w-1/2 bg-[#FAF9F7] p-2">
+                            <div className="h-2 w-10 rounded bg-[#D4C8B8] mb-1.5" />
+                            <div className="h-1.5 w-6 rounded bg-[#B8A99A]" />
+                          </div>
+                          <div className="w-1/2 bg-[#1C1917] p-2">
+                            <div className="h-2 w-10 rounded bg-[#57534E] mb-1.5" />
+                            <div className="h-1.5 w-6 rounded bg-[#78716C]" />
+                          </div>
+                        </div>
+                      ) : opt.mode === "light" ? (
+                        <div className="h-[72px] bg-[#FAF9F7] p-3">
+                          <div className="h-2 w-16 rounded bg-[#44403C] mb-2" />
+                          <div className="h-1.5 w-12 rounded bg-[#D4C8B8] mb-1.5" />
+                          <div className="h-1.5 w-14 rounded bg-[#D4C8B8] mb-2" />
+                          <div className="h-3 w-8 rounded bg-[#8B5E2A]" />
+                        </div>
+                      ) : (
+                        <div className="h-[72px] bg-[#1C1917] p-3">
+                          <div className="h-2 w-16 rounded bg-[#D6D3D1] mb-2" />
+                          <div className="h-1.5 w-12 rounded bg-[#57534E] mb-1.5" />
+                          <div className="h-1.5 w-14 rounded bg-[#57534E] mb-2" />
+                          <div className="h-3 w-8 rounded bg-[#B8860B]" />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <opt.icon className="w-4 h-4 text-[--af-text-secondary]" />
+                        <div>
+                          <p className="text-sm font-medium">{opt.label}</p>
+                          <p className="text-xs text-[--af-text-muted]">{opt.description}</p>
+                        </div>
+                      </div>
+                      <div
+                        className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? "border-[--af-brand]"
+                            : "border-[--af-text-muted]"
+                        }`}
+                      >
+                        {isSelected && (
+                          <div className="w-2 h-2 rounded-full bg-[--af-brand]" />
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Status banner */}
+            <div className="flex items-center gap-3 rounded-lg bg-[--af-brand]/10 border border-[--af-brand]/20 px-4 py-3">
+              <Monitor className="w-4 h-4 text-[--af-brand] shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-[--af-brand]">
+                  {themeMode === "system"
+                    ? `System theme \u2014 currently ${effectiveTheme}`
+                    : `${themeMode.charAt(0).toUpperCase() + themeMode.slice(1)} theme`}
+                </p>
+                <p className="text-xs text-[--af-text-muted]">
+                  Changes are applied instantly across the entire app
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Roles & Permissions Section */}
