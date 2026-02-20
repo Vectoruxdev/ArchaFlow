@@ -240,11 +240,11 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <aside
           className={`fixed top-14 left-0 bottom-0 bg-[--af-bg-sidebar] border-r border-[--af-border-sidebar] z-30 transition-all duration-300 lg:translate-x-0 ${
             isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          } ${isCollapsed ? "lg:w-[60px]" : "lg:w-[210px]"} w-[210px]`}
+          } ${isCollapsed ? "lg:w-[60px]" : "lg:w-[250px]"} w-[250px]`}
         >
           <div className="flex flex-col h-full">
             {/* Workspace Selector */}
-            <div className={`p-3 ${isCollapsed ? "lg:p-2" : ""}`}>
+            <div className={`p-3 border-b border-[--af-border-sidebar] ${isCollapsed ? "lg:p-2" : ""}`}>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   {isCollapsed ? (
@@ -266,7 +266,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                         {getInitials(displayWorkspace.name)}
                       </span>
                       <div className="flex-1 text-left min-w-0">
-                        <p className="font-semibold text-[13px] truncate text-[--af-sidebar-text]">{displayWorkspace.name}</p>
+                        <p className="font-semibold text-sm truncate text-[--af-sidebar-text]">{displayWorkspace.name}</p>
                         <p className="text-[11px] text-[--af-sidebar-muted] capitalize">{displayWorkspace.role}</p>
                       </div>
                       <ChevronDown className="w-3.5 h-3.5 text-[--af-sidebar-muted] group-hover:text-[--af-sidebar-text] flex-shrink-0" />
@@ -307,7 +307,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Navigation Items */}
-            <nav className={`flex-1 space-y-0.5 overflow-y-auto af-scroll ${isCollapsed ? "lg:px-2" : "px-2.5"} py-1`}>
+            <nav className={`flex-1 space-y-1 overflow-y-auto af-scroll ${isCollapsed ? "lg:px-2" : "px-3"} py-3`}>
               {navigationItems.map((item) => {
                 const isActive = pathname === item.href || pathname?.startsWith(item.href + "/")
 
@@ -320,13 +320,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                             router.push(item.href)
                             setIsMobileMenuOpen(false)
                           }}
-                          className={`w-full flex items-center justify-center p-2 rounded-sidebar text-sm transition-colors ${
+                          className={`w-full flex items-center justify-center p-2.5 rounded-sidebar transition-colors ${
                             isActive
                               ? "bg-[--af-sidebar-active-bg] text-[--af-sidebar-active]"
                               : "text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text]"
                           }`}
                         >
-                          <item.icon className="w-5 h-5" />
+                          <item.icon className="w-[22px] h-[22px]" />
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right">
@@ -343,21 +343,24 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       router.push(item.href)
                       setIsMobileMenuOpen(false)
                     }}
-                    className={`w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[14px] transition-colors ${
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sidebar text-[15px] transition-colors ${
                       isActive
                         ? "bg-[--af-sidebar-active-bg] text-[--af-sidebar-active] font-semibold"
                         : "text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text]"
                     }`}
                   >
-                    <item.icon className="w-5 h-5 shrink-0" />
-                    <span className="flex-1 truncate">{item.label}</span>
+                    <item.icon className="w-[22px] h-[22px] shrink-0" />
+                    <span className="flex-1 truncate text-left">{item.label}</span>
+                    {isActive && (
+                      <span className="w-2 h-2 rounded-full bg-[--af-sidebar-active] shrink-0" />
+                    )}
                   </button>
                 )
               })}
             </nav>
 
             {/* Bottom Section */}
-            <div className={`border-t border-[--af-border-sidebar] ${isCollapsed ? "lg:p-2" : "p-2.5"} space-y-0.5`}>
+            <div className={`border-t border-[--af-border-sidebar] ${isCollapsed ? "lg:p-2" : "p-3"} space-y-1`}>
               {/* Collapse/Close Toggle */}
               {isCollapsed ? (
                 <Tooltip>
@@ -372,8 +375,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       }}
                       className="w-full flex items-center justify-center p-2 rounded-sidebar text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text] transition-colors"
                     >
-                      <ChevronRight className="w-5 h-5 hidden lg:block" />
-                      <X className="w-5 h-5 lg:hidden" />
+                      <ChevronRight className="w-[22px] h-[22px] hidden lg:block" />
+                      <X className="w-[22px] h-[22px] lg:hidden" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right">
@@ -390,10 +393,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       setIsMobileMenuOpen(false)
                     }
                   }}
-                  className="w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[14px] text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text] transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sidebar text-[15px] text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text] transition-colors"
                 >
-                  <ChevronLeft className="w-5 h-5 hidden lg:block" />
-                  <X className="w-5 h-5 lg:hidden" />
+                  <ChevronLeft className="w-[22px] h-[22px] hidden lg:block" />
+                  <X className="w-[22px] h-[22px] lg:hidden" />
                   <span className="hidden lg:block">Collapse</span>
                   <span className="lg:hidden">Close</span>
                 </button>
@@ -407,7 +410,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       onClick={handleLogout}
                       className="w-full flex items-center justify-center p-2 rounded-sidebar text-[--af-danger-text] hover:bg-[rgba(168,64,64,0.12)] transition-colors"
                     >
-                      <LogOut className="w-5 h-5" />
+                      <LogOut className="w-[22px] h-[22px]" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="right">
@@ -417,9 +420,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               ) : (
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-sidebar text-[14px] text-[--af-danger-text] hover:bg-[rgba(168,64,64,0.12)] transition-colors"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-sidebar text-[15px] text-[--af-danger-text] hover:bg-[rgba(168,64,64,0.12)] transition-colors"
                 >
-                  <LogOut className="w-5 h-5" />
+                  <LogOut className="w-[22px] h-[22px]" />
                   <span>Logout</span>
                 </button>
               )}
@@ -436,7 +439,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Main Content */}
-        <main className={`pt-14 transition-all duration-300 ${isCollapsed ? "lg:pl-[60px]" : "lg:pl-[210px]"}`}>
+        <main className={`pt-14 transition-all duration-300 ${isCollapsed ? "lg:pl-[60px]" : "lg:pl-[250px]"}`}>
           {children}
         </main>
 
