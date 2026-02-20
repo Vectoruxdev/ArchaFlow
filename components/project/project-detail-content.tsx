@@ -334,7 +334,6 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
           project_tasks(*),
           project_notes(*),
           project_files(*),
-          project_invoices(*),
           project_assignments(user_id)
         `
     const projectColumnsWithoutOwners =

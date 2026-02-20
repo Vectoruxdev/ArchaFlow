@@ -129,16 +129,16 @@ export default function DashboardPage() {
               .eq("business_id", businessId)
               .is("archived_at", null),
             supabase
-              .from("project_invoices")
-              .select("id, amount, due_date, status")
+              .from("invoices")
+              .select("id, total, due_date, status")
               .eq("business_id", businessId)
               .lt("due_date", today)
-              .neq("status", "paid"),
+              .in("status", ["sent", "viewed", "overdue", "partially_paid"]),
             supabase
-              .from("project_invoices")
-              .select("amount")
+              .from("invoices")
+              .select("amount_due")
               .eq("business_id", businessId)
-              .in("status", ["draft", "sent", "overdue"]),
+              .in("status", ["draft", "sent", "viewed", "overdue", "partially_paid"]),
           ])
 
           const projects = (projectsRes.data || []) as { id: string; status: string; due_date: string | null; payment_status: string }[]
@@ -146,7 +146,7 @@ export default function DashboardPage() {
           const activeProjects = projects.filter((p) => p.status !== "completed").length
           const overdueProjects = projects.filter((p) => p.due_date && p.due_date < today).length
           const overdueInvoices = (overdueInvoicesRes.data || []).length
-          const pendingTotal = (pendingInvoicesRes.data || []).reduce((sum, inv) => sum + Number((inv as { amount: number }).amount || 0), 0)
+          const pendingTotal = (pendingInvoicesRes.data || []).reduce((sum, inv) => sum + Number((inv as { amount_due: number }).amount_due || 0), 0)
 
           let newLeads = 0
           let overdueTasks = 0
