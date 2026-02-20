@@ -1305,10 +1305,12 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                   <DollarSign className="w-5 h-5" />
                   Invoices
                 </h2>
-                <Button size="sm" onClick={() => window.location.href = `/invoices/new?projectId=${projectId}&projectName=${encodeURIComponent(project.title)}`}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Generate Invoice
-                </Button>
+                <a href={`/invoices/new?projectId=${projectId}&projectName=${encodeURIComponent(project.title)}`}>
+                  <Button size="sm">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Generate Invoice
+                  </Button>
+                </a>
               </div>
 
               {projectInvoices.length === 0 ? (
