@@ -18,8 +18,20 @@ CREATE INDEX idx_billing_overrides_business ON billing_overrides(business_id);
 CREATE INDEX idx_billing_overrides_active ON billing_overrides(business_id, is_active);
 
 -- Allow "comped" as a valid subscription_status
--- (No constraint change needed if subscription_status is a TEXT column without CHECK constraint)
--- If there IS a check constraint, uncomment and adapt:
--- ALTER TABLE businesses DROP CONSTRAINT IF EXISTS businesses_subscription_status_check;
--- ALTER TABLE businesses ADD CONSTRAINT businesses_subscription_status_check
---   CHECK (subscription_status IN ('active', 'past_due', 'canceled', 'trialing', 'incomplete', 'none', 'comped'));
+-- Drop any existing check constraint on subscription_status and re-add with "comped" included
+DO $$
+DECLARE
+  constraint_name TEXT;
+BEGIN
+  SELECT c.conname INTO constraint_name
+  FROM pg_constraint c
+  JOIN pg_attribute a ON a.attnum = ANY(c.conkey) AND a.attrelid = c.conrelid
+  WHERE c.conrelid = 'businesses'::regclass
+    AND c.contype = 'c'
+    AND a.attname = 'subscription_status'
+  LIMIT 1;
+
+  IF constraint_name IS NOT NULL THEN
+    EXECUTE 'ALTER TABLE businesses DROP CONSTRAINT ' || constraint_name;
+  END IF;
+END $$;

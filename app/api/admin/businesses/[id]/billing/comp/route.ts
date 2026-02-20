@@ -68,7 +68,7 @@ export async function POST(
         .eq("is_active", true)
 
       // Update business with comped status and tier features
-      await admin
+      const { error: updateError } = await admin
         .from("businesses")
         .update({
           plan_tier: tier,
@@ -79,6 +79,14 @@ export async function POST(
           ai_credits_used: 0,
         })
         .eq("id", businessId)
+
+      if (updateError) {
+        console.error("[admin/billing/comp] DB update failed:", updateError)
+        return NextResponse.json(
+          { error: `Failed to update business: ${updateError.message}` },
+          { status: 500 }
+        )
+      }
 
       // Log override
       await admin.from("billing_overrides").insert({
@@ -107,7 +115,7 @@ export async function POST(
       const freeConfig = PLAN_CONFIGS.free
 
       // Downgrade to free
-      await admin
+      const { error: removeError } = await admin
         .from("businesses")
         .update({
           plan_tier: "free",
@@ -117,6 +125,14 @@ export async function POST(
           ai_credits_used: 0,
         })
         .eq("id", businessId)
+
+      if (removeError) {
+        console.error("[admin/billing/comp] DB remove failed:", removeError)
+        return NextResponse.json(
+          { error: `Failed to update business: ${removeError.message}` },
+          { status: 500 }
+        )
+      }
 
       // Deactivate comp overrides
       await admin
