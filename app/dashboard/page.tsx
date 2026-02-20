@@ -25,6 +25,7 @@ import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { isSupabaseConfigured } from "@/lib/supabase/client"
 import { authFetch } from "@/lib/auth/auth-fetch"
+import { StatsCard } from "@/components/admin/stats-card"
 
 type CompanyStats = {
   newLeads: number
@@ -336,104 +337,15 @@ export default function DashboardPage() {
         {isCompanyView && companyStats && (
           <>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
-              <Link href="/leads">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">New Leads</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <Target className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{companyStats.newLeads}</div>
-                  <p className="text-[11px] text-[--af-success-text] mt-1">Last 7 days</p>
-                </div>
-              </Link>
-              <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Active Projects</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <FolderKanban className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{companyStats.activeProjects}</div>
-                  <p className="text-[11px] text-[--af-text-muted] mt-1">In progress</p>
-                </div>
-              </Link>
-              <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Projects</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <AlertCircle className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{companyStats.overdueProjects}</div>
-                  <p className="text-[11px] text-[--af-danger-text] mt-1">Needs attention</p>
-                </div>
-              </Link>
-              <Link href="/invoices">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Invoices</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{companyStats.overdueInvoices}</div>
-                  <p className="text-[11px] text-[--af-danger-text] mt-1">Past due</p>
-                </div>
-              </Link>
+              <StatsCard href="/leads" title="New Leads" value={companyStats.newLeads} icon={Target} description="Last 7 days" descriptionColor="success" />
+              <StatsCard href="/workflow" title="Active Projects" value={companyStats.activeProjects} icon={FolderKanban} description="In progress" />
+              <StatsCard href="/workflow" title="Overdue Projects" value={companyStats.overdueProjects} icon={AlertCircle} description="Needs attention" descriptionColor="danger" />
+              <StatsCard href="/invoices" title="Overdue Invoices" value={companyStats.overdueInvoices} icon={DollarSign} description="Past due" descriptionColor="danger" />
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
-              <Link href="/invoices">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Pending Invoices</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">
-                    ${companyStats.pendingInvoiceTotal.toLocaleString()}
-                  </div>
-                  <p className="text-[11px] text-[--af-warning-text] mt-1">Outstanding</p>
-                </div>
-              </Link>
-              <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Tasks</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <AlertCircle className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{companyStats.overdueTasks}</div>
-                  <p className="text-[11px] text-[--af-danger-text] mt-1">Needs attention</p>
-                </div>
-              </Link>
-              <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 col-span-2 lg:col-span-1 relative overflow-hidden">
-                <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                  <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Team Workload</span>
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                    <CheckCircle2 className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                  </div>
-                </div>
-                <div className="text-[28px] font-display font-bold tracking-tight leading-none">{companyStats.teamWorkload}%</div>
-                <div className="mt-1 sm:mt-2 h-1.5 bg-[--af-bg-surface-alt] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full"
-                    style={{ width: `${companyStats.teamWorkload}%` }}
-                  />
-                </div>
-              </div>
+              <StatsCard href="/invoices" title="Pending Invoices" value={`$${companyStats.pendingInvoiceTotal.toLocaleString()}`} icon={DollarSign} description="Outstanding" descriptionColor="warning" />
+              <StatsCard href="/workflow" title="Overdue Tasks" value={companyStats.overdueTasks} icon={AlertCircle} description="Needs attention" descriptionColor="danger" />
+              <StatsCard title="Team Workload" value={`${companyStats.teamWorkload}%`} icon={CheckCircle2} progress={companyStats.teamWorkload} className="col-span-2 lg:col-span-1" />
             </div>
             <div className="flex justify-end">
               <Button variant="outline" size="sm" asChild>
@@ -448,71 +360,11 @@ export default function DashboardPage() {
         {!isCompanyView && personalStats && (
           <>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
-              <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">My Projects</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <FolderKanban className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{personalStats.myProjects}</div>
-                  <p className="text-[11px] text-[--af-text-muted] mt-1">Assigned to you</p>
-                </div>
-              </Link>
-              <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">My Tasks</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <ListTodo className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{personalStats.myTasks}</div>
-                  <p className="text-[11px] text-[--af-text-muted] mt-1">In progress</p>
-                </div>
-              </Link>
-              <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Tasks</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <AlertCircle className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{personalStats.overdueTasks}</div>
-                  <p className="text-[11px] text-[--af-danger-text] mt-1">Needs attention</p>
-                </div>
-              </Link>
-              <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
-                <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                  <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Active Time</span>
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                    <Clock className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                  </div>
-                </div>
-                <div className="text-[28px] font-display font-bold tracking-tight leading-none">
-                  {personalStats.activeTimeMinutes > 0 ? `${personalStats.activeTimeMinutes}m` : "\u2014"}
-                </div>
-                <p className="text-[11px] text-[--af-text-muted] mt-1">Today</p>
-              </div>
-              <Link href="/workflow">
-                <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 hover:border-[--af-border-strong] transition-colors cursor-pointer col-span-2 relative overflow-hidden">
-                  <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                    <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Upcoming Due</span>
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                      <ListTodo className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                    </div>
-                  </div>
-                  <div className="text-[28px] font-display font-bold tracking-tight leading-none">{personalStats.upcomingDueCount}</div>
-                  <p className="text-[11px] text-[--af-text-muted] mt-1">Next 7 days</p>
-                </div>
-              </Link>
+              <StatsCard href="/workflow" title="My Projects" value={personalStats.myProjects} icon={FolderKanban} description="Assigned to you" />
+              <StatsCard href="/workflow" title="My Tasks" value={personalStats.myTasks} icon={ListTodo} description="In progress" />
+              <StatsCard href="/workflow" title="Overdue Tasks" value={personalStats.overdueTasks} icon={AlertCircle} description="Needs attention" descriptionColor="danger" />
+              <StatsCard title="Active Time" value={personalStats.activeTimeMinutes > 0 ? `${personalStats.activeTimeMinutes}m` : "\u2014"} icon={Clock} description="Today" />
+              <StatsCard href="/workflow" title="Upcoming Due" value={personalStats.upcomingDueCount} icon={ListTodo} description="Next 7 days" className="col-span-2" />
             </div>
             <div className="flex justify-end">
               <Button variant="outline" size="sm" asChild>

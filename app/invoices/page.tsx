@@ -22,6 +22,7 @@ import {
   Trash2,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth/auth-context"
+import { StatsCard } from "@/components/admin/stats-card"
 import { InvoiceDetailPanel } from "@/components/invoices/invoice-detail-panel"
 import { InvoiceSettingsForm } from "@/components/invoices/invoice-settings-form"
 import {
@@ -181,34 +182,10 @@ export default function InvoicesPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Outstanding</span>
-              <DollarSign className="w-4 h-4 text-[--af-text-muted]" />
-            </div>
-            <p className="text-2xl font-display font-bold tracking-tight">{formatCurrency(totalOutstanding)}</p>
-          </div>
-          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue</span>
-              <AlertTriangle className="w-4 h-4 text-[--af-text-muted]" />
-            </div>
-            <p className="text-2xl font-display font-bold tracking-tight text-[--af-danger-text]">{formatCurrency(totalOverdue)}</p>
-          </div>
-          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Collected</span>
-              <CheckCircle2 className="w-4 h-4 text-[--af-text-muted]" />
-            </div>
-            <p className="text-2xl font-display font-bold tracking-tight text-[--af-success-text]">{formatCurrency(totalPaid)}</p>
-          </div>
-          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Drafts</span>
-              <Clock className="w-4 h-4 text-[--af-text-muted]" />
-            </div>
-            <p className="text-2xl font-display font-bold tracking-tight">{draftCount}</p>
-          </div>
+          <StatsCard variant="compact" title="Outstanding" value={formatCurrency(totalOutstanding)} icon={DollarSign} />
+          <StatsCard variant="compact" title="Overdue" value={formatCurrency(totalOverdue)} icon={AlertTriangle} valueColor="danger" />
+          <StatsCard variant="compact" title="Collected" value={formatCurrency(totalPaid)} icon={CheckCircle2} valueColor="success" />
+          <StatsCard variant="compact" title="Drafts" value={draftCount} icon={Clock} />
         </div>
 
         {/* Filters */}

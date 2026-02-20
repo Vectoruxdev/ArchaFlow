@@ -28,6 +28,7 @@ import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
 import { toast } from "sonner"
 import { useAuth } from "@/lib/auth/auth-context"
+import { StatsCard } from "@/components/admin/stats-card"
 import { authFetch } from "@/lib/auth/auth-fetch"
 import {
   DropdownMenu,
@@ -497,44 +498,10 @@ export default function ProjectsPage() {
         </div>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {[
-            {
-              label: "Total Projects",
-              value: String(stats.total),
-              sub: `${stats.active} active`,
-              icon: <UsersIcon className="w-[18px] h-[18px] text-[--af-brand-text]" />,
-            },
-            {
-              label: "Total Budget",
-              value: `$${fmtCurrency(stats.totalBudget)}`,
-              sub: "Across all projects",
-              icon: <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />,
-            },
-            {
-              label: "Total Spent",
-              value: `$${fmtCurrency(stats.totalSpent)}`,
-              sub: `${stats.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : 0}% of budget`,
-              icon: <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />,
-            },
-            {
-              label: "Avg. Progress",
-              value: `${activeProjects.length ? Math.round(activeProjects.reduce((sum, p) => sum + p.progress, 0) / activeProjects.length) : 0}%`,
-              sub: "Across all projects",
-              icon: <Calendar className="w-[18px] h-[18px] text-[--af-brand-text]" />,
-            },
-          ].map((card) => (
-            <div key={card.label} className="relative overflow-hidden bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
-              <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between mb-3 relative">
-                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">{card.label}</span>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center">
-                  {card.icon}
-                </div>
-              </div>
-              <div className="text-[28px] font-display font-bold tracking-tight leading-none mb-1">{card.value}</div>
-              <p className="text-[11px] text-[--af-text-muted]">{card.sub}</p>
-            </div>
-          ))}
+          <StatsCard title="Total Projects" value={stats.total} icon={UsersIcon} description={`${stats.active} active`} />
+          <StatsCard title="Total Budget" value={`$${fmtCurrency(stats.totalBudget)}`} icon={DollarSign} description="Across all projects" />
+          <StatsCard title="Total Spent" value={`$${fmtCurrency(stats.totalSpent)}`} icon={DollarSign} description={`${stats.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : 0}% of budget`} />
+          <StatsCard title="Avg. Progress" value={`${activeProjects.length ? Math.round(activeProjects.reduce((sum, p) => sum + p.progress, 0) / activeProjects.length) : 0}%`} icon={Calendar} description="Across all projects" />
         </div>
 
         {/* Filters and Search */}

@@ -79,6 +79,7 @@ import { toast } from "sonner"
 import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
 import { ClientSelect } from "@/components/ui/client-select"
+import { StatsCard } from "@/components/admin/stats-card"
 
 // Types
 type ProjectStatus = string
@@ -1530,74 +1531,35 @@ export default function WorkflowPage() {
           <>
         {/* Stats Row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 min-w-0">
-            <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
-              <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Active Projects</span>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                  <FolderKanban className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                </div>
-              </div>
-              <div className="text-[28px] font-display font-bold tracking-tight leading-none">
-                {stats.activeProjects}
-                {hasActiveFilters && (
-                  <span className="text-xs text-[--af-text-muted] ml-2 font-normal">(filtered)</span>
-                )}
-              </div>
-              {stats.newThisWeek > 0 && (
-                <p className="text-[11px] text-[--af-success-text] mt-1">+{stats.newThisWeek} this week</p>
-              )}
-            </div>
-
-            <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
-              <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Pending Invoices</span>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                  <DollarSign className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                </div>
-              </div>
-              <div className="text-[28px] font-display font-bold tracking-tight leading-none">
-                {filteredProjects.filter((p) => p.paymentStatus === "pending").length}
-                {hasActiveFilters && (
-                  <span className="text-xs text-[--af-text-muted] ml-2 font-normal">(filtered)</span>
-                )}
-              </div>
-              <p className="text-[11px] text-[--af-warning-text] mt-1">
-                {filteredProjects.filter((p) => p.paymentStatus === "pending").length} invoices
-              </p>
-            </div>
-
-            <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
-              <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue Tasks</span>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                  <AlertCircle className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                </div>
-              </div>
-              <div className="text-[28px] font-display font-bold tracking-tight leading-none">{stats.overdueTasks}</div>
-              <p className="text-[11px] text-[--af-danger-text] mt-1">
-                {stats.overdueTasks > 0 ? "Needs attention" : "All on track"}
-              </p>
-            </div>
-
-            <div className="p-3 sm:p-4 lg:p-5 rounded-card border border-[--af-border-default] bg-[--af-bg-surface] min-w-0 relative overflow-hidden">
-              <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-[--af-brand] opacity-[0.12]" />
-              <div className="flex items-center justify-between gap-2 min-w-0 mb-3 relative">
-                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Team Workload</span>
-                <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0">
-                  <CheckCircle2 className="w-[18px] h-[18px] text-[--af-brand-text]" />
-                </div>
-              </div>
-              <div className="text-[28px] font-display font-bold tracking-tight leading-none">{stats.teamWorkload}%</div>
-              <div className="mt-1 sm:mt-2 h-1.5 bg-[--af-bg-surface-alt] rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-warm-900 dark:bg-[--af-bg-surface] rounded-full"
-                  style={{ width: `${stats.teamWorkload}%` }}
-                />
-              </div>
-          </div>
+          <StatsCard
+            title="Active Projects"
+            value={stats.activeProjects}
+            icon={FolderKanban}
+            valueSuffix={hasActiveFilters ? <span className="text-xs text-[--af-text-muted] ml-2 font-normal">(filtered)</span> : undefined}
+            description={stats.newThisWeek > 0 ? `+${stats.newThisWeek} this week` : undefined}
+            descriptionColor="success"
+          />
+          <StatsCard
+            title="Pending Invoices"
+            value={filteredProjects.filter((p) => p.paymentStatus === "pending").length}
+            icon={DollarSign}
+            valueSuffix={hasActiveFilters ? <span className="text-xs text-[--af-text-muted] ml-2 font-normal">(filtered)</span> : undefined}
+            description={`${filteredProjects.filter((p) => p.paymentStatus === "pending").length} invoices`}
+            descriptionColor="warning"
+          />
+          <StatsCard
+            title="Overdue Tasks"
+            value={stats.overdueTasks}
+            icon={AlertCircle}
+            description={stats.overdueTasks > 0 ? "Needs attention" : "All on track"}
+            descriptionColor="danger"
+          />
+          <StatsCard
+            title="Team Workload"
+            value={`${stats.teamWorkload}%`}
+            icon={CheckCircle2}
+            progress={stats.teamWorkload}
+          />
         </div>
 
         {/* Board/List container - can be fullscreened */}
