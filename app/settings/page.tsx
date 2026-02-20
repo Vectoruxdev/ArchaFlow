@@ -854,13 +854,13 @@ export default function SettingsPage() {
         {/* Accent Color Section */}
         <div className="border border-[--af-border-default] rounded-lg">
           <div className="p-6 border-b border-[--af-border-default]">
-            <h2 className="font-semibold">Accent Color</h2>
+            <h2 className="font-display font-semibold text-lg">Accent Color</h2>
             <p className="text-sm text-[--af-text-secondary] mt-1">
-              Choose a brand color that appears across buttons, links, and highlights
+              Used for highlights, badges, and interactive elements
             </p>
           </div>
           <div className="p-6">
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-4">
               {accentOptions.map((opt) => {
                 const isSelected = accentColor === opt.id
                 return (
@@ -868,18 +868,17 @@ export default function SettingsPage() {
                     key={opt.id}
                     type="button"
                     onClick={() => applyAccent(opt.id)}
-                    className="flex flex-col items-center gap-2 group"
-                    title={opt.label}
+                    className={`flex flex-col items-center gap-2.5 rounded-xl border-2 px-5 py-4 transition-all ${
+                      isSelected
+                        ? "border-[--af-brand] bg-[--af-bg-surface-alt]"
+                        : "border-[--af-border-default] bg-[--af-bg-surface-alt] hover:border-[--af-text-muted]"
+                    }`}
                   >
                     <div
-                      className={`w-10 h-10 rounded-full border-2 transition-all ${
-                        isSelected
-                          ? "border-[--af-brand] scale-110 shadow-md"
-                          : "border-[--af-border-default] hover:border-[--af-text-muted] hover:scale-105"
-                      }`}
+                      className="w-10 h-10 rounded-full"
                       style={{ backgroundColor: opt.swatch }}
                     />
-                    <span className={`text-xs ${isSelected ? "font-semibold text-[--af-text-primary]" : "text-[--af-text-muted]"}`}>
+                    <span className={`text-xs font-medium ${isSelected ? "text-[--af-brand-text]" : "text-[--af-text-muted]"}`}>
                       {opt.label}
                     </span>
                   </button>
