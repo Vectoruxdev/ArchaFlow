@@ -182,10 +182,10 @@ export default function InvoicesPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard variant="compact" title="Outstanding" value={formatCurrency(totalOutstanding)} icon={DollarSign} />
-          <StatsCard variant="compact" title="Overdue" value={formatCurrency(totalOverdue)} icon={AlertTriangle} valueColor="danger" />
-          <StatsCard variant="compact" title="Collected" value={formatCurrency(totalPaid)} icon={CheckCircle2} valueColor="success" />
-          <StatsCard variant="compact" title="Drafts" value={draftCount} icon={Clock} />
+          <StatsCard title="Outstanding" value={formatCurrency(totalOutstanding)} icon={DollarSign} />
+          <StatsCard title="Overdue" value={formatCurrency(totalOverdue)} icon={AlertTriangle} valueColor="danger" />
+          <StatsCard title="Collected" value={formatCurrency(totalPaid)} icon={CheckCircle2} valueColor="success" />
+          <StatsCard title="Drafts" value={draftCount} icon={Clock} />
         </div>
 
         {/* Filters */}
