@@ -166,7 +166,7 @@ export function InvoiceDetailPanel({
                 <div>
                   <h2 className="text-lg font-semibold">{invoice.invoice_number}</h2>
                   <p className="text-sm text-gray-500">
-                    {invoice.client?.name || "No client"}
+                    {invoice.client ? `${invoice.client.first_name || ""} ${invoice.client.last_name || ""}`.trim() || "No client" : "No client"}
                     {invoice.project?.name && ` · ${invoice.project.name}`}
                   </p>
                 </div>
@@ -390,7 +390,7 @@ export function InvoiceDetailPanel({
             invoiceId={invoice.id}
             invoiceNumber={invoice.invoice_number}
             clientEmail={invoice.client?.email || ""}
-            clientName={invoice.client?.name || ""}
+            clientName={invoice.client ? `${invoice.client.first_name || ""} ${invoice.client.last_name || ""}`.trim() : ""}
             onSent={() => {
               loadInvoice()
               onUpdated?.()

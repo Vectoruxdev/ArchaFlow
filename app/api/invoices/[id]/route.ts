@@ -24,7 +24,7 @@ export async function GET(
     // Get invoice with relations
     const { data: invoice, error: invoiceError } = await admin
       .from("invoices")
-      .select("*, client:clients(id, name, email, company_name, phone), project:projects(id, name)")
+      .select("*, client:clients(id, first_name, last_name, email, phone), project:projects(id, name)")
       .eq("id", params.id)
       .single()
 

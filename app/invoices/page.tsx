@@ -31,7 +31,7 @@ interface Invoice {
   issue_date: string | null
   due_date: string | null
   created_at: string
-  client: { id: string; name: string; email: string } | null
+  client: { id: string; first_name: string; last_name: string; email: string } | null
   project: { id: string; name: string } | null
 }
 
@@ -86,7 +86,7 @@ export default function InvoicesPage() {
     const q = search.toLowerCase()
     return (
       inv.invoice_number.toLowerCase().includes(q) ||
-      inv.client?.name?.toLowerCase().includes(q) ||
+      `${inv.client?.first_name || ""} ${inv.client?.last_name || ""}`.toLowerCase().includes(q) ||
       inv.project?.name?.toLowerCase().includes(q)
     )
   })
@@ -245,7 +245,7 @@ export default function InvoicesPage() {
                           )}
                         </td>
                         <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
-                          {inv.client?.name || "—"}
+                          {inv.client ? `${inv.client.first_name || ""} ${inv.client.last_name || ""}`.trim() || "—" : "—"}
                         </td>
                         <td className="px-4 py-3">
                           <Badge className={`text-xs ${sc.color}`}>{sc.label}</Badge>

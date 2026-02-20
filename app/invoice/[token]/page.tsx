@@ -18,7 +18,7 @@ interface InvoiceData {
   dueDate: string | null
   paymentTerms: string
   notes: string | null
-  client: { id: string; name: string; email: string; company_name: string | null; phone: string | null } | null
+  client: { id: string; first_name: string; last_name: string; email: string; phone: string | null } | null
   lineItems: { id: string; description: string; quantity: number; unit_price: number; amount: number }[]
   payments: { id: string; amount: number; payment_method: string; payment_date: string }[]
   changeOrders: { id: string; change_order_number: number; title: string; description: string | null; amount: number; status: string; created_at: string }[]
@@ -151,10 +151,7 @@ export default function PublicInvoicePage() {
               <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Bill To</p>
               {invoice.client ? (
                 <>
-                  <p className="font-semibold text-gray-900">{invoice.client.name}</p>
-                  {invoice.client.company_name && (
-                    <p className="text-sm text-gray-500">{invoice.client.company_name}</p>
-                  )}
+                  <p className="font-semibold text-gray-900">{`${invoice.client.first_name || ""} ${invoice.client.last_name || ""}`.trim()}</p>
                   {invoice.client.email && (
                     <p className="text-sm text-gray-500">{invoice.client.email}</p>
                   )}

@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = admin
       .from("invoices")
-      .select("*, client:clients(id, name, email), project:projects(id, name)")
+      .select("*, client:clients(id, first_name, last_name, email), project:projects(id, name)")
       .eq("business_id", businessId)
       .order("created_at", { ascending: false })
 

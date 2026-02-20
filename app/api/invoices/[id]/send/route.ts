@@ -25,7 +25,7 @@ export async function POST(
     // Load invoice
     const { data: invoice, error: invoiceError } = await admin
       .from("invoices")
-      .select("*, client:clients(id, name, email, company_name)")
+      .select("*, client:clients(id, first_name, last_name, email)")
       .eq("id", params.id)
       .single()
 

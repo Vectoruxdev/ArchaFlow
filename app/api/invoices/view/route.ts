@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     // Load invoice by viewing token
     const { data: invoice, error: invoiceError } = await admin
       .from("invoices")
-      .select("*, client:clients(id, name, email, company_name, phone)")
+      .select("*, client:clients(id, first_name, last_name, email, phone)")
       .eq("viewing_token", token)
       .single()
 
