@@ -22,6 +22,7 @@ import {
   Download,
   Calendar,
   Receipt,
+  Gift,
 } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
@@ -250,6 +251,21 @@ export default function BillingPage() {
             </div>
           </div>
 
+          {/* Comped banner */}
+          {workspace?.subscriptionStatus === "comped" && (
+            <div className="flex items-center gap-3 rounded-lg border border-purple-200 dark:border-purple-900/30 bg-purple-50 dark:bg-purple-900/10 p-4">
+              <Gift className="w-5 h-5 text-purple-500 flex-shrink-0" />
+              <div>
+                <p className="font-medium text-sm text-purple-700 dark:text-purple-400">
+                  Complimentary Plan
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                  Your {config.name} plan has been comped by an administrator. You have full access to all {config.name} features at no cost.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Past due warning */}
           {workspace?.subscriptionStatus === "past_due" && (
             <div className="flex items-center gap-3 rounded-lg border border-orange-200 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 p-4">
@@ -310,17 +326,23 @@ export default function BillingPage() {
                   className={
                     workspace?.subscriptionStatus === "active"
                       ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                      : workspace?.subscriptionStatus === "past_due"
-                        ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
-                        : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                      : workspace?.subscriptionStatus === "comped"
+                        ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                        : workspace?.subscriptionStatus === "past_due"
+                          ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
+                          : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
                   }
                 >
-                  {workspace?.subscriptionStatus === "none" ? "Free Tier" : workspace?.subscriptionStatus}
+                  {workspace?.subscriptionStatus === "none"
+                    ? "Free Tier"
+                    : workspace?.subscriptionStatus === "comped"
+                      ? "Complimentary"
+                      : workspace?.subscriptionStatus}
                 </Badge>
               </div>
 
               {/* Actions */}
-              {isOwner && (
+              {isOwner && workspace?.subscriptionStatus !== "comped" && (
                 <div className="flex flex-wrap gap-2 pt-2">
                   {tier === "free" && (
                     <>

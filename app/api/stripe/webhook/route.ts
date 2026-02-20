@@ -9,6 +9,18 @@ export const dynamic = "force-dynamic"
 // Disable body parsing — Stripe needs the raw body for signature verification
 export const runtime = "nodejs"
 
+async function isBusinessComped(
+  admin: ReturnType<typeof getSupabaseAdmin>,
+  businessId: string
+): Promise<boolean> {
+  const { data } = await admin
+    .from("businesses")
+    .select("subscription_status")
+    .eq("id", businessId)
+    .single()
+  return data?.subscription_status === "comped"
+}
+
 async function logEvent(
   businessId: string,
   eventType: string,
@@ -75,6 +87,12 @@ export async function POST(request: NextRequest) {
             ? session.customer
             : session.customer?.id
 
+        // Skip if business is comped
+        if (await isBusinessComped(admin, businessId)) {
+          console.log("[webhook] Skipping checkout.session.completed for comped business", businessId)
+          break
+        }
+
         const planTier = (session.metadata?.plan_tier || "pro") as PlanTier
         const config = PLAN_CONFIGS[planTier]
 
@@ -116,6 +134,12 @@ export async function POST(request: NextRequest) {
             break
           }
 
+          // Skip if business is comped
+          if (await isBusinessComped(admin, business.id)) {
+            console.log("[webhook] Skipping subscription.updated for comped business", business.id)
+            break
+          }
+
           const status = mapSubscriptionStatus(subscription.status)
           await admin
             .from("businesses")
@@ -129,6 +153,12 @@ export async function POST(request: NextRequest) {
             status,
           })
         } else {
+          // Skip if business is comped
+          if (await isBusinessComped(admin, businessId)) {
+            console.log("[webhook] Skipping subscription.updated for comped business", businessId)
+            break
+          }
+
           const status = mapSubscriptionStatus(subscription.status)
           await admin
             .from("businesses")
@@ -155,6 +185,12 @@ export async function POST(request: NextRequest) {
           .single()
 
         if (business) {
+          // Skip if business is comped
+          if (await isBusinessComped(admin, business.id)) {
+            console.log("[webhook] Skipping subscription.deleted for comped business", business.id)
+            break
+          }
+
           await admin
             .from("businesses")
             .update({
@@ -187,6 +223,12 @@ export async function POST(request: NextRequest) {
             .single()
 
           if (business) {
+            // Skip if business is comped
+            if (await isBusinessComped(admin, business.id)) {
+              console.log("[webhook] Skipping invoice.payment_failed for comped business", business.id)
+              break
+            }
+
             await admin
               .from("businesses")
               .update({ subscription_status: "past_due" })
@@ -213,6 +255,12 @@ export async function POST(request: NextRequest) {
             .single()
 
           if (business) {
+            // Skip if business is comped
+            if (await isBusinessComped(admin, business.id)) {
+              console.log("[webhook] Skipping invoice.payment_succeeded for comped business", business.id)
+              break
+            }
+
             const config = PLAN_CONFIGS[business.plan_tier as PlanTier] || PLAN_CONFIGS.free
 
             await admin

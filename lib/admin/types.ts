@@ -37,6 +37,27 @@ export interface AdminActivityEntry {
   createdAt: string
 }
 
+export interface BillingOverride {
+  id: string
+  businessId: string
+  actionType: "discount_applied" | "discount_removed" | "comp_applied" | "comp_removed" | "tier_changed"
+  details: Record<string, unknown>
+  reason: string | null
+  performedBy: string
+  performedByEmail?: string
+  isActive: boolean
+  createdAt: string
+}
+
+export interface ActiveDiscount {
+  couponId: string
+  discountType: "percentage" | "fixed"
+  discountValue: number
+  duration: "forever" | "once" | "repeating"
+  durationInMonths?: number
+  effectivePrice: number
+}
+
 export interface AdminDashboardStats {
   totalBusinesses: number
   totalUsers: number

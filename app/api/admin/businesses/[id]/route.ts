@@ -89,6 +89,7 @@ export async function GET(
     isFoundingMember: business.is_founding_member || false,
     stripeCustomerId: business.stripe_customer_id,
     stripeSubscriptionId: business.stripe_subscription_id,
+    currentPeriodEnd: business.current_period_end || null,
     createdAt: business.created_at,
     recentActivity: (activity || []).map((a: any) => ({
       id: a.id,

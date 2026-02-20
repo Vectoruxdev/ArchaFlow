@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -13,23 +13,24 @@ export default function BusinessDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
 
-  useEffect(() => {
-    async function fetchBusiness() {
-      try {
-        const res = await fetch(`/api/admin/businesses/${id}`)
-        if (res.ok) {
-          setBusiness(await res.json())
-        } else {
-          setError("Business not found")
-        }
-      } catch {
-        setError("Failed to load business")
-      } finally {
-        setLoading(false)
+  const fetchBusiness = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/businesses/${id}`)
+      if (res.ok) {
+        setBusiness(await res.json())
+      } else {
+        setError("Business not found")
       }
+    } catch {
+      setError("Failed to load business")
+    } finally {
+      setLoading(false)
     }
-    fetchBusiness()
   }, [id])
+
+  useEffect(() => {
+    fetchBusiness()
+  }, [fetchBusiness])
 
   if (loading) {
     return (
@@ -71,7 +72,7 @@ export default function BusinessDetailPage() {
         <h1 className="text-2xl font-bold">{business.name}</h1>
       </div>
 
-      <BusinessDetailTabs business={business} />
+      <BusinessDetailTabs business={business} onRefresh={fetchBusiness} />
     </div>
   )
 }
