@@ -128,11 +128,13 @@ interface ProjectFile {
 
 interface Invoice {
   id: string
-  number: string
-  date: string
-  amount: number
-  status: "paid" | "sent" | "pending" | "overdue"
-  dueDate: string
+  invoice_number: string
+  issue_date: string
+  total: number
+  amount_paid: number
+  amount_due: number
+  status: string
+  due_date: string
 }
 
 interface Project {
@@ -263,11 +265,14 @@ const priorityColors = {
   low: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
 }
 
-const invoiceStatusColors = {
-  paid: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
+const invoiceStatusColors: Record<string, string> = {
+  draft: "bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-500/20",
   sent: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  pending: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
+  viewed: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+  partially_paid: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20",
+  paid: "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20",
   overdue: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
+  void: "bg-gray-500/10 text-gray-400 dark:text-gray-500 border-gray-500/20",
 }
 
 interface ProjectDetailContentProps {
@@ -478,6 +483,25 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
           }))
 
         setTodos(loadedTasks)
+
+        // Fetch invoices for this project from the invoices table
+        const { data: invoiceData } = await supabase
+          .from("invoices")
+          .select("id, invoice_number, issue_date, total, amount_paid, amount_due, status, due_date")
+          .eq("project_id", projectId)
+          .order("created_at", { ascending: false })
+        setProjectInvoices(
+          (invoiceData || []).map((inv: any) => ({
+            id: inv.id,
+            invoice_number: inv.invoice_number,
+            issue_date: inv.issue_date || "",
+            total: Number(inv.total) || 0,
+            amount_paid: Number(inv.amount_paid) || 0,
+            amount_due: Number(inv.amount_due) || 0,
+            status: inv.status || "draft",
+            due_date: inv.due_date || "",
+          }))
+        )
       }
     } catch (error: any) {
       console.error("Error loading project:", error)
@@ -1281,7 +1305,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                   <DollarSign className="w-5 h-5" />
                   Invoices
                 </h2>
-                <Button size="sm">
+                <Button size="sm" onClick={() => window.location.href = `/invoices/new?projectId=${projectId}&projectName=${encodeURIComponent(project.title)}`}>
                   <Plus className="w-4 h-4 mr-2" />
                   Generate Invoice
                 </Button>
@@ -1299,21 +1323,22 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                     {projectInvoices.map((invoice) => (
                   <div
                     key={invoice.id}
-                    className="border border-gray-200 dark:border-gray-800 rounded-lg p-4"
+                    className="border border-gray-200 dark:border-gray-800 rounded-lg p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
+                    onClick={() => window.location.href = `/invoices`}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-medium">{invoice.number}</p>
+                        <p className="font-medium">{invoice.invoice_number}</p>
                         <p className="text-sm text-gray-500">
-                          {new Date(invoice.date).toLocaleDateString()}
+                          {invoice.issue_date ? new Date(invoice.issue_date).toLocaleDateString() : "No date"}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">
-                          ${invoice.amount.toLocaleString()}
+                          ${invoice.total.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
-                        <Badge className={invoiceStatusColors[invoice.status]}>
-                          {invoice.status}
+                        <Badge className={invoiceStatusColors[invoice.status] || invoiceStatusColors.draft}>
+                          {invoice.status.replace("_", " ")}
                         </Badge>
                       </div>
                     </div>
@@ -1324,15 +1349,15 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                   <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">Total Invoiced</span>
-                      <span className="font-semibold">$225,000</span>
+                      <span className="font-semibold">${projectInvoices.reduce((s, i) => s + i.total, 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between text-sm mt-2">
                       <span className="text-gray-600 dark:text-gray-400">Total Paid</span>
-                      <span className="font-semibold text-green-600">$125,000</span>
+                      <span className="font-semibold text-green-600">${projectInvoices.reduce((s, i) => s + i.amount_paid, 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                     <div className="flex justify-between text-sm mt-2">
                       <span className="text-gray-600 dark:text-gray-400">Outstanding</span>
-                      <span className="font-semibold text-yellow-600">$100,000</span>
+                      <span className="font-semibold text-yellow-600">${projectInvoices.reduce((s, i) => s + i.amount_due, 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                     </div>
                   </div>
                 </>

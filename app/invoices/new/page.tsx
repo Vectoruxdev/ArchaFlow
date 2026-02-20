@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,6 +20,7 @@ interface LineItem {
 
 export default function NewInvoicePage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { currentWorkspace } = useAuth()
   const [saving, setSaving] = useState(false)
   const [savingAndSending, setSavingAndSending] = useState(false)
@@ -27,9 +28,16 @@ export default function NewInvoicePage() {
   // Options
   const [settings, setSettings] = useState<any>(null)
 
+  // Pre-fill from query params (e.g. from project detail "Generate Invoice" button)
+  const prefillProjectId = searchParams.get("projectId")
+  const prefillProjectName = searchParams.get("projectName")
+
   // Form state
   const [clientValue, setClientValue] = useState<{ clientId: string | null; displayName: string }>({ clientId: null, displayName: "" })
-  const [projectValue, setProjectValue] = useState<{ projectId: string | null; displayName: string }>({ projectId: null, displayName: "" })
+  const [projectValue, setProjectValue] = useState<{ projectId: string | null; displayName: string }>({
+    projectId: prefillProjectId || null,
+    displayName: prefillProjectName || "",
+  })
   const [issueDate, setIssueDate] = useState(new Date().toISOString().split("T")[0])
   const [dueDate, setDueDate] = useState("")
   const [paymentTerms, setPaymentTerms] = useState("Net 30")
