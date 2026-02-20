@@ -52,7 +52,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className={`${inter.variable} ${cormorant.variable} ${ibmPlexMono.variable} ${inter.className}`}>
+      <body className={`${inter.variable} ${cormorant.variable} ${ibmPlexMono.variable}`}>
         <AuthProvider>{children}</AuthProvider>
         <Toaster />
       </body>

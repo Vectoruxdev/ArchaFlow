@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
+        sans: ["var(--af-font-body)"],
         display: ["var(--af-font-display)"],
         body: ["var(--af-font-body)"],
         mono: ["var(--af-font-mono)"],
