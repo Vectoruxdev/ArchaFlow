@@ -38,10 +38,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    // Build query
+    // Check overdue: update any sent/viewed invoices past due date
+    const now = new Date().toISOString().split("T")[0]
+    await admin
+      .from("invoices")
+      .update({ status: "overdue", updated_at: new Date().toISOString() })
+      .eq("business_id", businessId)
+      .in("status", ["sent", "viewed"])
+      .lt("due_date", now)
+
+    // Build query — no JOINs to avoid FK resolution issues
     let query = admin
       .from("invoices")
-      .select("*, client:clients(id, first_name, last_name, email), project:projects(id, name)")
+      .select("*")
       .eq("business_id", businessId)
       .order("created_at", { ascending: false })
 
@@ -61,15 +70,6 @@ export async function GET(request: NextRequest) {
     const dateTo = params.get("dateTo")
     if (dateTo) query = query.lte("issue_date", dateTo)
 
-    // Check overdue: update any sent/viewed invoices past due date
-    const now = new Date().toISOString().split("T")[0]
-    await admin
-      .from("invoices")
-      .update({ status: "overdue", updated_at: new Date().toISOString() })
-      .eq("business_id", businessId)
-      .in("status", ["sent", "viewed"])
-      .lt("due_date", now)
-
     const { data: invoices, error: queryError } = await query
 
     if (queryError) {
@@ -77,7 +77,41 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch invoices" }, { status: 500 })
     }
 
-    return NextResponse.json(invoices)
+    // Separately fetch client and project names
+    const clientIds = [...new Set(invoices.filter((i: any) => i.client_id).map((i: any) => i.client_id))]
+    const projectIds = [...new Set(invoices.filter((i: any) => i.project_id).map((i: any) => i.project_id))]
+
+    const clientMap: Record<string, any> = {}
+    const projectMap: Record<string, any> = {}
+
+    if (clientIds.length > 0) {
+      const { data: clients } = await admin
+        .from("clients")
+        .select("id, first_name, last_name, email")
+        .in("id", clientIds)
+      for (const c of clients || []) {
+        clientMap[c.id] = { id: c.id, first_name: c.first_name, last_name: c.last_name, email: c.email }
+      }
+    }
+
+    if (projectIds.length > 0) {
+      const { data: projects } = await admin
+        .from("projects")
+        .select("id, name")
+        .in("id", projectIds)
+      for (const p of projects || []) {
+        projectMap[p.id] = { id: p.id, name: p.name }
+      }
+    }
+
+    // Attach client/project to each invoice
+    const enriched = invoices.map((inv: any) => ({
+      ...inv,
+      client: inv.client_id ? clientMap[inv.client_id] || null : null,
+      project: inv.project_id ? projectMap[inv.project_id] || null : null,
+    }))
+
+    return NextResponse.json(enriched)
   } catch (err: any) {
     console.error("List invoices API error:", err)
     return NextResponse.json({ error: err.message || "Internal server error" }, { status: 500 })
