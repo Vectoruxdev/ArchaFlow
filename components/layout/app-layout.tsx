@@ -91,6 +91,15 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   // Show actual workspace data or a loading placeholder
   const displayWorkspace = currentWorkspace || { id: "", name: "Loading...", icon: "🏢", role: "viewer" as const }
 
+  /** Extract up to 2 initials from workspace name */
+  const getInitials = (name: string) =>
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((w) => w[0].toUpperCase())
+      .join("")
+
   // Load collapsed state from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("sidebar-collapsed")
@@ -242,7 +251,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <button className="w-full flex items-center justify-center p-2 hover:bg-[--af-sidebar-active-bg] rounded-sidebar transition-colors">
-                          <span className="text-xl">{displayWorkspace.icon}</span>
+                          <span className="w-8 h-8 rounded-lg bg-warm-900 dark:bg-warm-800 flex items-center justify-center text-[11px] font-semibold tracking-wide text-amber-300 flex-shrink-0">
+                            {getInitials(displayWorkspace.name)}
+                          </span>
                         </button>
                       </TooltipTrigger>
                       <TooltipContent side="right">
@@ -251,7 +262,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     </Tooltip>
                   ) : (
                     <button className="w-full flex items-center gap-2.5 p-2.5 hover:bg-[--af-sidebar-active-bg] rounded-sidebar transition-colors group">
-                      <span className="text-xl flex-shrink-0">{displayWorkspace.icon}</span>
+                      <span className="w-8 h-8 rounded-lg bg-warm-900 dark:bg-warm-800 flex items-center justify-center text-[11px] font-semibold tracking-wide text-amber-300 flex-shrink-0">
+                        {getInitials(displayWorkspace.name)}
+                      </span>
                       <div className="flex-1 text-left min-w-0">
                         <p className="font-semibold text-[13px] truncate text-[--af-sidebar-text]">{displayWorkspace.name}</p>
                         <p className="text-[11px] text-[--af-sidebar-muted] capitalize">{displayWorkspace.role}</p>
@@ -269,7 +282,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       onClick={() => switchWorkspace?.(workspace.id)}
                       className="flex items-center gap-3"
                     >
-                      <span className="text-lg">{workspace.icon}</span>
+                      <span className="w-7 h-7 rounded-md bg-warm-900 dark:bg-warm-800 flex items-center justify-center text-[10px] font-semibold tracking-wide text-amber-300 flex-shrink-0">
+                        {getInitials(workspace.name)}
+                      </span>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm truncate">{workspace.name}</p>
                         <p className="text-xs text-[--af-text-muted] capitalize">{workspace.role}</p>
