@@ -15,7 +15,7 @@ export default function BusinessDetailPage() {
 
   const fetchBusiness = useCallback(async () => {
     try {
-      const res = await fetch(`/api/admin/businesses/${id}`)
+      const res = await fetch(`/api/admin/businesses/${id}`, { cache: "no-store" })
       if (res.ok) {
         setBusiness(await res.json())
       } else {

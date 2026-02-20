@@ -33,7 +33,7 @@ interface BusinessDetailData {
 
 interface BusinessDetailTabsProps {
   business: BusinessDetailData
-  onRefresh?: () => void
+  onRefresh?: () => void | Promise<void>
 }
 
 export function BusinessDetailTabs({ business, onRefresh }: BusinessDetailTabsProps) {
@@ -53,7 +53,7 @@ export function BusinessDetailTabs({ business, onRefresh }: BusinessDetailTabsPr
         <MembersTab businessId={business.id} />
       </TabsContent>
       <TabsContent value="billing">
-        <BillingTab business={business} onRefresh={onRefresh || (() => {})} />
+        <BillingTab business={business} onRefresh={onRefresh || (() => Promise.resolve())} />
       </TabsContent>
       <TabsContent value="activity">
         <ActivityTab businessId={business.id} initialActivity={business.recentActivity} />
@@ -183,7 +183,7 @@ function MembersTab({ businessId }: { businessId: string }) {
   )
 }
 
-function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onRefresh: () => void }) {
+function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onRefresh: () => void | Promise<void> }) {
   const stripeBaseUrl = "https://dashboard.stripe.com"
 
   const [overridesLoading, setOverridesLoading] = useState(true)
@@ -202,7 +202,9 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
   const fetchOverrides = useCallback(async () => {
     setOverridesLoading(true)
     try {
-      const res = await fetch(`/api/admin/businesses/${business.id}/billing/overrides`)
+      const res = await fetch(`/api/admin/businesses/${business.id}/billing/overrides`, {
+        cache: "no-store",
+      })
       if (res.ok) {
         const data = await res.json()
         setActiveDiscount(data.activeDiscount)
@@ -219,9 +221,9 @@ function BillingTab({ business, onRefresh }: { business: BusinessDetailData; onR
     fetchOverrides()
   }, [fetchOverrides])
 
-  function handleActionSuccess() {
-    fetchOverrides()
-    onRefresh()
+  async function handleActionSuccess() {
+    await onRefresh()
+    await fetchOverrides()
   }
 
   async function handleRemoveDiscount() {

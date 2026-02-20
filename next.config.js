@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  allowedDevOrigins: ["admin.localhost"],
   webpack: (config, { isServer }) => {
     // Ignore file watching issues
     config.watchOptions = {
