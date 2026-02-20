@@ -31,6 +31,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface Invoice {
   id: string
@@ -70,6 +78,8 @@ export default function InvoicesPage() {
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null)
   const [detailOpen, setDetailOpen] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<Invoice | null>(null)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (currentWorkspace) loadInvoices()
@@ -114,22 +124,22 @@ export default function InvoicesPage() {
     .reduce((sum, i) => sum + parseFloat(String(i.total)), 0)
   const draftCount = invoices.filter((i) => i.status === "draft").length
 
-  const handleDelete = async (inv: Invoice) => {
-    if (inv.status !== "draft") {
-      toast.error("Only draft invoices can be deleted")
-      return
-    }
-    if (!confirm(`Delete ${inv.invoice_number}? This cannot be undone.`)) return
+  const confirmDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
     try {
-      const res = await fetch(`/api/invoices/${inv.id}`, { method: "DELETE" })
+      const res = await fetch(`/api/invoices/${deleteTarget.id}`, { method: "DELETE" })
       if (!res.ok) {
         const body = await res.json()
         throw new Error(body.error || "Failed to delete")
       }
-      toast.success(`${inv.invoice_number} deleted`)
-      loadInvoices()
+      toast.success(`${deleteTarget.invoice_number} deleted`)
+      setInvoices((prev) => prev.filter((i) => i.id !== deleteTarget.id))
     } catch (err: any) {
       toast.error(err.message)
+    } finally {
+      setDeleting(false)
+      setDeleteTarget(null)
     }
   }
 
@@ -315,7 +325,7 @@ export default function InvoicesPage() {
                                 </DropdownMenuItem>
                               )}
                               {inv.status === "draft" && (
-                                <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => handleDelete(inv)}>
+                                <DropdownMenuItem className="text-red-600 focus:text-red-600" onClick={() => setDeleteTarget(inv)}>
                                   <Trash2 className="w-4 h-4 mr-2" /> Delete
                                 </DropdownMenuItem>
                               )}
@@ -338,6 +348,27 @@ export default function InvoicesPage() {
         onOpenChange={setDetailOpen}
         onUpdated={loadInvoices}
       />
+
+      {/* Delete Confirmation Modal */}
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Invoice</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete <span className="font-medium text-gray-900 dark:text-gray-100">{deleteTarget?.invoice_number}</span>? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete} disabled={deleting}>
+              {deleting && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   )
 }
