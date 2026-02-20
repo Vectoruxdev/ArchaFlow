@@ -78,12 +78,17 @@ export async function GET(request: NextRequest) {
       .eq("business_id", invoice.business_id)
       .single()
 
-    // Get business name fallback
+    // Get business name and payment settings
     const { data: businessData } = await admin
       .from("businesses")
-      .select("name")
+      .select("name, plan_tier, online_payments_enabled, stripe_connect_onboarding_complete")
       .eq("id", invoice.business_id)
       .single()
+
+    const onlinePaymentsEnabled =
+      businessData?.online_payments_enabled === true &&
+      businessData?.stripe_connect_onboarding_complete === true &&
+      ["pro", "enterprise"].includes(businessData?.plan_tier || "")
 
     return NextResponse.json({
       id: invoice.id,
@@ -110,6 +115,7 @@ export async function GET(request: NextRequest) {
         email: settings?.company_email || "",
         footerText: settings?.footer_text || "",
       },
+      onlinePaymentsEnabled,
     })
   } catch (err: any) {
     console.error("Public invoice view error:", err)

@@ -3,14 +3,26 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Loader2 } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Loader2, CreditCard, ExternalLink, AlertCircle } from "lucide-react"
 import { toast } from "sonner"
 import { useAuth } from "@/lib/auth/auth-context"
+
+interface ConnectStatus {
+  connected: boolean
+  chargesEnabled: boolean
+  payoutsEnabled: boolean
+  onboardingComplete: boolean
+  paymentsEnabled: boolean
+}
 
 export function InvoiceSettingsForm() {
   const { currentWorkspace } = useAuth()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [connectStatus, setConnectStatus] = useState<ConnectStatus | null>(null)
+  const [connectLoading, setConnectLoading] = useState(false)
+  const [toggleLoading, setToggleLoading] = useState(false)
 
   const [defaultPaymentTerms, setDefaultPaymentTerms] = useState("Net 30")
   const [defaultTaxRate, setDefaultTaxRate] = useState("0")
@@ -21,7 +33,10 @@ export function InvoiceSettingsForm() {
   const [footerText, setFooterText] = useState("")
 
   useEffect(() => {
-    if (currentWorkspace) loadSettings()
+    if (currentWorkspace) {
+      loadSettings()
+      loadConnectStatus()
+    }
   }, [currentWorkspace?.id])
 
   const loadSettings = async () => {
@@ -77,6 +92,74 @@ export function InvoiceSettingsForm() {
       setSaving(false)
     }
   }
+
+  const loadConnectStatus = async () => {
+    if (!currentWorkspace) return
+    try {
+      const res = await fetch(`/api/stripe/connect/status?businessId=${currentWorkspace.id}`)
+      if (res.ok) {
+        setConnectStatus(await res.json())
+      }
+    } catch {
+      // Non-critical
+    }
+  }
+
+  const handleConnectStripe = async () => {
+    if (!currentWorkspace) return
+    setConnectLoading(true)
+    try {
+      const res = await fetch("/api/stripe/connect/onboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: currentWorkspace.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      window.location.href = data.url
+    } catch (err: any) {
+      toast.error(err.message)
+      setConnectLoading(false)
+    }
+  }
+
+  const handleTogglePayments = async () => {
+    if (!currentWorkspace) return
+    setToggleLoading(true)
+    try {
+      const res = await fetch("/api/stripe/connect/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: currentWorkspace.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setConnectStatus((prev) => prev ? { ...prev, paymentsEnabled: data.enabled } : prev)
+      toast.success(data.enabled ? "Online payments enabled" : "Online payments disabled")
+    } catch (err: any) {
+      toast.error(err.message)
+    } finally {
+      setToggleLoading(false)
+    }
+  }
+
+  const handleOpenDashboard = async () => {
+    if (!currentWorkspace) return
+    try {
+      const res = await fetch("/api/stripe/connect/dashboard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ businessId: currentWorkspace.id }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      window.open(data.url, "_blank")
+    } catch (err: any) {
+      toast.error(err.message)
+    }
+  }
+
+  const isFreeTier = currentWorkspace?.planTier === "free"
 
   if (loading) {
     return (
@@ -186,6 +269,89 @@ export function InvoiceSettingsForm() {
         {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
         Save Settings
       </Button>
+
+      {/* Online Payments Section */}
+      <div className="border-t border-gray-200 dark:border-gray-800 pt-6 mt-6">
+        <div className="flex items-center gap-2 mb-1">
+          <CreditCard className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          <h3 className="text-lg font-semibold">Online Payments</h3>
+        </div>
+        <p className="text-sm text-gray-500 mb-4">
+          Let clients pay invoices with a credit card directly from their invoice link.
+        </p>
+
+        {isFreeTier ? (
+          <div className="flex items-start gap-3 bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+            <AlertCircle className="w-5 h-5 text-gray-400 mt-0.5 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Upgrade to Pro to accept online payments
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Online payments are available on Pro and Enterprise plans.
+              </p>
+            </div>
+          </div>
+        ) : !connectStatus?.connected ? (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Connect your Stripe account to start accepting credit card payments on invoices. A $0.50 platform fee applies per transaction.
+            </p>
+            <Button onClick={handleConnectStripe} disabled={connectLoading}>
+              {connectLoading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <CreditCard className="w-4 h-4 mr-2" />
+              )}
+              Connect Stripe Account
+            </Button>
+          </div>
+        ) : !connectStatus.onboardingComplete ? (
+          <div className="space-y-3">
+            <div className="flex items-start gap-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg p-4">
+              <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  Stripe setup incomplete
+                </p>
+                <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                  Complete your Stripe onboarding to start accepting payments.
+                </p>
+              </div>
+            </div>
+            <Button onClick={handleConnectStripe} disabled={connectLoading}>
+              {connectLoading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <ExternalLink className="w-4 h-4 mr-2" />
+              )}
+              Complete Setup
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Accept online payments
+                </p>
+                <p className="text-xs text-gray-500">
+                  Clients will see a "Pay Now" button on their invoices
+                </p>
+              </div>
+              <Switch
+                checked={connectStatus.paymentsEnabled}
+                onCheckedChange={handleTogglePayments}
+                disabled={toggleLoading}
+              />
+            </div>
+            <Button variant="outline" size="sm" onClick={handleOpenDashboard}>
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Manage Payouts
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

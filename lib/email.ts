@@ -118,6 +118,7 @@ export async function sendInvoiceEmail({
   amount,
   dueDate,
   viewingToken,
+  onlinePaymentsEnabled,
 }: {
   to: string
   recipientName: string
@@ -126,8 +127,10 @@ export async function sendInvoiceEmail({
   amount: string
   dueDate: string
   viewingToken: string
+  onlinePaymentsEnabled?: boolean
 }) {
   const viewUrl = `${getSiteUrl()}/invoice/${viewingToken}`
+  const ctaLabel = onlinePaymentsEnabled ? "View &amp; Pay" : "View Invoice"
 
   const { error } = await getResend().emails.send({
     from: FROM_EMAIL,
@@ -150,7 +153,7 @@ export async function sendInvoiceEmail({
           ${businessName} has sent you an invoice for <strong>${amount}</strong>, due by <strong>${dueDate}</strong>.
         </p>
         <a href="${viewUrl}" style="display: inline-block; background: #000; color: #fff; padding: 12px 32px; border-radius: 9999px; text-decoration: none; font-weight: 500; font-size: 14px;">
-          View Invoice
+          ${ctaLabel}
         </a>
         <p style="color: #999; font-size: 13px; margin-top: 32px; line-height: 1.5;">
           Or copy this link: ${viewUrl}

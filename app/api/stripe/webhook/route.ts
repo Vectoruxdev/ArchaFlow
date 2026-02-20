@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getStripe } from "@/lib/stripe/client"
 import { PLAN_CONFIGS, type PlanTier } from "@/lib/stripe/config"
 import { getSupabaseAdmin } from "@/lib/supabase/admin"
+import { sendPaymentReceivedEmail } from "@/lib/email"
 import Stripe from "stripe"
 
 export const dynamic = "force-dynamic"
@@ -274,6 +275,140 @@ export async function POST(request: NextRequest) {
 
             await logEvent(business.id, "invoice.payment_succeeded", event.id)
           }
+        }
+        break
+      }
+
+      case "payment_intent.succeeded": {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent
+        const invoiceId = paymentIntent.metadata?.invoice_id
+
+        // Only handle invoice payments (skip subscription payments etc.)
+        if (!invoiceId) break
+
+        // Idempotency: check if payment already recorded
+        const { data: existingPayment } = await admin
+          .from("invoice_payments")
+          .select("id")
+          .eq("stripe_payment_intent_id", paymentIntent.id)
+          .maybeSingle()
+
+        if (existingPayment) {
+          console.log("[webhook] payment_intent.succeeded: already recorded, skipping", paymentIntent.id)
+          break
+        }
+
+        // Load invoice
+        const { data: inv } = await admin
+          .from("invoices")
+          .select("id, invoice_number, business_id, amount_paid, amount_due, client_id")
+          .eq("id", invoiceId)
+          .single()
+
+        if (!inv) {
+          console.error("[webhook] payment_intent.succeeded: invoice not found", invoiceId)
+          break
+        }
+
+        const paymentAmount = paymentIntent.amount / 100 // Convert cents to dollars
+        const chargeId = typeof paymentIntent.latest_charge === "string"
+          ? paymentIntent.latest_charge
+          : paymentIntent.latest_charge?.id || null
+
+        // Insert payment record
+        await admin.from("invoice_payments").insert({
+          invoice_id: inv.id,
+          amount: paymentAmount,
+          payment_method: "credit_card",
+          payment_date: new Date().toISOString(),
+          stripe_payment_intent_id: paymentIntent.id,
+          stripe_charge_id: chargeId,
+        })
+
+        // Update invoice totals
+        const newAmountPaid = parseFloat(inv.amount_paid) + paymentAmount
+        const newAmountDue = parseFloat(inv.amount_due) - paymentAmount
+        const newStatus = newAmountDue <= 0.005 ? "paid" : "partially_paid"
+
+        await admin
+          .from("invoices")
+          .update({
+            amount_paid: newAmountPaid,
+            amount_due: Math.max(0, newAmountDue),
+            status: newStatus,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", inv.id)
+
+        // Send payment received email to client
+        if (inv.client_id) {
+          const { data: client } = await admin
+            .from("clients")
+            .select("first_name, last_name, email")
+            .eq("id", inv.client_id)
+            .single()
+
+          const { data: biz } = await admin
+            .from("businesses")
+            .select("name")
+            .eq("id", inv.business_id)
+            .single()
+
+          if (client?.email) {
+            sendPaymentReceivedEmail({
+              to: client.email,
+              recipientName: `${client.first_name || ""} ${client.last_name || ""}`.trim() || "Client",
+              businessName: biz?.name || "Your service provider",
+              invoiceNumber: inv.invoice_number,
+              paymentAmount: `$${paymentAmount.toFixed(2)}`,
+              remainingBalance: `$${Math.max(0, newAmountDue).toFixed(2)}`,
+            }).catch((err) => console.error("[webhook] Failed to send payment email:", err))
+          }
+        }
+
+        // Log activity
+        admin
+          .from("workspace_activities")
+          .insert({
+            business_id: inv.business_id,
+            activity_type: "payment_received",
+            entity_type: "invoice",
+            entity_id: inv.id,
+            message: `Payment of $${paymentAmount.toFixed(2)} received on invoice ${inv.invoice_number}`,
+            metadata: { stripe_payment_intent_id: paymentIntent.id },
+          })
+          .then(({ error: actErr }) => {
+            if (actErr) console.error("[webhook] Failed to log activity:", actErr)
+          })
+
+        break
+      }
+
+      case "payment_intent.payment_failed": {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent
+        const invoiceId = paymentIntent.metadata?.invoice_id
+        if (invoiceId) {
+          console.log("[webhook] payment_intent.payment_failed for invoice:", invoiceId, paymentIntent.last_payment_error?.message)
+        }
+        break
+      }
+
+      case "account.updated": {
+        const account = event.data.object as Stripe.Account
+
+        const { data: biz } = await admin
+          .from("businesses")
+          .select("id")
+          .eq("stripe_connect_account_id", account.id)
+          .single()
+
+        if (biz) {
+          await admin
+            .from("businesses")
+            .update({
+              stripe_connect_onboarding_complete: account.charges_enabled,
+            })
+            .eq("id", biz.id)
         }
         break
       }

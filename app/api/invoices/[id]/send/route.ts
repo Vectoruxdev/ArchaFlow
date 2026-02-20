@@ -86,14 +86,18 @@ export async function POST(
       return NextResponse.json({ error: "Failed to update invoice" }, { status: 500 })
     }
 
-    // Get business name for email
+    // Get business name and payment settings for email
     const { data: businessData } = await admin
       .from("businesses")
-      .select("name")
+      .select("name, online_payments_enabled, stripe_connect_onboarding_complete, plan_tier")
       .eq("id", invoice.business_id)
       .single()
 
     const businessName = businessData?.name || "Your service provider"
+    const onlinePaymentsEnabled =
+      businessData?.online_payments_enabled === true &&
+      businessData?.stripe_connect_onboarding_complete === true &&
+      ["pro", "enterprise"].includes(businessData?.plan_tier || "")
 
     // Send email
     let emailWarning: string | null = null
@@ -108,6 +112,7 @@ export async function POST(
           ? new Date(invoice.due_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
           : "Upon receipt",
         viewingToken,
+        onlinePaymentsEnabled,
       })
     } catch (emailErr: any) {
       console.error("Invoice email error:", emailErr)

@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useParams } from "next/navigation"
-import { Loader2, XCircle, CheckCircle2, Clock, AlertTriangle } from "lucide-react"
+import { useParams, useSearchParams } from "next/navigation"
+import { Loader2, XCircle, CheckCircle2, Clock, AlertTriangle, CreditCard } from "lucide-react"
+import { StripePaymentForm } from "@/components/invoices/stripe-payment-form"
 
 interface InvoiceData {
   id: string
@@ -23,6 +24,7 @@ interface InvoiceData {
   payments: { id: string; amount: number; payment_method: string; payment_date: string }[]
   changeOrders: { id: string; change_order_number: number; title: string; description: string | null; amount: number; status: string; created_at: string }[]
   business: { name: string; address: string; phone: string; email: string; footerText: string }
+  onlinePaymentsEnabled?: boolean
 }
 
 function formatCurrency(val: number): string {
@@ -35,15 +37,28 @@ function formatDate(d: string): string {
 
 export default function PublicInvoicePage() {
   const params = useParams()
+  const searchParams = useSearchParams()
   const token = params.token as string
 
   const [invoice, setInvoice] = useState<InvoiceData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [showPayment, setShowPayment] = useState(false)
+  const [payAmount, setPayAmount] = useState("")
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [paymentLoading, setPaymentLoading] = useState(false)
+  const [paymentSuccess, setPaymentSuccess] = useState(false)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
 
   useEffect(() => {
     loadInvoice()
   }, [token])
+
+  useEffect(() => {
+    if (searchParams.get("payment") === "success") {
+      setPaymentSuccess(true)
+    }
+  }, [searchParams])
 
   const loadInvoice = async () => {
     try {
@@ -59,6 +74,52 @@ export default function PublicInvoicePage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const isPayable = invoice &&
+    invoice.onlinePaymentsEnabled &&
+    invoice.amountDue > 0 &&
+    ["sent", "viewed", "overdue", "partially_paid"].includes(invoice.status)
+
+  const handleStartPayment = () => {
+    if (!invoice) return
+    setPayAmount(String(invoice.amountDue))
+    setShowPayment(true)
+    setClientSecret(null)
+    setPaymentError(null)
+  }
+
+  const handleCreatePaymentIntent = async () => {
+    const amount = parseFloat(payAmount)
+    if (!amount || amount <= 0 || (invoice && amount > invoice.amountDue)) {
+      setPaymentError(`Enter an amount between $0.01 and $${invoice?.amountDue.toFixed(2)}`)
+      return
+    }
+
+    setPaymentLoading(true)
+    setPaymentError(null)
+    try {
+      const res = await fetch("/api/invoices/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, amount }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setClientSecret(data.clientSecret)
+    } catch (err: any) {
+      setPaymentError(err.message)
+    } finally {
+      setPaymentLoading(false)
+    }
+  }
+
+  const handlePaymentSuccess = () => {
+    setPaymentSuccess(true)
+    setShowPayment(false)
+    setClientSecret(null)
+    // Reload invoice to show updated payment status
+    loadInvoice()
   }
 
   if (loading) {
@@ -116,6 +177,103 @@ export default function PublicInvoicePage() {
           </button>
         </div>
       </div>
+
+      {/* Payment Success Banner */}
+      {paymentSuccess && (
+        <div className="max-w-4xl mx-auto px-4 mt-6 print:hidden">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0" />
+            <div>
+              <p className="text-sm font-medium text-green-800">Payment successful!</p>
+              <p className="text-xs text-green-600">Your payment has been received and is being processed.</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pay Now Bar */}
+      {isPayable && !showPayment && !paymentSuccess && (
+        <div className="max-w-4xl mx-auto px-4 mt-6 print:hidden">
+          <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-900">Balance Due: {formatCurrency(invoice.amountDue)}</p>
+              <p className="text-xs text-gray-500">Pay securely with a credit or debit card</p>
+            </div>
+            <button
+              onClick={handleStartPayment}
+              className="flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+            >
+              <CreditCard className="w-4 h-4" />
+              Pay Now
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Payment Form */}
+      {showPayment && (
+        <div className="max-w-4xl mx-auto px-4 mt-6 print:hidden">
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Pay Invoice {invoice?.invoiceNumber}</h3>
+              <button
+                onClick={() => { setShowPayment(false); setClientSecret(null); setPaymentError(null) }}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+            </div>
+
+            {!clientSecret ? (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Payment Amount
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                    <input
+                      type="number"
+                      value={payAmount}
+                      onChange={(e) => setPayAmount(e.target.value)}
+                      min="0.01"
+                      max={invoice?.amountDue}
+                      step="0.01"
+                      className="w-full border border-gray-200 rounded-lg pl-7 pr-3 py-2 text-sm"
+                      placeholder="0.00"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Balance due: {formatCurrency(invoice?.amountDue || 0)}. You can pay the full amount or a partial payment.
+                  </p>
+                </div>
+                {paymentError && (
+                  <p className="text-sm text-red-600">{paymentError}</p>
+                )}
+                <button
+                  onClick={handleCreatePaymentIntent}
+                  disabled={paymentLoading}
+                  className="flex items-center justify-center gap-2 w-full bg-black text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors disabled:opacity-50"
+                >
+                  {paymentLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Continue to Payment
+                </button>
+              </div>
+            ) : (
+              <StripePaymentForm
+                clientSecret={clientSecret}
+                amount={parseFloat(payAmount)}
+                invoiceNumber={invoice?.invoiceNumber || ""}
+                onSuccess={handlePaymentSuccess}
+                onError={(msg) => setPaymentError(msg)}
+              />
+            )}
+            {paymentError && clientSecret && (
+              <p className="text-sm text-red-600 mt-3">{paymentError}</p>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-4xl mx-auto px-4 py-8 print:py-0 print:px-0">
         {/* Invoice Header */}

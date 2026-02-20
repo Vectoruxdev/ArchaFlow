@@ -51,3 +51,7 @@ export function canCreateInvoice(tier: PlanTier, currentMonthCount: number): boo
 export function getInvoiceLimit(tier: PlanTier): number {
   return PLAN_CONFIGS[tier].maxInvoicesPerMonth
 }
+
+export function canAcceptOnlinePayments(tier: PlanTier): boolean {
+  return PLAN_CONFIGS[tier].hasOnlinePayments
+}
