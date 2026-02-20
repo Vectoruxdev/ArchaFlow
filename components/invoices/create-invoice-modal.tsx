@@ -79,9 +79,8 @@ export function CreateInvoiceModal({
       const [clientsRes, projectsRes, settingsRes] = await Promise.all([
         supabase
           .from("clients")
-          .select("id, first_name, last_name, email, company_name")
+          .select("*")
           .eq("business_id", currentWorkspace.id)
-          .is("archived_at", null)
           .order("first_name", { ascending: true }),
         supabase
           .from("projects")
@@ -91,10 +90,17 @@ export function CreateInvoiceModal({
         fetch(`/api/invoices/settings?businessId=${currentWorkspace.id}`),
       ])
       if (clientsRes.data) {
-        setClients(clientsRes.data.map((c: any) => ({
-          ...c,
-          name: `${c.first_name || ""} ${c.last_name || ""}`.trim() || c.email || "Unnamed",
-        })))
+        setClients(
+          clientsRes.data
+            .filter((c: any) => !c.archived_at)
+            .map((c: any) => ({
+              id: c.id,
+              first_name: c.first_name,
+              last_name: c.last_name,
+              email: c.email,
+              name: `${c.first_name || ""} ${c.last_name || ""}`.trim() || c.email || "Unnamed",
+            }))
+        )
       }
       if (projectsRes.data) setProjects(projectsRes.data)
       if (settingsRes.ok) {
@@ -205,7 +211,7 @@ export function CreateInvoiceModal({
                     <option value="">No client selected</option>
                     {clients.map((c) => (
                       <option key={c.id} value={c.id}>
-                        {c.name} {c.company_name ? `(${c.company_name})` : ""}
+                        {c.name}
                       </option>
                     ))}
                   </select>

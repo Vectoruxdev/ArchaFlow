@@ -65,9 +65,8 @@ export default function NewInvoicePage() {
       const [clientsRes, projectsRes, settingsRes] = await Promise.all([
         supabase
           .from("clients")
-          .select("id, first_name, last_name, email, company_name")
+          .select("*")
           .eq("business_id", currentWorkspace.id)
-          .is("archived_at", null)
           .order("first_name", { ascending: true }),
         supabase
           .from("projects")
@@ -76,12 +75,22 @@ export default function NewInvoicePage() {
           .order("name", { ascending: true }),
         fetch(`/api/invoices/settings?businessId=${currentWorkspace.id}`),
       ])
+      if (clientsRes.error) console.error("Clients fetch error:", clientsRes.error)
       if (clientsRes.data) {
-        setClients(clientsRes.data.map((c: any) => ({
-          ...c,
-          name: `${c.first_name || ""} ${c.last_name || ""}`.trim() || c.email || "Unnamed",
-        })))
+        setClients(
+          clientsRes.data
+            .filter((c: any) => !c.archived_at)
+            .map((c: any) => ({
+              id: c.id,
+              first_name: c.first_name,
+              last_name: c.last_name,
+              email: c.email,
+              description: c.description,
+              name: `${c.first_name || ""} ${c.last_name || ""}`.trim() || c.email || "Unnamed",
+            }))
+        )
       }
+      if (projectsRes.error) console.error("Projects fetch error:", projectsRes.error)
       if (projectsRes.data) setProjects(projectsRes.data)
       if (settingsRes.ok) {
         const s = await settingsRes.json()
@@ -275,13 +284,12 @@ export default function NewInvoicePage() {
                   <option value="">Select a client...</option>
                   {clients.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {c.name} {c.company_name ? `(${c.company_name})` : ""}
+                      {c.name}
                     </option>
                   ))}
                 </select>
                 {selectedClient && (
                   <div className="text-sm space-y-0.5 text-gray-500">
-                    {selectedClient.company_name && <p>{selectedClient.company_name}</p>}
                     {selectedClient.email && <p>{selectedClient.email}</p>}
                   </div>
                 )}
