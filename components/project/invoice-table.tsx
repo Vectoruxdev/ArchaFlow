@@ -89,19 +89,19 @@ export function InvoiceTable({ projectId, clientId }: InvoiceTableProps) {
             <table className="w-full">
               <thead className="bg-[--af-bg-surface-alt]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Invoice #
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Date
                   </th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="px-4 py-3 text-right text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Amount
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Due Date
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Status
                   </th>
                 </tr>

@@ -35,6 +35,7 @@ import {
   ChevronDown,
   Maximize2,
   Minimize2,
+  Loader2,
 } from "lucide-react"
 import { AppLayout } from "@/components/layout/app-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
@@ -1428,7 +1429,7 @@ export default function WorkflowPage() {
 
   return (
     <AppLayout>
-      <div className="p-4 lg:p-6 space-y-6">
+      <div className="p-6 space-y-6">
         {/* Error toast — only when there is a load error */}
         {loadError && isAuthReady && (
           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-lg px-4">
@@ -1476,7 +1477,7 @@ export default function WorkflowPage() {
         {(authLoading || workspacesLoading) && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4"></div>
+              <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
               <p className="text-sm text-[--af-text-secondary]">
                 {authLoading ? "Authenticating..." : "Loading your workspaces..."}
               </p>
@@ -1488,7 +1489,7 @@ export default function WorkflowPage() {
         {!authLoading && !workspacesLoading && isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4"></div>
+              <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
               <p className="text-sm text-[--af-text-secondary]">Loading projects...</p>
             </div>
           </div>
@@ -1498,7 +1499,7 @@ export default function WorkflowPage() {
         {isAuthReady && !authLoading && !workspacesLoading && workspaces.length > 0 && !businessId && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4"></div>
+              <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
               <p className="text-sm text-[--af-text-secondary]">Selecting workspace...</p>
             </div>
           </div>

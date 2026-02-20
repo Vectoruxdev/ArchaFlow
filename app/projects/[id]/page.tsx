@@ -148,7 +148,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
       <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Sticky Header */}
         <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
-          <div className="p-4 lg:p-6">
+          <div className="p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4 min-w-0 flex-1">
                 <Button

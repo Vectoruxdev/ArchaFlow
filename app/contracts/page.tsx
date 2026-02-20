@@ -107,14 +107,14 @@ export default function ContractsPage() {
       <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Header */}
         <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
-          <div className="p-4 lg:p-6">
-            <h1 className="text-xl sm:text-2xl font-display font-bold tracking-tight">Contracts</h1>
+          <div className="p-6">
+            <h1 className="text-2xl font-display font-bold tracking-tight">Contracts</h1>
             <p className="text-sm text-[--af-text-muted] mt-1">
               Create templates, send contracts, and collect signatures
             </p>
           </div>
           {/* Tabs */}
-          <div className="px-4 lg:px-6 flex gap-0">
+          <div className="px-6 flex gap-0">
             {(["templates", "contracts"] as const).map((t) => (
               <button
                 key={t}
@@ -133,7 +133,7 @@ export default function ContractsPage() {
         </div>
 
         {/* Content */}
-        <div className="p-4 lg:p-6">
+        <div className="p-6">
           {loading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (

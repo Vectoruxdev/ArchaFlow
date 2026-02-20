@@ -80,16 +80,16 @@ interface Project {
 const allProjects: Project[] = []
 
 const statusColors = {
-  lead: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
-  sale: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
-  design: "bg-[--af-warning-bg]0/10 text-[--af-warning-text] border-[--af-warning-border]/20",
-  completed: "bg-[--af-success-bg]0/10 text-[--af-success-text] border-[--af-success-border]/20",
+  lead: "bg-[--af-info-bg] text-[--af-info-text] border border-[--af-info-border]",
+  sale: "bg-[--af-warning-bg] text-[--af-warning-text] border border-[--af-warning-border]",
+  design: "bg-[--af-warning-bg] text-[--af-warning-text] border border-[--af-warning-border]",
+  completed: "bg-[--af-success-bg] text-[--af-success-text] border border-[--af-success-border]",
 }
 
 const paymentColors = {
-  pending: "bg-[--af-danger-bg]0/10 text-[--af-danger-text]",
-  partial: "bg-[--af-warning-bg]0/10 text-[--af-warning-text]",
-  paid: "bg-[--af-success-bg]0/10 text-[--af-success-text]",
+  pending: "bg-[--af-danger-bg] text-[--af-danger-text] border border-[--af-danger-border]",
+  partial: "bg-[--af-warning-bg] text-[--af-warning-text] border border-[--af-warning-border]",
+  paid: "bg-[--af-success-bg] text-[--af-success-text] border border-[--af-success-border]",
 }
 
 const priorityColors = {
@@ -467,7 +467,7 @@ export default function ProjectsPage() {
 
   return (
     <AppLayout>
-      <div className="p-4 lg:p-6 space-y-6">
+      <div className="p-6 space-y-6">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
@@ -490,44 +490,44 @@ export default function ProjectsPage() {
         </div>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="border border-[--af-border-default] rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[--af-text-secondary]">Total Projects</span>
+          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Total Projects</span>
               <UsersIcon className="w-4 h-4 text-[--af-text-muted]" />
             </div>
             <div className="text-2xl font-display font-bold tracking-tight">{stats.total}</div>
-            <p className="text-xs text-[--af-text-muted] mt-1">{stats.active} active</p>
+            <p className="text-[11px] text-[--af-text-muted] mt-1">{stats.active} active</p>
           </div>
 
-          <div className="border border-[--af-border-default] rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[--af-text-secondary]">Total Budget</span>
+          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Total Budget</span>
               <DollarSign className="w-4 h-4 text-[--af-text-muted]" />
             </div>
             <div className="text-2xl font-display font-bold tracking-tight">${((stats.totalBudget || 0) / 1000000).toFixed(1)}M</div>
-            <p className="text-xs text-[--af-text-muted] mt-1">Across all projects</p>
+            <p className="text-[11px] text-[--af-text-muted] mt-1">Across all projects</p>
           </div>
 
-          <div className="border border-[--af-border-default] rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[--af-text-secondary]">Total Spent</span>
+          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Total Spent</span>
               <DollarSign className="w-4 h-4 text-[--af-text-muted]" />
             </div>
             <div className="text-2xl font-display font-bold tracking-tight">${((stats.totalSpent || 0) / 1000000).toFixed(1)}M</div>
-            <p className="text-xs text-[--af-text-muted] mt-1">
+            <p className="text-[11px] text-[--af-text-muted] mt-1">
               {stats.totalBudget ? Math.round((stats.totalSpent / stats.totalBudget) * 100) : 0}% of budget
             </p>
           </div>
 
-          <div className="border border-[--af-border-default] rounded-lg p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-[--af-text-secondary]">Avg. Progress</span>
+          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Avg. Progress</span>
               <Calendar className="w-4 h-4 text-[--af-text-muted]" />
             </div>
             <div className="text-2xl font-display font-bold tracking-tight">
               {projects.length ? Math.round(projects.reduce((sum, p) => sum + p.progress, 0) / projects.length) : 0}%
             </div>
-            <p className="text-xs text-[--af-text-muted] mt-1">Across all projects</p>
+            <p className="text-[11px] text-[--af-text-muted] mt-1">Across all projects</p>
           </div>
         </div>
 
@@ -580,31 +580,31 @@ export default function ProjectsPage() {
                 <table className="w-full">
               <thead className="bg-[--af-bg-surface-alt]">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Project
                   </th>
-                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Client
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Status
                   </th>
-                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Budget
                   </th>
-                  <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Progress
                   </th>
-                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Due Date
                   </th>
-                  <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Team
                   </th>
-                  <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Payment
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                     Actions
                   </th>
                 </tr>
@@ -734,31 +734,31 @@ export default function ProjectsPage() {
                 <table className="w-full">
                   <thead className="bg-[--af-bg-surface-alt]">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Project
                       </th>
-                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Client
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Status
                       </th>
-                      <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Budget
                       </th>
-                      <th className="hidden md:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Progress
                       </th>
-                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Due Date
                       </th>
-                      <th className="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Team
                       </th>
-                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Payment
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">
                         Actions
                       </th>
                     </tr>

@@ -203,7 +203,7 @@ export default function EditInvoicePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8">
               <div />
               <div>
-                <p className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider mb-3">Bill To</p>
+                <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] mb-3">Bill To</p>
                 <ClientSelect
                   value={clientValue}
                   onChange={setClientValue}
@@ -215,17 +215,17 @@ export default function EditInvoicePage() {
             {/* Meta row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 pb-8 border-b border-[--af-border-default]/50 dark:border-warm-800">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Issue Date</label>
+                <label className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Issue Date</label>
                 <Input type="date" value={issueDate} onChange={(e) => setIssueDate(e.target.value)} className="text-sm" />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Due Date</label>
+                <label className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Due Date</label>
                 <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="text-sm" />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Terms</label>
+                <label className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Terms</label>
                 <select
-                  className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-900 h-9"
+                  className="w-full h-9 rounded-[--af-radius-input] border border-[--af-border-default] bg-[--af-bg-input] px-3 text-[13px] transition-colors"
                   value={paymentTerms}
                   onChange={(e) => setPaymentTerms(e.target.value)}
                 >
@@ -237,7 +237,7 @@ export default function EditInvoicePage() {
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Project</label>
+                <label className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Project</label>
                 <ProjectSelect
                   value={projectValue}
                   onChange={setProjectValue}
@@ -249,10 +249,10 @@ export default function EditInvoicePage() {
             {/* Line items */}
             <div className="mb-6">
               <div className="grid grid-cols-[1fr_80px_120px_120px_40px] gap-2 mb-2 px-1">
-                <span className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Description</span>
-                <span className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider text-right">Qty</span>
-                <span className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider text-right">Price</span>
-                <span className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider text-right">Amount</span>
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Description</span>
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] text-right">Qty</span>
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] text-right">Price</span>
+                <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] text-right">Amount</span>
                 <span />
               </div>
               <div className="space-y-2">
@@ -276,9 +276,9 @@ export default function EditInvoicePage() {
             {/* Totals + Notes */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-6 border-t border-[--af-border-default]/50 dark:border-warm-800">
               <div className="space-y-2">
-                <label className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Notes / Payment Instructions</label>
+                <label className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Notes / Payment Instructions</label>
                 <textarea
-                  className="w-full border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-900 min-h-[100px] resize-y"
+                  className="w-full h-9 rounded-[--af-radius-input] border border-[--af-border-default] bg-[--af-bg-input] px-3 text-[13px] transition-colors min-h-[100px] resize-y"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Payment instructions, bank details, thank you message..."

@@ -187,9 +187,9 @@ const statusLabels: Record<string, string> = {
 
 function TemperatureBadge({ temperature }: { temperature: string }) {
   const colors: Record<string, string> = {
-    cold: "bg-[--af-info-bg]0/10 text-[--af-info-text]",
-    warm: "bg-[--af-warning-bg]0/10 text-[--af-warning-text]",
-    hot: "bg-[--af-danger-bg]0/10 text-[--af-danger-text]",
+    cold: "bg-[--af-info-bg] text-[--af-info-text] border border-[--af-info-border]",
+    warm: "bg-[--af-warning-bg] text-[--af-warning-text] border border-[--af-warning-border]",
+    hot: "bg-[--af-danger-bg] text-[--af-danger-text] border border-[--af-danger-border]",
   }
   return (
     <Badge className={colors[temperature] || "bg-[--af-bg-surface-alt] text-[--af-text-secondary]"}>
@@ -200,13 +200,13 @@ function TemperatureBadge({ temperature }: { temperature: string }) {
 
 function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
-    new: "bg-purple-500/10 text-purple-600",
-    contacted: "bg-[--af-info-bg]0/10 text-[--af-info-text]",
-    qualified: "bg-[--af-success-bg]0/10 text-[--af-success-text]",
-    proposal: "bg-orange-500/10 text-orange-600",
-    negotiation: "bg-[--af-warning-bg]0/10 text-[--af-warning-text]",
-    won: "bg-emerald-500/10 text-emerald-600",
-    lost: "bg-[--af-bg-canvas]0/10 text-[--af-text-muted]",
+    new: "bg-[--af-brand-light] text-[--af-brand-text] border border-[--af-brand-border]",
+    contacted: "bg-[--af-info-bg] text-[--af-info-text] border border-[--af-info-border]",
+    qualified: "bg-[--af-success-bg] text-[--af-success-text] border border-[--af-success-border]",
+    proposal: "bg-[--af-warning-bg] text-[--af-warning-text] border border-[--af-warning-border]",
+    negotiation: "bg-[--af-warning-bg] text-[--af-warning-text] border border-[--af-warning-border]",
+    won: "bg-[--af-success-bg] text-[--af-success-text] border border-[--af-success-border]",
+    lost: "bg-[--af-bg-surface-alt] text-[--af-text-muted] border border-[--af-border-default]",
   }
   return (
     <Badge className={colors[status] || "bg-[--af-bg-surface-alt] text-[--af-text-secondary]"}>

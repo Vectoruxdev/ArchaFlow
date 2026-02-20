@@ -17,6 +17,7 @@ import {
   UserPlus,
   FolderPlus,
   User,
+  Loader2,
 } from "lucide-react"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
@@ -287,8 +288,8 @@ export default function DashboardPage() {
       <AppLayout>
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4" />
-            <p className="text-sm text-[--af-text-secondary]">Loading dashboard...</p>
+            <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
+            <p className="text-sm text-[--af-text-muted]">Loading dashboard...</p>
           </div>
         </div>
       </AppLayout>
@@ -323,10 +324,13 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="p-4 lg:p-6 space-y-6">
+      <div className="p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-display font-bold tracking-tight">Dashboard</h1>
-          <span className="text-xs text-[--af-text-muted] capitalize">{role} view</span>
+          <div>
+            <h1 className="text-2xl font-display font-bold tracking-tight">Dashboard</h1>
+            <p className="text-sm text-[--af-text-muted] mt-1">Overview of your workspace</p>
+          </div>
+          <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] bg-[--af-bg-surface-alt] px-2 py-1 rounded-badge">{role}</span>
         </div>
 
         {isCompanyView && companyStats && (

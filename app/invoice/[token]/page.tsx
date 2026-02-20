@@ -291,7 +291,7 @@ export default function PublicInvoicePage() {
           <div className="grid grid-cols-2 gap-8 mb-8">
             {/* From */}
             <div>
-              <p className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider mb-2">From</p>
+              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] mb-2">From</p>
               <p className="font-semibold text-foreground">{invoice.business.name}</p>
               {invoice.business.address && (
                 <p className="text-sm text-[--af-text-muted] whitespace-pre-line">{invoice.business.address}</p>
@@ -306,7 +306,7 @@ export default function PublicInvoicePage() {
 
             {/* To */}
             <div>
-              <p className="text-xs font-medium text-[--af-text-muted] uppercase tracking-wider mb-2">Bill To</p>
+              <p className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] mb-2">Bill To</p>
               {invoice.client ? (
                 <>
                   <p className="font-semibold text-foreground">{`${invoice.client.first_name || ""} ${invoice.client.last_name || ""}`.trim()}</p>
@@ -343,10 +343,10 @@ export default function PublicInvoicePage() {
             <table className="w-full">
               <thead className="bg-[--af-bg-canvas]">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Description</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider w-24">Qty</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider w-32">Unit Price</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider w-32">Amount</th>
+                  <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Description</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] w-24">Qty</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] w-32">Unit Price</th>
+                  <th className="px-4 py-3 text-right text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted] w-32">Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[--af-border-default]">

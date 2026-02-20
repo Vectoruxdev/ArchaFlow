@@ -69,7 +69,7 @@ export default function BusinessesListPage() {
         <select
           value={planFilter}
           onChange={(e) => setPlanFilter(e.target.value)}
-          className="h-10 rounded-md border border-[--af-border-default] bg-[--af-bg-surface] dark:bg-warm-900 px-3 text-sm"
+          className="h-9 rounded-[--af-radius-input] border border-[--af-border-default] bg-[--af-bg-input] px-3 text-[13px] transition-colors"
         >
           <option value="">All Plans</option>
           <option value="free">Free</option>
@@ -80,7 +80,7 @@ export default function BusinessesListPage() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-10 rounded-md border border-[--af-border-default] bg-[--af-bg-surface] dark:bg-warm-900 px-3 text-sm"
+          className="h-9 rounded-[--af-radius-input] border border-[--af-border-default] bg-[--af-bg-input] px-3 text-[13px] transition-colors"
         >
           <option value="">All Statuses</option>
           <option value="active">Active</option>

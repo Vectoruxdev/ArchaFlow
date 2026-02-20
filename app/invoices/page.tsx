@@ -181,33 +181,33 @@ export default function InvoicesPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-1">
-              <DollarSign className="w-4 h-4 text-[--af-info-text]" />
-              <p className="text-sm text-[--af-text-muted]">Outstanding</p>
+          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Outstanding</span>
+              <DollarSign className="w-4 h-4 text-[--af-text-muted]" />
             </div>
-            <p className="text-xl font-display font-bold tracking-tight">{formatCurrency(totalOutstanding)}</p>
+            <p className="text-2xl font-display font-bold tracking-tight">{formatCurrency(totalOutstanding)}</p>
           </div>
-          <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-1">
-              <AlertTriangle className="w-4 h-4 text-[--af-danger-text]" />
-              <p className="text-sm text-[--af-text-muted]">Overdue</p>
+          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Overdue</span>
+              <AlertTriangle className="w-4 h-4 text-[--af-text-muted]" />
             </div>
-            <p className="text-xl font-display font-bold tracking-tight text-[--af-danger-text]">{formatCurrency(totalOverdue)}</p>
+            <p className="text-2xl font-display font-bold tracking-tight text-[--af-danger-text]">{formatCurrency(totalOverdue)}</p>
           </div>
-          <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-1">
-              <CheckCircle2 className="w-4 h-4 text-[--af-success-text]" />
-              <p className="text-sm text-[--af-text-muted]">Collected</p>
+          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Collected</span>
+              <CheckCircle2 className="w-4 h-4 text-[--af-text-muted]" />
             </div>
-            <p className="text-xl font-display font-bold tracking-tight text-[--af-success-text]">{formatCurrency(totalPaid)}</p>
+            <p className="text-2xl font-display font-bold tracking-tight text-[--af-success-text]">{formatCurrency(totalPaid)}</p>
           </div>
-          <div className="bg-[--af-bg-surface] dark:bg-warm-900 border border-[--af-border-default] rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-1">
+          <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-card p-5 shadow-af-card">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Drafts</span>
               <Clock className="w-4 h-4 text-[--af-text-muted]" />
-              <p className="text-sm text-[--af-text-muted]">Drafts</p>
             </div>
-            <p className="text-xl font-display font-bold tracking-tight">{draftCount}</p>
+            <p className="text-2xl font-display font-bold tracking-tight">{draftCount}</p>
           </div>
         </div>
 
@@ -223,7 +223,7 @@ export default function InvoicesPage() {
             />
           </div>
           <select
-            className="border border-[--af-border-default] rounded-lg px-3 py-2 text-sm bg-[--af-bg-surface] dark:bg-warm-950"
+            className="h-9 rounded-[--af-radius-input] border border-[--af-border-default] bg-[--af-bg-input] px-3 text-[13px] transition-colors"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -258,12 +258,12 @@ export default function InvoicesPage() {
               <table className="w-full">
                 <thead className="bg-[--af-bg-surface-alt]">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Invoice</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Client</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Total</th>
-                    <th className="px-4 py-3 text-right text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Balance</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-[--af-text-muted] uppercase tracking-wider">Due Date</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Invoice</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Client</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Status</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Total</th>
+                    <th className="px-4 py-3 text-right text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Balance</th>
+                    <th className="px-4 py-3 text-left text-[10px] font-mono font-semibold uppercase tracking-wider text-[--af-text-muted]">Due Date</th>
                     <th className="px-4 py-3 w-10"></th>
                   </tr>
                 </thead>

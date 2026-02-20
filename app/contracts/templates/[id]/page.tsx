@@ -98,7 +98,7 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
       <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Header */}
         <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
-          <div className="p-4 lg:p-6">
+          <div className="p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4 flex-1 min-w-0">
                 <Button variant="ghost" size="icon" onClick={() => router.push("/contracts")}>
@@ -128,7 +128,7 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
         </div>
 
         {/* Content */}
-        <div className="p-4 lg:p-6 max-w-4xl mx-auto">
+        <div className="p-6 max-w-4xl mx-auto">
           {loading ? (
             <div className="h-96 bg-[--af-bg-surface-alt] dark:bg-warm-800 rounded-lg animate-pulse" />
           ) : type === "rich_text" ? (

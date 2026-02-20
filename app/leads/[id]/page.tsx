@@ -824,7 +824,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
       <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Sticky Header */}
         <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
-          <div className="p-4 lg:p-6">
+          <div className="p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4 min-w-0 flex-1">
                 <Button variant="ghost" size="icon" onClick={handleBack} className="shrink-0">
@@ -925,7 +925,7 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
 
         {/* Content */}
         {lead && (
-          <div className="p-4 lg:p-6 space-y-6">
+          <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - Lead Info */}
               <div className="lg:col-span-2 space-y-6">

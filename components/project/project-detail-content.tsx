@@ -30,6 +30,7 @@ import {
   Briefcase,
   Target,
   TrendingUp,
+  Loader2,
 } from "lucide-react"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
@@ -729,7 +730,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand] mx-auto mb-4"></div>
+          <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
           <p className="text-sm text-[--af-text-secondary]">Loading project...</p>
         </div>
       </div>

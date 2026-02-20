@@ -18,6 +18,7 @@ import {
   Check,
   Upload,
   Trash2,
+  Loader2,
 } from "lucide-react"
 
 type NotificationPrefs = {
@@ -258,7 +259,7 @@ export default function ProfilePage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center py-20">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--af-brand]" />
+          <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted]" />
         </div>
       </AppLayout>
     )
@@ -279,7 +280,7 @@ export default function ProfilePage() {
         onValidationError={setProfileError}
         isUploading={avatarUploading}
       />
-      <div className="p-4 lg:p-6 max-w-2xl mx-auto space-y-8">
+      <div className="p-6 max-w-2xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-display font-bold tracking-tight">Profile</h1>
           {saved && (
