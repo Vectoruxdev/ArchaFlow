@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd"
 import { supabase } from "@/lib/supabase/client"
 import { authFetch } from "@/lib/auth/auth-fetch"
+import { toast } from "@/lib/toast"
 import {
   Calendar,
   DollarSign,
@@ -30,6 +31,8 @@ import {
   Briefcase,
   Target,
   TrendingUp,
+  Sparkles,
+  Loader2,
 } from "lucide-react"
 import { Spinner } from "@/components/design-system"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -125,6 +128,7 @@ interface ProjectFile {
   uploadedBy: string
   uploadedAt: string
   version?: string
+  url?: string
 }
 
 interface Invoice {
@@ -300,6 +304,9 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
   // Loading state
   const [isLoading, setIsLoading] = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
+
+  // AI Site Image generation state
+  const [isGeneratingSiteImage, setIsGeneratingSiteImage] = useState(false)
   
   // Task Detail Modal State
   const [selectedTask, setSelectedTask] = useState<Todo | null>(null)
@@ -503,6 +510,20 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
             due_date: inv.due_date || "",
           }))
         )
+
+        // Map project_files from the joined query
+        setProjectFiles(
+          (projectData.project_files || []).map((f: any) => ({
+            id: f.id,
+            name: f.name || "Unnamed File",
+            type: (f.type?.startsWith("image/") ? "image" : f.type === "application/pdf" ? "pdf" : "document") as "pdf" | "image" | "document",
+            size: f.size || "",
+            uploadedBy: f.uploaded_by || "",
+            uploadedAt: f.uploaded_at ? new Date(f.uploaded_at).toLocaleDateString() : "",
+            version: f.version || undefined,
+            url: f.url,
+          }))
+        )
       }
     } catch (error: any) {
       console.error("Error loading project:", error)
@@ -681,6 +702,29 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
         ...selectedTask,
         timeEntries: [...selectedTask.timeEntries, newEntry],
       })
+    }
+  }
+
+  const generateSiteImage = async () => {
+    if (!project.location) return
+    setIsGeneratingSiteImage(true)
+    toast.info("Generating AI site image...")
+    try {
+      const res = await fetch("/api/projects/generate-site-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectId, address: project.location }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? "Generation failed")
+      toast.success("AI site image generated and added to resources!")
+      // Reload project data to show the new file
+      await loadProjectData()
+    } catch (err: any) {
+      console.error("[ProjectDetail] Site image generation failed:", err)
+      toast.error("Site image generation failed: " + err.message)
+    } finally {
+      setIsGeneratingSiteImage(false)
     }
   }
 
@@ -1257,10 +1301,32 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                   <Paperclip className="w-5 h-5" />
                   Files & Attachments
                 </h2>
-                <Button size="sm">
-                  <Upload className="w-4 h-4 mr-2" />
-                  Upload Files
-                </Button>
+                <div className="flex items-center gap-2">
+                  {project.location && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={generateSiteImage}
+                      disabled={isGeneratingSiteImage}
+                    >
+                      {isGeneratingSiteImage ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Generate Site Image
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  <Button size="sm">
+                    <Upload className="w-4 h-4 mr-2" />
+                    Upload Files
+                  </Button>
+                </div>
               </div>
 
               {projectFiles.length === 0 ? (
@@ -1277,21 +1343,33 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                     className="border border-[--af-border-default] rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-[--af-bg-surface-alt] rounded flex items-center justify-center flex-shrink-0">
-                        <File className="w-5 h-5 text-[--af-text-secondary]" />
+                      <div className="w-10 h-10 bg-[--af-bg-surface-alt] rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        {file.type === "image" && file.url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={file.url} alt={file.name} className="w-full h-full object-cover rounded" />
+                        ) : (
+                          <File className="w-5 h-5 text-[--af-text-secondary]" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{file.name}</p>
                         <div className="flex items-center gap-2 mt-1 text-xs text-[--af-text-muted]">
                           <span>{file.size}</span>
                           <span>•</span>
-                          <span>{file.uploadedBy}</span>
+                          <span>{file.uploadedAt}</span>
                         </div>
-                        <p className="text-xs text-[--af-text-muted] mt-1">{file.uploadedAt}</p>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Download className="w-4 h-4" />
-                      </Button>
+                      {file.url ? (
+                        <a href={file.url} target="_blank" rel="noopener noreferrer" download={file.name}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Download className="w-4 h-4" />
+                          </Button>
+                        </a>
+                      ) : (
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}

@@ -17,6 +17,8 @@ import {
   Archive,
   ArchiveRestore,
   Trash2,
+  Sparkles,
+  Loader2,
 } from "lucide-react"
 import { AppLayout } from "@/components/layout/app-layout"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -144,6 +146,7 @@ export default function ProjectsPage() {
   const [isCreatingProject, setIsCreatingProject] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
   const [createFormTab, setCreateFormTab] = useState<"basic" | "details">("basic")
+  const [isGeneratingSiteImage, setIsGeneratingSiteImage] = useState(false)
   
   // Tab state for Active/Archived
   const [activeTab, setActiveTab] = useState<"active" | "archived">("active")
@@ -332,7 +335,7 @@ export default function ProjectsPage() {
     setCreateError(null)
 
     try {
-      await createProject()
+      const created = await createProject()
       
       // Reload projects list
       await loadProjects()
@@ -340,10 +343,35 @@ export default function ProjectsPage() {
       // Notify workflow to refresh
       window.dispatchEvent(new Event('projectsUpdated'))
       console.log("📢 [Projects Page] Dispatched projectsUpdated event")
+
+      // Capture address before resetting form
+      const locationParts = [newProject.locationAddress, newProject.locationCity, newProject.locationState, newProject.locationZip].filter(Boolean)
+      const address = locationParts.join(", ")
       
       // Reset form and close modal
       setNewProject({ title: "", clientName: "", clientId: null, budget: "", dueDate: "", source: "", interest: "", painPoints: "", notes: "", budgetMin: "", temperature: "", industry: "", companyName: "", companySize: "", locationAddress: "", locationCity: "", locationState: "", locationZip: "", jobTitle: "" })
       setIsNewProjectOpen(false)
+
+      // If an address was provided, trigger AI site image generation in the background
+      if (created?.id && address) {
+        setIsGeneratingSiteImage(true)
+        toast.info("Generating AI site image in the background...")
+        fetch("/api/projects/generate-site-image", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projectId: created.id, address }),
+        })
+          .then(async (res) => {
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.error ?? "Generation failed")
+            toast.success("AI site image generated and saved to project resources!")
+          })
+          .catch((err) => {
+            console.error("❌ [Projects Page] Site image generation failed:", err)
+            toast.error("Site image generation failed: " + err.message)
+          })
+          .finally(() => setIsGeneratingSiteImage(false))
+      }
     } catch (error: any) {
       console.error("❌ [Projects Page] Failed to create project:", error)
       setCreateError(error.message)
@@ -493,6 +521,12 @@ export default function ProjectsPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
+            {isGeneratingSiteImage && (
+              <div className="flex items-center gap-1.5 text-xs text-[--af-info-text] bg-[--af-info-bg] border border-[--af-info-border] rounded-md px-2.5 py-1.5">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                Generating site image...
+              </div>
+            )}
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
@@ -1097,6 +1131,15 @@ export default function ProjectsPage() {
                     </Select>
                   </div>
                 </div>
+                {/* AI Site Image hint — shown when any address field is filled */}
+                {(newProject.locationAddress || newProject.locationCity || newProject.locationState) && (
+                  <div className="flex items-start gap-2 rounded-lg border border-[--af-info-border] bg-[--af-info-bg] px-3 py-2.5 text-xs text-[--af-info-text]">
+                    <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                    <span>
+                      An AI-enhanced site image will be automatically generated from this address and added to project resources after creation.
+                    </span>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Notes</label>
                   <Textarea

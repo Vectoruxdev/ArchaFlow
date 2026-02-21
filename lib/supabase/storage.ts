@@ -1,6 +1,7 @@
 // Supabase Storage Helper Functions for Project Files
 
 import { supabase } from "./client"
+import { getSupabaseAdmin } from "./admin"
 
 const BUCKET_NAME = "project-files"
 const AVATARS_BUCKET = "avatars"
@@ -110,6 +111,48 @@ export async function getSignedUrl(
   }
 
   return data.signedUrl
+}
+
+/**
+ * Upload a file to Supabase Storage from a Buffer/ArrayBuffer (server-side only).
+ * Uses the service role key so this must only be called from API routes.
+ * @param buffer - The raw file data as a Buffer or ArrayBuffer
+ * @param projectId - The project ID for organizing files
+ * @param fileName - The file name to use (e.g. "site-image-1234567890.jpg")
+ * @param contentType - The MIME type (e.g. "image/jpeg")
+ * @param folder - Optional subfolder (default "attachments")
+ * @returns The public URL and storage path of the uploaded file
+ */
+export async function uploadProjectFileFromBuffer(
+  buffer: Buffer | ArrayBuffer,
+  projectId: string,
+  fileName: string,
+  contentType: string = "image/jpeg",
+  folder: string = "attachments"
+): Promise<{ url: string; path: string }> {
+  const admin = getSupabaseAdmin()
+  const filePath = `${projectId}/${folder}/${fileName}`
+
+  const { data, error } = await admin.storage
+    .from(BUCKET_NAME)
+    .upload(filePath, buffer, {
+      contentType,
+      cacheControl: "3600",
+      upsert: false,
+    })
+
+  if (error) {
+    throw new Error(`File upload failed: ${error.message}`)
+  }
+
+  const {
+    data: { publicUrl },
+  } = admin.storage.from(BUCKET_NAME).getPublicUrl(filePath)
+
+  return {
+    url: publicUrl,
+    path: data.path,
+  }
 }
 
 /**
