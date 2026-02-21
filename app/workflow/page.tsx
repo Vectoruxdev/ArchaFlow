@@ -80,6 +80,9 @@ import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
 import { ClientSelect } from "@/components/ui/client-select"
 import { StatsCard } from "@/components/admin/stats-card"
+import { CityCombobox } from "@/components/ui/city-combobox"
+import { SearchableSelect } from "@/components/ui/searchable-select"
+import { US_STATES } from "@/lib/us-states"
 
 // Types
 type ProjectStatus = string
@@ -201,7 +204,9 @@ export default function WorkflowPage() {
     industry: "",
     companyName: "",
     companySize: "",
-    location: "",
+    locationAddress: "",
+    locationCity: "",
+    locationState: "",
     jobTitle: "",
   })
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([])
@@ -602,7 +607,8 @@ export default function WorkflowPage() {
       if (newProject.industry) projectInsert.industry = newProject.industry
       if (newProject.companyName) projectInsert.company_name = newProject.companyName
       if (newProject.companySize) projectInsert.company_size = newProject.companySize
-      if (newProject.location) projectInsert.location = newProject.location
+      const locationParts = [newProject.locationAddress, newProject.locationCity, newProject.locationState].filter(Boolean)
+      if (locationParts.length) projectInsert.location = locationParts.join(", ")
       if (newProject.jobTitle) projectInsert.job_title = newProject.jobTitle
 
       const { data, error } = await supabase
@@ -721,7 +727,9 @@ export default function WorkflowPage() {
         industry: "",
         companyName: "",
         companySize: "",
-        location: "",
+        locationAddress: "",
+        locationCity: "",
+        locationState: "",
         jobTitle: "",
       })
       setSelectedTeamMembers([])
@@ -2179,7 +2187,9 @@ export default function WorkflowPage() {
             industry: "",
             companyName: "",
             companySize: "",
-            location: "",
+            locationAddress: "",
+            locationCity: "",
+            locationState: "",
             jobTitle: "",
           })
           setSelectedTeamMembers([])
@@ -2386,17 +2396,35 @@ export default function WorkflowPage() {
                     />
                   </div>
                 </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Address</label>
+                  <Input
+                    placeholder="123 Main St"
+                    value={newProject.locationAddress}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, locationAddress: e.target.value }))}
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Location</label>
-                    <input
-                      type="text"
-                      placeholder="City, State"
-                      value={newProject.location}
-                      onChange={(e) => setNewProject(prev => ({ ...prev, location: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                    <label className="text-sm font-medium">City</label>
+                    <CityCombobox
+                      value={newProject.locationCity}
+                      onChange={(v) => setNewProject(prev => ({ ...prev, locationCity: v }))}
+                      placeholder="Search city..."
                     />
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">State</label>
+                    <SearchableSelect
+                      options={US_STATES}
+                      value={newProject.locationState}
+                      onValueChange={(v) => setNewProject(prev => ({ ...prev, locationState: v }))}
+                      placeholder="Select state"
+                      searchPlaceholder="Search states..."
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Company Size</label>
                     <Select
