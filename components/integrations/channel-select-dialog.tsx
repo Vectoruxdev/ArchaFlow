@@ -12,7 +12,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { RefreshCw, Hash, Lock, MessageSquare, Loader2 } from "lucide-react"
+import { RefreshCw, Hash, Lock, MessageSquare } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import type { IntegrationChannel, Provider } from "@/lib/integrations/types"
 
 interface ChannelSelectDialogProps {
@@ -133,7 +134,7 @@ export function ChannelSelectDialog({
             className="h-8 text-xs"
           >
             {syncing ? (
-              <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+              <Spinner size="sm" className="mr-1" />
             ) : (
               <RefreshCw className="w-3 h-3 mr-1" />
             )}
@@ -144,7 +145,7 @@ export function ChannelSelectDialog({
         <div className="flex-1 overflow-y-auto space-y-1 min-h-0 max-h-[40vh] border rounded-lg p-2">
           {loading ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-5 h-5 animate-spin text-[--af-text-muted]" />
+              <Spinner size="sm" />
             </div>
           ) : channels.length === 0 ? (
             <div className="text-center py-8 text-sm text-[--af-text-muted]">

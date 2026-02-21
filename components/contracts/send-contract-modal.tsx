@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Loader2, Send } from "lucide-react"
+import { Send } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -10,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import type { ContractTemplate } from "./contract-template-list"
@@ -270,7 +271,7 @@ export function SendContractModal({ open, onOpenChange, template, onSent }: Prop
 
           <Button onClick={handleSend} disabled={sending} className="w-full">
             {sending ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Spinner size="sm" className="mr-2" />
             ) : (
               <Send className="w-4 h-4 mr-2" />
             )}

@@ -6,7 +6,8 @@ import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
 import { useAuth } from "@/lib/auth/auth-context"
 import { Button } from "@/components/ui/button"
-import { CheckCircle2, XCircle, Loader2, LogIn } from "lucide-react"
+import { CheckCircle2, XCircle, LogIn } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 
 function AcceptInviteContent() {
   const router = useRouter()
@@ -174,7 +175,7 @@ function AcceptInviteContent() {
       <div className="max-w-md w-full bg-[--af-bg-surface] border border-[--af-border-default] rounded-xl p-8 text-center">
         {status === "loading" || status === "accepting" ? (
           <div className="space-y-4">
-            <Loader2 className="w-12 h-12 text-[--af-text-muted] animate-spin mx-auto" />
+            <Spinner size="lg" className="w-12 h-12 mx-auto" />
             <h1 className="text-xl font-display font-bold tracking-tight">
               {status === "loading" ? "Loading..." : "Accepting invitation..."}
             </h1>
@@ -185,7 +186,7 @@ function AcceptInviteContent() {
             <LogIn className="w-12 h-12 text-[--af-text-muted] mx-auto" />
             {detailsLoading ? (
               <div className="space-y-2">
-                <Loader2 className="w-8 h-8 text-[--af-text-muted] animate-spin mx-auto" />
+                <Spinner size="lg" className="mx-auto" />
                 <p className="text-sm text-[--af-text-muted]">Loading invitation...</p>
               </div>
             ) : (
@@ -239,7 +240,7 @@ export default function AcceptInvitePage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-900 flex items-center justify-center p-4">
-          <Loader2 className="w-10 h-10 text-[--af-text-muted] animate-spin" />
+          <Spinner size="lg" className="w-10 h-10" />
         </div>
       }
     >

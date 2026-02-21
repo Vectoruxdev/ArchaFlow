@@ -9,8 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Plus, Trash2, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { Plus, Trash2 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
+import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
 import { supabase } from "@/lib/supabase/client"
 
@@ -197,7 +198,7 @@ export function CreateInvoiceModal({
 
             {loadingOptions ? (
               <div className="flex justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-[--af-text-muted]" />
+                <Spinner size="md" />
               </div>
             ) : (
               <>
@@ -386,7 +387,7 @@ export function CreateInvoiceModal({
             <div className="flex justify-between pt-4">
               <Button variant="outline" onClick={() => setStep(2)}>Back</Button>
               <Button onClick={handleCreate} disabled={saving}>
-                {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {saving && <Spinner size="sm" className="mr-2" />}
                 Create Draft Invoice
               </Button>
             </div>

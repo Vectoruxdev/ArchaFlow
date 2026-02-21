@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Loader2 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 
 export interface WorkspaceMember {
   userId: string
@@ -146,7 +146,7 @@ export function AssignTeamModal({
           )}
           {loadingMembers ? (
             <div className="flex items-center gap-2 text-sm text-[--af-text-muted]">
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Spinner size="sm" />
               Loading team members…
             </div>
           ) : (
@@ -202,7 +202,7 @@ export function AssignTeamModal({
           <Button onClick={handleSave} disabled={!canSave}>
             {saving ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Spinner size="sm" className="mr-2" />
                 Saving…
               </>
             ) : (

@@ -34,7 +34,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ClientFormModal, type ClientFormData } from "@/components/clients/client-form-modal"
 import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
 import {
   Search,

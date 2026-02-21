@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  Loader2,
   ChevronDown,
   ChevronUp,
   CheckCircle2,
@@ -33,6 +32,7 @@ import {
   Calendar,
   Filter,
 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import type { ExtractedTask } from "@/lib/integrations/types"
 
 type ScanStatus = "idle" | "fetching" | "extracting" | "ready" | "importing" | "imported" | "error"
@@ -372,7 +372,7 @@ export function MessageScanDialog({
         {/* Progress states */}
         {(status === "fetching" || status === "extracting" || status === "importing") && (
           <div className="flex flex-col items-center justify-center py-12 gap-3">
-            <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted]" />
+            <Spinner size="lg" />
             <p className="text-sm text-[--af-text-muted]">
               {status === "fetching" && "Fetching messages..."}
               {status === "extracting" && "Extracting tasks..."}

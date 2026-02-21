@@ -51,7 +51,7 @@ import {
 } from "@/components/ui/select"
 import { LeadFormModal, type LeadFormData } from "@/components/leads/lead-form-modal"
 import { authFetch } from "@/lib/auth/auth-fetch"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import {

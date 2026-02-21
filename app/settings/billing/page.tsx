@@ -24,7 +24,7 @@ import {
   Receipt,
   Gift,
 } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import Link from "next/link"
 
 interface SubscriptionEvent {
@@ -79,7 +79,7 @@ export default function BillingPage() {
       toast.success("Subscription activated! Welcome to your new plan.")
       refreshWorkspaces()
     } else if (searchParams.get("canceled") === "true") {
-      toast("Checkout canceled. No changes were made.")
+      toast.message("Checkout canceled. No changes were made.")
     }
   }, [searchParams])
 

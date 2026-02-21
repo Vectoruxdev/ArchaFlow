@@ -35,8 +35,8 @@ import {
   ChevronDown,
   Maximize2,
   Minimize2,
-  Loader2,
 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { AppLayout } from "@/components/layout/app-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
 import { AssignTeamModal } from "@/components/project/assign-team-modal"
@@ -75,7 +75,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
 import { ClientSelect } from "@/components/ui/client-select"
@@ -1478,7 +1478,7 @@ export default function WorkflowPage() {
         {(authLoading || workspacesLoading) && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
+              <Spinner size="lg" className="mx-auto mb-4" />
               <p className="text-sm text-[--af-text-secondary]">
                 {authLoading ? "Authenticating..." : "Loading your workspaces..."}
               </p>
@@ -1490,7 +1490,7 @@ export default function WorkflowPage() {
         {!authLoading && !workspacesLoading && isLoading && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
+              <Spinner size="lg" className="mx-auto mb-4" />
               <p className="text-sm text-[--af-text-secondary]">Loading projects...</p>
             </div>
           </div>
@@ -1500,7 +1500,7 @@ export default function WorkflowPage() {
         {isAuthReady && !authLoading && !workspacesLoading && workspaces.length > 0 && !businessId && (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
-              <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
+              <Spinner size="lg" className="mx-auto mb-4" />
               <p className="text-sm text-[--af-text-secondary]">Selecting workspace...</p>
             </div>
           </div>

@@ -11,8 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { Spinner } from "@/components/design-system"
+import { toast } from "@/lib/toast"
 
 interface SendInvoiceModalProps {
   open: boolean
@@ -105,7 +105,7 @@ export function SendInvoiceModal({
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={handleSend} disabled={sending}>
-            {sending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            {sending && <Spinner size="sm" className="mr-2" />}
             Send Invoice
           </Button>
         </DialogFooter>

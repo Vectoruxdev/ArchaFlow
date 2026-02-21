@@ -16,9 +16,10 @@ import {
 } from "@/components/ui/dialog"
 import { ChannelSelectDialog } from "@/components/integrations/channel-select-dialog"
 import { MessageScanDialog } from "@/components/integrations/message-scan-dialog"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
-import { Check, Search, Settings, ExternalLink, Loader2 } from "lucide-react"
+import { Check, Search, Settings, ExternalLink } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import type { Provider } from "@/lib/integrations/types"
 
 interface Integration {
@@ -303,7 +304,7 @@ export default function IntegrationsPage() {
                       className="h-8 text-xs px-2 text-[--af-text-secondary]"
                     >
                       {disconnecting === integration.id ? (
-                        <Loader2 className="w-3 h-3 animate-spin" />
+                        <Spinner size="sm" />
                       ) : (
                         "Disconnect"
                       )}

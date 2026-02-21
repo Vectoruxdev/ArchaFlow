@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Save, Loader2 } from "lucide-react"
+import { ArrowLeft, Save } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AppLayout } from "@/components/layout/app-layout"
 import { ContractTemplateEditor } from "@/components/contracts/contract-template-editor"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 
 export default function TemplateEditorPage({ params }: { params: { id: string } }) {
@@ -117,7 +118,7 @@ export default function TemplateEditorPage({ params }: { params: { id: string } 
               </div>
               <Button onClick={save} disabled={saving || loading}>
                 {saving ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Spinner size="sm" className="mr-2" />
                 ) : (
                   <Save className="w-4 h-4 mr-2" />
                 )}

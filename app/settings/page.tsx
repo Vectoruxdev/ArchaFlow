@@ -38,7 +38,7 @@ import {
 } from "lucide-react"
 import { PlanBadge } from "@/components/billing/plan-badge"
 import Link from "next/link"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 
 export default function SettingsPage() {
   const router = useRouter()

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useParams, useSearchParams } from "next/navigation"
-import { Loader2, XCircle, CheckCircle2, Clock, AlertTriangle, CreditCard } from "lucide-react"
+import { XCircle, CheckCircle2, Clock, AlertTriangle, CreditCard } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { StripePaymentForm } from "@/components/invoices/stripe-payment-form"
 
 interface InvoiceData {
@@ -125,7 +126,7 @@ export default function PublicInvoicePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas]">
-        <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted]" />
+        <Spinner size="lg" />
       </div>
     )
   }
@@ -255,7 +256,7 @@ export default function PublicInvoicePage() {
                   disabled={paymentLoading}
                   className="flex items-center justify-center gap-2 w-full bg-warm-900 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-warm-800 transition-colors disabled:opacity-50"
                 >
-                  {paymentLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {paymentLoading && <Spinner size="sm" />}
                   Continue to Payment
                 </button>
               </div>

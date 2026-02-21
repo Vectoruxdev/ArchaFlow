@@ -20,7 +20,7 @@ import {
 import { AppLayout } from "@/components/layout/app-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
 import { AssignTeamModal } from "@/components/project/assign-team-modal"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 

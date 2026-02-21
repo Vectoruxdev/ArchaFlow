@@ -17,8 +17,8 @@ import {
   UserPlus,
   FolderPlus,
   User,
-  Loader2,
 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { supabase } from "@/lib/supabase/client"
@@ -289,7 +289,7 @@ export default function DashboardPage() {
       <AppLayout>
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
-            <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
+            <Spinner size="lg" className="mx-auto mb-4" />
             <p className="text-sm text-[--af-text-muted]">Loading dashboard...</p>
           </div>
         </div>

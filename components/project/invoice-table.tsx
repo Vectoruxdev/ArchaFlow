@@ -4,7 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Loader2 } from "lucide-react"
+import { Plus } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { useAuth } from "@/lib/auth/auth-context"
 import { InvoiceDetailPanel } from "@/components/invoices/invoice-detail-panel"
 
@@ -77,7 +78,7 @@ export function InvoiceTable({ projectId, clientId }: InvoiceTableProps) {
       {/* Table */}
       {loading ? (
         <div className="flex justify-center py-8">
-          <Loader2 className="w-5 h-5 animate-spin text-[--af-text-muted]" />
+          <Spinner size="sm" />
         </div>
       ) : invoices.length === 0 ? (
         <div className="text-center py-8 text-sm text-[--af-text-muted]">

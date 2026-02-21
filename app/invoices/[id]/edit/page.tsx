@@ -5,8 +5,9 @@ import { useRouter, useParams } from "next/navigation"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Plus, Trash2, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { ArrowLeft, Plus, Trash2 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
+import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
 import { ClientSelect } from "@/components/ui/client-select"
 import { ProjectSelect } from "@/components/ui/project-select"
@@ -163,7 +164,7 @@ export default function EditInvoicePage() {
     return (
       <AppLayout>
         <div className="flex justify-center items-center py-20">
-          <Loader2 className="w-6 h-6 animate-spin text-[--af-text-muted]" />
+          <Spinner size="md" />
         </div>
       </AppLayout>
     )
@@ -183,7 +184,7 @@ export default function EditInvoicePage() {
               Back to Invoices
             </button>
             <Button onClick={handleSave} disabled={saving}>
-              {saving && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+              {saving && <Spinner size="sm" className="mr-1" />}
               Save Changes
             </Button>
           </div>

@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useParams } from "next/navigation"
-import { Loader2, CheckCircle2, XCircle, AlertTriangle } from "lucide-react"
+import { CheckCircle2, XCircle, AlertTriangle } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import SignatureCanvas from "react-signature-canvas"
 
 interface ContractData {
@@ -133,7 +134,7 @@ export default function SignContractPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas]">
-        <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted]" />
+        <Spinner size="lg" />
       </div>
     )
   }
@@ -236,7 +237,7 @@ export default function SignContractPage() {
               Clear
             </Button>
             <Button onClick={handleSign} disabled={signing}>
-              {signing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {signing && <Spinner size="sm" className="mr-2" />}
               Sign Contract
             </Button>
           </div>

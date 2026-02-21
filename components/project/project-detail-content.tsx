@@ -30,8 +30,8 @@ import {
   Briefcase,
   Target,
   TrendingUp,
-  Loader2,
 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -730,7 +730,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted] mx-auto mb-4" />
+          <Spinner size="lg" className="mx-auto mb-4" />
           <p className="text-sm text-[--af-text-secondary]">Loading project...</p>
         </div>
       </div>

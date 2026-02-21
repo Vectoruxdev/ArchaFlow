@@ -12,7 +12,7 @@ import { PLAN_CONFIGS } from "@/lib/stripe/config"
 import { DiscountModal } from "@/components/admin/billing/discount-modal"
 import { CompPlanModal } from "@/components/admin/billing/comp-plan-modal"
 import { ChangeTierModal } from "@/components/admin/billing/change-tier-modal"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 
 interface BusinessDetailData {
   id: string

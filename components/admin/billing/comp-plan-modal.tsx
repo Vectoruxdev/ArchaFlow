@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select"
 import { PLAN_CONFIGS } from "@/lib/stripe/config"
 import { AlertCircle } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 
 interface CompPlanModalProps {
   open: boolean

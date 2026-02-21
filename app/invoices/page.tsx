@@ -15,12 +15,12 @@ import {
   CheckCircle2,
   AlertTriangle,
   Settings,
-  Loader2,
   MoreHorizontal,
   Eye,
   Pencil,
   Trash2,
 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { useAuth } from "@/lib/auth/auth-context"
 import { StatsCard } from "@/components/admin/stats-card"
 import { InvoiceDetailPanel } from "@/components/invoices/invoice-detail-panel"
@@ -31,7 +31,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import {
   Dialog,
   DialogContent,
@@ -218,7 +218,7 @@ export default function InvoicesPage() {
         {/* Table */}
         {loading ? (
           <div className="flex justify-center py-12">
-            <Loader2 className="w-6 h-6 animate-spin text-[--af-text-muted]" />
+            <Spinner size="md" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
@@ -340,7 +340,7 @@ export default function InvoicesPage() {
               Cancel
             </Button>
             <Button variant="destructive" onClick={confirmDelete} disabled={deleting}>
-              {deleting && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+              {deleting && <Spinner size="sm" className="mr-1" />}
               Delete
             </Button>
           </DialogFooter>

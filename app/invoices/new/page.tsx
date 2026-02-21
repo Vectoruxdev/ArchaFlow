@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Plus, Trash2, Loader2, Send } from "lucide-react"
-import { toast } from "sonner"
+import { ArrowLeft, Plus, Trash2, Send } from "lucide-react"
+import { Spinner } from "@/components/design-system"
+import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
 import { supabase } from "@/lib/supabase/client"
 import { ClientSelect } from "@/components/ui/client-select"
@@ -192,7 +193,7 @@ export default function NewInvoicePage() {
                 onClick={() => handleSave(false)}
                 disabled={saving || savingAndSending}
               >
-                {saving && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+                {saving && <Spinner size="sm" className="mr-1" />}
                 Save Draft
               </Button>
               {clientValue.clientId && (
@@ -200,7 +201,7 @@ export default function NewInvoicePage() {
                   onClick={() => handleSave(true)}
                   disabled={saving || savingAndSending}
                 >
-                  {savingAndSending && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+                  {savingAndSending && <Spinner size="sm" className="mr-1" />}
                   <Send className="w-4 h-4 mr-1" />
                   Save & Send
                 </Button>
@@ -419,7 +420,7 @@ export default function NewInvoicePage() {
               onClick={() => handleSave(false)}
               disabled={saving || savingAndSending}
             >
-              {saving && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+              {saving && <Spinner size="sm" className="mr-1" />}
               Save Draft
             </Button>
             {clientValue.clientId && (
@@ -427,7 +428,7 @@ export default function NewInvoicePage() {
                 onClick={() => handleSave(true)}
                 disabled={saving || savingAndSending}
               >
-                {savingAndSending && <Loader2 className="w-4 h-4 mr-1 animate-spin" />}
+                {savingAndSending && <Spinner size="sm" className="mr-1" />}
                 Save & Send
               </Button>
             )}

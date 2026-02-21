@@ -15,7 +15,6 @@ import {
   DollarSign,
   Ban,
   Plus,
-  Loader2,
   ExternalLink,
   CheckCircle2,
   Clock,
@@ -25,7 +24,8 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react"
-import { toast } from "sonner"
+import { Spinner } from "@/components/design-system"
+import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
 import { SendInvoiceModal } from "./send-invoice-modal"
 import { RecordPaymentModal } from "./record-payment-modal"
@@ -179,7 +179,7 @@ export function InvoiceDetailPanel({
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0">
           {loading ? (
             <div className="flex justify-center py-20">
-              <Loader2 className="w-6 h-6 animate-spin text-[--af-text-muted]" />
+              <Spinner size="md" />
             </div>
           ) : invoice ? (
             <>
@@ -408,7 +408,7 @@ export function InvoiceDetailPanel({
                         disabled={voiding}
                         className="text-[--af-danger-text] hover:text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                       >
-                        {voiding ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Ban className="w-4 h-4 mr-1" />}
+                        {voiding ? <Spinner size="sm" className="mr-1" /> : <Ban className="w-4 h-4 mr-1" />}
                         Void
                       </Button>
                     )}
@@ -420,7 +420,7 @@ export function InvoiceDetailPanel({
                         disabled={deleting}
                         className="text-[--af-danger-text] hover:text-[--af-danger-text] hover:bg-[--af-danger-bg]"
                       >
-                        {deleting ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Trash2 className="w-4 h-4 mr-1" />}
+                        {deleting ? <Spinner size="sm" className="mr-1" /> : <Trash2 className="w-4 h-4 mr-1" />}
                         Delete
                       </Button>
                     )}

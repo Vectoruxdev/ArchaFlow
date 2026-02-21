@@ -6,7 +6,7 @@ import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { uploadAvatar } from "@/lib/supabase/storage"
@@ -18,11 +18,11 @@ import {
   Check,
   Upload,
   Trash2,
-  Loader2,
   Monitor,
   Sun,
   Moon,
 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 
 type NotificationPrefs = {
   email_notifications: boolean
@@ -274,7 +274,7 @@ export default function ProfilePage() {
     return (
       <AppLayout>
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-[--af-text-muted]" />
+          <Spinner size="lg" />
         </div>
       </AppLayout>
     )

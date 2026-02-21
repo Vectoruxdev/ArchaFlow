@@ -11,8 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { Spinner } from "@/components/design-system"
+import { toast } from "@/lib/toast"
 
 interface RecordPaymentModalProps {
   open: boolean
@@ -144,7 +144,7 @@ export function RecordPaymentModal({
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
           <Button onClick={handleSubmit} disabled={saving}>
-            {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+            {saving && <Spinner size="sm" className="mr-2" />}
             Record Payment
           </Button>
         </DialogFooter>

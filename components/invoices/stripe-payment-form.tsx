@@ -4,7 +4,7 @@ import { useState } from "react"
 import { loadStripe } from "@stripe/stripe-js"
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
@@ -54,7 +54,7 @@ function CheckoutForm({
       <PaymentElement />
       <Button type="submit" disabled={!stripe || submitting} className="w-full">
         {submitting ? (
-          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          <Spinner size="sm" className="mr-2" />
         ) : null}
         Pay ${amount.toFixed(2)}
       </Button>

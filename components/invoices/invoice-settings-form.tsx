@@ -4,8 +4,9 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import { Loader2, CreditCard, ExternalLink, AlertCircle } from "lucide-react"
-import { toast } from "sonner"
+import { CreditCard, ExternalLink, AlertCircle } from "lucide-react"
+import { Spinner } from "@/components/design-system"
+import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
 
 interface ConnectStatus {
@@ -164,7 +165,7 @@ export function InvoiceSettingsForm() {
   if (loading) {
     return (
       <div className="flex justify-center py-8">
-        <Loader2 className="w-6 h-6 animate-spin text-[--af-text-muted]" />
+        <Spinner size="md" />
       </div>
     )
   }
@@ -266,7 +267,7 @@ export function InvoiceSettingsForm() {
       </div>
 
       <Button onClick={handleSave} disabled={saving}>
-        {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+        {saving && <Spinner size="sm" className="mr-2" />}
         Save Settings
       </Button>
 
@@ -299,7 +300,7 @@ export function InvoiceSettingsForm() {
             </p>
             <Button onClick={handleConnectStripe} disabled={connectLoading}>
               {connectLoading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Spinner size="sm" className="mr-2" />
               ) : (
                 <CreditCard className="w-4 h-4 mr-2" />
               )}
@@ -321,7 +322,7 @@ export function InvoiceSettingsForm() {
             </div>
             <Button onClick={handleConnectStripe} disabled={connectLoading}>
               {connectLoading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Spinner size="sm" className="mr-2" />
               ) : (
                 <ExternalLink className="w-4 h-4 mr-2" />
               )}

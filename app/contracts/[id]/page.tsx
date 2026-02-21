@@ -7,7 +7,6 @@ import {
   MoreVertical,
   Send,
   Ban,
-  Loader2,
   Mail,
   Clock,
   CheckCircle2,
@@ -17,6 +16,7 @@ import {
   ExternalLink,
   Copy,
 } from "lucide-react"
+import { Spinner } from "@/components/design-system"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AppLayout } from "@/components/layout/app-layout"
 import { ContractStatusBadge } from "@/components/contracts/contract-status-badge"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 
@@ -271,7 +271,7 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
                   {canRemind && (
                     <Button variant="outline" onClick={handleRemind} disabled={reminding}>
                       {reminding ? (
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <Spinner size="sm" className="mr-2" />
                       ) : (
                         <Mail className="w-4 h-4 mr-2" />
                       )}

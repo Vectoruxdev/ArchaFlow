@@ -55,7 +55,7 @@ import {
   Clock,
   Upload,
 } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { uploadAvatar } from "@/lib/supabase/storage"
