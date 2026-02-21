@@ -13,6 +13,7 @@ import {
   LogOut,
   Plus,
   Check,
+  Palette,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -361,6 +362,47 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
             {/* Bottom Section */}
             <div className={`border-t border-[--af-border-sidebar] ${isCollapsed ? "lg:p-2" : "p-3"} space-y-1`}>
+              {/* Design System — Owner/Admin only */}
+              {currentWorkspace?.role && ["Owner", "Admin"].includes(currentWorkspace.role) && (
+                isCollapsed ? (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => {
+                          router.push("/design-system")
+                          setIsMobileMenuOpen(false)
+                        }}
+                        className={`w-full flex items-center justify-center p-2.5 rounded-sidebar transition-colors ${
+                          pathname === "/design-system"
+                            ? "bg-[--af-sidebar-active-bg] text-[--af-sidebar-active]"
+                            : "text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text]"
+                        }`}
+                      >
+                        <Palette className="w-[22px] h-[22px]" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>Design System</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <button
+                    onClick={() => {
+                      router.push("/design-system")
+                      setIsMobileMenuOpen(false)
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sidebar text-[15px] transition-colors ${
+                      pathname === "/design-system"
+                        ? "bg-[--af-sidebar-active-bg] text-[--af-sidebar-active] font-semibold"
+                        : "text-[--af-sidebar-muted] hover:bg-[--af-sidebar-active-bg] hover:text-[--af-sidebar-text]"
+                    }`}
+                  >
+                    <Palette className="w-[22px] h-[22px] shrink-0" />
+                    <span className="flex-1 truncate text-left">Design System</span>
+                  </button>
+                )
+              )}
+
               {/* Collapse/Close Toggle */}
               {isCollapsed ? (
                 <Tooltip>
