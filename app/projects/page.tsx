@@ -56,6 +56,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { ClientSelect } from "@/components/ui/client-select"
+import { CityCombobox } from "@/components/ui/city-combobox"
+import { SearchableSelect } from "@/components/ui/searchable-select"
+import { US_STATES } from "@/lib/us-states"
 
 // Types
 type ProjectStatus = "lead" | "sale" | "design" | "completed"
@@ -132,7 +135,10 @@ export default function ProjectsPage() {
     industry: "",
     companyName: "",
     companySize: "",
-    location: "",
+    locationAddress: "",
+    locationCity: "",
+    locationState: "",
+    locationZip: "",
     jobTitle: "",
   })
   const [isCreatingProject, setIsCreatingProject] = useState(false)
@@ -291,7 +297,8 @@ export default function ProjectsPage() {
       if (newProject.industry) projectInsert.industry = newProject.industry
       if (newProject.companyName) projectInsert.company_name = newProject.companyName
       if (newProject.companySize) projectInsert.company_size = newProject.companySize
-      if (newProject.location) projectInsert.location = newProject.location
+      const locationParts = [newProject.locationAddress, newProject.locationCity, newProject.locationState, newProject.locationZip].filter(Boolean)
+      if (locationParts.length) projectInsert.location = locationParts.join(", ")
       if (newProject.jobTitle) projectInsert.job_title = newProject.jobTitle
 
       const { data, error } = await supabase
@@ -335,7 +342,7 @@ export default function ProjectsPage() {
       console.log("📢 [Projects Page] Dispatched projectsUpdated event")
       
       // Reset form and close modal
-      setNewProject({ title: "", clientName: "", clientId: null, budget: "", dueDate: "", source: "", interest: "", painPoints: "", notes: "", budgetMin: "", temperature: "", industry: "", companyName: "", companySize: "", location: "", jobTitle: "" })
+      setNewProject({ title: "", clientName: "", clientId: null, budget: "", dueDate: "", source: "", interest: "", painPoints: "", notes: "", budgetMin: "", temperature: "", industry: "", companyName: "", companySize: "", locationAddress: "", locationCity: "", locationState: "", locationZip: "", jobTitle: "" })
       setIsNewProjectOpen(false)
     } catch (error: any) {
       console.error("❌ [Projects Page] Failed to create project:", error)
@@ -888,7 +895,7 @@ export default function ProjectsPage() {
           setIsNewProjectOpen(open)
           if (!open) {
             // Reset form when modal closes
-            setNewProject({ title: "", clientName: "", clientId: null, budget: "", dueDate: "", source: "", interest: "", painPoints: "", notes: "", budgetMin: "", temperature: "", industry: "", companyName: "", companySize: "", location: "", jobTitle: "" })
+            setNewProject({ title: "", clientName: "", clientId: null, budget: "", dueDate: "", source: "", interest: "", painPoints: "", notes: "", budgetMin: "", temperature: "", industry: "", companyName: "", companySize: "", locationAddress: "", locationCity: "", locationState: "", locationZip: "", jobTitle: "" })
             setCreateError(null)
           }
         }}
@@ -1033,13 +1040,41 @@ export default function ProjectsPage() {
                     />
                   </div>
                 </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Address</label>
+                  <Input
+                    placeholder="123 Main St"
+                    value={newProject.locationAddress}
+                    onChange={(e) => setNewProject(prev => ({ ...prev, locationAddress: e.target.value }))}
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Location</label>
+                    <label className="text-sm font-medium">City</label>
+                    <CityCombobox
+                      value={newProject.locationCity}
+                      onChange={(v) => setNewProject(prev => ({ ...prev, locationCity: v }))}
+                      placeholder="Search city..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">State</label>
+                    <SearchableSelect
+                      options={US_STATES}
+                      value={newProject.locationState}
+                      onValueChange={(v) => setNewProject(prev => ({ ...prev, locationState: v }))}
+                      placeholder="Select state"
+                      searchPlaceholder="Search states..."
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Zipcode</label>
                     <Input
-                      placeholder="City, State"
-                      value={newProject.location}
-                      onChange={(e) => setNewProject(prev => ({ ...prev, location: e.target.value }))}
+                      placeholder="12345"
+                      value={newProject.locationZip}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, locationZip: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-2">

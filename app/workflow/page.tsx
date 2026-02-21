@@ -207,6 +207,7 @@ export default function WorkflowPage() {
     locationAddress: "",
     locationCity: "",
     locationState: "",
+    locationZip: "",
     jobTitle: "",
   })
   const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([])
@@ -607,7 +608,7 @@ export default function WorkflowPage() {
       if (newProject.industry) projectInsert.industry = newProject.industry
       if (newProject.companyName) projectInsert.company_name = newProject.companyName
       if (newProject.companySize) projectInsert.company_size = newProject.companySize
-      const locationParts = [newProject.locationAddress, newProject.locationCity, newProject.locationState].filter(Boolean)
+      const locationParts = [newProject.locationAddress, newProject.locationCity, newProject.locationState, newProject.locationZip].filter(Boolean)
       if (locationParts.length) projectInsert.location = locationParts.join(", ")
       if (newProject.jobTitle) projectInsert.job_title = newProject.jobTitle
 
@@ -730,6 +731,7 @@ export default function WorkflowPage() {
         locationAddress: "",
         locationCity: "",
         locationState: "",
+        locationZip: "",
         jobTitle: "",
       })
       setSelectedTeamMembers([])
@@ -2190,6 +2192,7 @@ export default function WorkflowPage() {
             locationAddress: "",
             locationCity: "",
             locationState: "",
+            locationZip: "",
             jobTitle: "",
           })
           setSelectedTeamMembers([])
@@ -2425,6 +2428,14 @@ export default function WorkflowPage() {
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Zipcode</label>
+                    <Input
+                      placeholder="12345"
+                      value={newProject.locationZip}
+                      onChange={(e) => setNewProject(prev => ({ ...prev, locationZip: e.target.value }))}
+                    />
+                  </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Company Size</label>
                     <Select
