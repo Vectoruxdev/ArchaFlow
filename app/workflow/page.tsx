@@ -2144,7 +2144,8 @@ export default function WorkflowPage() {
         {/* Floating Action Button */}
       <button
         onClick={() => setIsNewProjectOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-warm-900 dark:bg-[--af-bg-surface] text-white dark:text-foreground rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center z-50"
+        style={{ boxShadow: '0 0 20px color-mix(in srgb, var(--af-brand) 50%, transparent), 0 0 40px color-mix(in srgb, var(--af-brand) 30%, transparent)' }}
+        className="fixed bottom-6 right-6 w-14 h-14 bg-[--af-brand] text-[--af-bg-canvas] rounded-full hover:scale-110 transition-all flex items-center justify-center z-50"
       >
         <Plus className="w-6 h-6" />
       </button>
