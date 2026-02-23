@@ -190,17 +190,12 @@ export async function POST(request: NextRequest) {
     )
 
     // Step 4: Insert a record into project_files
-    const fileSizeKb = Math.round(finalBuffer.byteLength / 1024)
-    const fileSizeLabel = fileSizeKb >= 1024
-      ? `${(fileSizeKb / 1024).toFixed(1)} MB`
-      : `${fileSizeKb} KB`
-
     const { data: fileRecord, error: insertError } = await admin
       .from("project_files")
       .insert({
         project_id: projectId,
         name: wasEnhanced ? `Site Image (AI Enhanced)` : `Site Image (${imageSource === "street_view" ? "Street View" : "Satellite"})`,
-        size: fileSizeLabel,
+        size: finalBuffer.byteLength,
         type: "image/jpeg",
         url,
         uploaded_by: user.id,
