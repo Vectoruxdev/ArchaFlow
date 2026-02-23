@@ -23,6 +23,8 @@ import {
   Calendar,
   Receipt,
   Gift,
+  Info,
+  Zap,
 } from "lucide-react"
 import { toast } from "@/lib/toast"
 import Link from "next/link"
@@ -56,6 +58,13 @@ interface SubscriptionInfo {
   status: string
 }
 
+interface AIUsageEntry {
+  id: string
+  feature: string
+  credits_used: number
+  created_at: string
+}
+
 export default function BillingPage() {
   const { currentWorkspace, user, refreshWorkspaces } = useAuth()
   const searchParams = useSearchParams()
@@ -67,6 +76,8 @@ export default function BillingPage() {
   const [invoices, setInvoices] = useState<Invoice[]>([])
   const [invoicesLoading, setInvoicesLoading] = useState(true)
   const [subscriptionInfo, setSubscriptionInfo] = useState<SubscriptionInfo | null>(null)
+  const [aiUsage, setAiUsage] = useState<AIUsageEntry[]>([])
+  const [aiUsageLoading, setAiUsageLoading] = useState(true)
 
   const workspace = currentWorkspace
   const isOwner = workspace?.role === "owner"
@@ -82,6 +93,25 @@ export default function BillingPage() {
       toast.message("Checkout canceled. No changes were made.")
     }
   }, [searchParams])
+
+  // Load recent AI credit usage
+  useEffect(() => {
+    if (!workspace?.id) {
+      setAiUsageLoading(false)
+      return
+    }
+    setAiUsageLoading(true)
+    supabase
+      .from("ai_credit_usage")
+      .select("id, feature, credits_used, created_at")
+      .eq("business_id", workspace.id)
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .then(({ data }) => {
+        setAiUsage(data || [])
+        setAiUsageLoading(false)
+      })
+  }, [workspace?.id])
 
   // Load recent subscription events
   useEffect(() => {
@@ -488,10 +518,80 @@ export default function BillingPage() {
                       }}
                     />
                   </div>
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-xs text-[--af-text-muted]">
+                      {Math.max(0, (workspace?.aiCreditsLimit || 0) - (workspace?.aiCreditsUsed || 0))} credits remaining
+                    </p>
+                    <p className="text-xs text-[--af-text-muted]">Resets each billing cycle</p>
+                  </div>
+                </div>
+              )}
+
+              {/* What uses credits? */}
+              {config.hasAI && (
+                <div className="rounded-lg border border-[--af-border-default] bg-[--af-bg-surface-alt] p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Info className="w-4 h-4 text-[--af-text-muted]" />
+                    <span className="text-sm font-medium">What uses credits?</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-3 h-3 text-[--af-text-muted]" />
+                        <span className="text-[--af-text-secondary]">AI-enhanced site image</span>
+                      </div>
+                      <span className="font-medium">5 credits</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-3 h-3 text-[--af-text-muted]" />
+                        <span className="text-[--af-text-secondary]">Google Maps image (no AI)</span>
+                      </div>
+                      <span className="font-medium text-[--af-success-text]">Free</span>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           </div>
+
+          {/* Recent AI Usage */}
+          {config.hasAI && (
+            <div className="border border-[--af-border-default] rounded-lg">
+              <div className="p-6 border-b border-[--af-border-default]">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[--af-bg-surface-alt] flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-[--af-text-secondary]" />
+                  </div>
+                  <h2 className="font-semibold">Recent AI Usage</h2>
+                </div>
+              </div>
+              <div className="divide-y divide-[--af-border-default] dark:divide-warm-800">
+                {aiUsageLoading ? (
+                  <div className="p-6 text-sm text-[--af-text-muted]">Loading...</div>
+                ) : aiUsage.length === 0 ? (
+                  <div className="p-6 text-sm text-[--af-text-muted]">No AI credit usage yet.</div>
+                ) : (
+                  aiUsage.map((entry) => (
+                    <div key={entry.id} className="p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-[--af-text-muted]" />
+                        <span className="text-sm capitalize">
+                          {entry.feature.replace(/_/g, " ")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium">{entry.credits_used} credits</span>
+                        <span className="text-xs text-[--af-text-muted]">
+                          {new Date(entry.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Next Billing Date + Estimated Charge (paid plans only) */}
           {tier !== "free" && subscriptionInfo?.currentPeriodEnd && (

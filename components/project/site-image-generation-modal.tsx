@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { MapPin, Sparkles, Check, AlertCircle, Save, Map, Wand2, Layers } from "lucide-react"
+import { MapPin, Sparkles, Check, AlertCircle, Save, Map, Wand2, Layers, Info } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,8 @@ interface SiteImageGenerationModalProps {
   generatedImageUrls?: string[]
   onDismiss: () => void
   onStart?: (mode: EnhanceMode) => void
+  creditsRemaining?: number
+  creditsLimit?: number
 }
 
 const progressSteps = [
@@ -38,24 +40,27 @@ function getStepIndex(step: SiteImageGenStep): number {
   return -1
 }
 
-const modeOptions: { value: EnhanceMode; label: string; description: string; icon: typeof Map }[] = [
+const modeOptions: { value: EnhanceMode; label: string; description: string; icon: typeof Map; creditCost: string }[] = [
   {
     value: "original",
     label: "Google Maps Only",
     description: "Raw street view + aerial images, no AI enhancement",
     icon: Map,
+    creditCost: "Free",
   },
   {
     value: "enhanced",
     label: "AI Enhanced Only",
     description: "Gemini-enhanced architectural photos only",
     icon: Wand2,
+    creditCost: "5-10 credits",
   },
   {
     value: "both",
     label: "Both",
     description: "Save originals and AI-enhanced versions (up to 4 images)",
     icon: Layers,
+    creditCost: "5-10 credits",
   },
 ]
 
@@ -65,10 +70,16 @@ export function SiteImageGenerationModal({
   generatedImageUrls,
   onDismiss,
   onStart,
+  creditsRemaining,
+  creditsLimit,
 }: SiteImageGenerationModalProps) {
   const [selectedMode, setSelectedMode] = useState<EnhanceMode>("enhanced")
   const isOpen = step !== null
   const currentIndex = getStepIndex(step)
+
+  const hasCreditsInfo = creditsRemaining !== undefined && creditsLimit !== undefined
+  const needsCredits = selectedMode !== "original"
+  const insufficientCredits = hasCreditsInfo && needsCredits && creditsRemaining < 5
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onDismiss() }}>
@@ -124,9 +135,18 @@ export function SiteImageGenerationModal({
                         <Icon className="w-5 h-5" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium ${isSelected ? "text-[--af-brand]" : ""}`}>
-                          {option.label}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className={`text-sm font-medium ${isSelected ? "text-[--af-brand]" : ""}`}>
+                            {option.label}
+                          </p>
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                            option.creditCost === "Free"
+                              ? "bg-[--af-success-bg] text-[--af-success-text]"
+                              : "bg-[--af-bg-surface-alt] text-[--af-text-muted]"
+                          }`}>
+                            {option.creditCost}
+                          </span>
+                        </div>
                         <p className="text-xs text-[--af-text-muted] mt-0.5">{option.description}</p>
                       </div>
                       {isSelected && (
@@ -139,6 +159,40 @@ export function SiteImageGenerationModal({
                     </button>
                   )
                 })}
+
+                {/* Credits remaining bar */}
+                {hasCreditsInfo && (
+                  <div className="mt-2 px-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-[--af-text-muted]">AI Credits</span>
+                      <span className="text-xs text-[--af-text-secondary]">
+                        {creditsRemaining} / {creditsLimit} remaining
+                      </span>
+                    </div>
+                    <div className="w-full bg-[--af-bg-surface-alt] rounded-full h-1.5">
+                      <div
+                        className={`h-1.5 rounded-full transition-all ${
+                          creditsRemaining < 5
+                            ? "bg-orange-500"
+                            : "bg-[--af-success-text]"
+                        }`}
+                        style={{
+                          width: `${Math.min(100, (creditsRemaining / Math.max(creditsLimit, 1)) * 100)}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Insufficient credits warning */}
+                {insufficientCredits && (
+                  <div className="flex items-start gap-2 mt-2 px-1 py-2 rounded-lg bg-orange-50 dark:bg-orange-900/10 border border-orange-200 dark:border-orange-800/30">
+                    <Info className="w-4 h-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-orange-700 dark:text-orange-400">
+                      Not enough credits for AI enhancement. Choose &quot;Google Maps Only&quot; or upgrade your plan for more credits.
+                    </p>
+                  </div>
+                )}
               </motion.div>
             ) : step === "error" ? (
               <motion.div
@@ -284,7 +338,7 @@ export function SiteImageGenerationModal({
             <Button variant="outline" onClick={onDismiss}>
               Cancel
             </Button>
-            <Button onClick={() => onStart?.(selectedMode)}>
+            <Button onClick={() => onStart?.(selectedMode)} disabled={insufficientCredits}>
               <Sparkles className="w-4 h-4 mr-2" />
               Generate
             </Button>

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server"
 import { getSupabaseAdmin } from "@/lib/supabase/admin"
 import { uploadProjectFileFromBuffer } from "@/lib/supabase/storage"
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { checkAICredits, deductAICredits, CREDIT_COST_PER_ENHANCEMENT } from "@/lib/billing/ai-credits"
 
 export const dynamic = "force-dynamic"
 // Two Gemini calls + two Google Maps fetches can take a while
@@ -152,6 +153,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
+    // Credit check for AI-enhanced modes
+    if (enhanceMode !== "original") {
+      // "enhanced" uses up to 2 enhancements (street view + satellite), "both" same
+      const maxEnhancements = 2
+      const creditsNeeded = maxEnhancements * CREDIT_COST_PER_ENHANCEMENT
+      const creditCheck = await checkAICredits(project.business_id, creditsNeeded)
+
+      if (!creditCheck.allowed) {
+        return NextResponse.json(
+          {
+            error: "Insufficient AI credits",
+            code: "INSUFFICIENT_CREDITS",
+            creditsUsed: creditCheck.creditsUsed,
+            creditsLimit: creditCheck.creditsLimit,
+            creditsNeeded: creditCheck.creditsNeeded,
+          },
+          { status: 402 }
+        )
+      }
+    }
+
     const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY
     const geminiApiKey = process.env.GEMINI_API_KEY
 
@@ -281,6 +303,18 @@ export async function POST(request: NextRequest) {
           generatedFiles.push(enhFile)
         }
       }
+    }
+
+    // Deduct credits for actually enhanced files (non-blocking)
+    const enhancedCount = generatedFiles.filter((f) => f.wasEnhanced).length
+    if (enhancedCount > 0) {
+      deductAICredits({
+        businessId: project.business_id,
+        userId: user.id,
+        credits: enhancedCount * CREDIT_COST_PER_ENHANCEMENT,
+        feature: "site_image_generation",
+        metadata: { projectId, enhanceMode, enhancedCount },
+      }).catch((err) => console.error("[generate-site-image] Failed to deduct credits:", err))
     }
 
     return NextResponse.json({

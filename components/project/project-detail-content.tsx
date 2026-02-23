@@ -57,6 +57,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useAuth } from "@/lib/auth/auth-context"
 import { ProjectContractsSection } from "./project-contracts-section"
 import { SiteImageGenerationModal, type SiteImageGenStep, type EnhanceMode } from "./site-image-generation-modal"
 import { ImageLightbox } from "@/components/ui/image-lightbox"
@@ -289,6 +290,7 @@ interface ProjectDetailContentProps {
 }
 
 export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
+  const { currentWorkspace, refreshWorkspaces } = useAuth()
   const [project, setProject] = useState<Project>(projectData as Project)
   const [todos, setTodos] = useState<Todo[]>(initialTodos)
   const [projectNotes, setProjectNotes] = useState<Note[]>(notes)
@@ -319,6 +321,11 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   
+  // AI credit state (from workspace)
+  const aiCreditsUsed = currentWorkspace?.aiCreditsUsed ?? 0
+  const aiCreditsLimit = currentWorkspace?.aiCreditsLimit ?? 0
+  const creditsRemaining = Math.max(0, aiCreditsLimit - aiCreditsUsed)
+
   // Task Detail Modal State
   const [selectedTask, setSelectedTask] = useState<Todo | null>(null)
   const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false)
@@ -757,6 +764,8 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
         setIsGeneratingSiteImage(false)
       }, 2500)
       await loadProjectData()
+      // Refresh workspace to update credit counters
+      refreshWorkspaces()
     } catch (err: any) {
       if (enhanceTimer) clearTimeout(enhanceTimer)
       console.error("[ProjectDetail] Site image generation failed:", err)
@@ -1692,6 +1701,8 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
           setIsGeneratingSiteImage(false)
         }}
         onStart={generateSiteImage}
+        creditsRemaining={creditsRemaining}
+        creditsLimit={aiCreditsLimit}
       />
 
       {/* Image Lightbox */}

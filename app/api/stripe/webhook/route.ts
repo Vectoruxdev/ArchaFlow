@@ -199,7 +199,7 @@ export async function POST(request: NextRequest) {
               subscription_status: "canceled",
               stripe_subscription_id: null,
               included_seats: 1,
-              ai_credits_limit: 0,
+              ai_credits_limit: PLAN_CONFIGS.free.aiCredits,
               ai_credits_used: 0,
             })
             .eq("id", business.id)
