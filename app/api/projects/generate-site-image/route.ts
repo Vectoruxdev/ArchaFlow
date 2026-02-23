@@ -61,9 +61,9 @@ async function enhanceImageWithGemini(imageBuffer: Buffer, geminiApiKey: string)
   const genAI = new GoogleGenerativeAI(geminiApiKey)
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash-exp",
+    model: "gemini-2.5-flash-image",
     generationConfig: {
-      // @ts-expect-error - responseModalities is supported in gemini-2.0-flash-exp but not yet typed
+      // @ts-expect-error - responseModalities is supported but not yet typed
       responseModalities: ["TEXT", "IMAGE"],
     },
   })
