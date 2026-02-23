@@ -3,6 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase/admin"
 import { exchangeSlackCode, fetchSlackChannels } from "@/lib/integrations/slack"
 import { cookies } from "next/headers"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(request: NextRequest) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin
 

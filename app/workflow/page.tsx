@@ -2231,7 +2231,7 @@ export default function WorkflowPage() {
                     placeholder="Enter project name"
                     value={newProject.title}
                     onChange={(e) => setNewProject(prev => ({ ...prev, title: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -2291,7 +2291,7 @@ export default function WorkflowPage() {
                     value={newProject.description}
                     onChange={(e) => setNewProject(prev => ({ ...prev, description: e.target.value }))}
                     rows={4}
-                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
                   />
                 </div>
               </TabsContent>
@@ -2341,7 +2341,7 @@ export default function WorkflowPage() {
                     placeholder="What are they interested in?"
                     value={newProject.interest}
                     onChange={(e) => setNewProject(prev => ({ ...prev, interest: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -2374,7 +2374,7 @@ export default function WorkflowPage() {
                     value={newProject.painPoints}
                     onChange={(e) => setNewProject(prev => ({ ...prev, painPoints: e.target.value }))}
                     rows={3}
-                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -2385,7 +2385,7 @@ export default function WorkflowPage() {
                       placeholder="Acme Corp"
                       value={newProject.companyName}
                       onChange={(e) => setNewProject(prev => ({ ...prev, companyName: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                   <div className="space-y-2">
@@ -2395,7 +2395,7 @@ export default function WorkflowPage() {
                       placeholder="Real Estate, Construction..."
                       value={newProject.industry}
                       onChange={(e) => setNewProject(prev => ({ ...prev, industry: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                 </div>
@@ -2463,7 +2463,7 @@ export default function WorkflowPage() {
                     value={newProject.notes}
                     onChange={(e) => setNewProject(prev => ({ ...prev, notes: e.target.value }))}
                     rows={3}
-                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus] resize-none"
                   />
                 </div>
               </TabsContent>
@@ -2477,7 +2477,7 @@ export default function WorkflowPage() {
                       type="date"
                       value={newProject.startDate}
                       onChange={(e) => setNewProject(prev => ({ ...prev, startDate: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                   <div className="space-y-2">
@@ -2486,7 +2486,7 @@ export default function WorkflowPage() {
                       type="date"
                       value={newProject.dueDate}
                       onChange={(e) => setNewProject(prev => ({ ...prev, dueDate: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                      className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                     />
                   </div>
                 </div>
@@ -2496,7 +2496,7 @@ export default function WorkflowPage() {
                     type="date"
                     value={newProject.expectedCompletion}
                     onChange={(e) => setNewProject(prev => ({ ...prev, expectedCompletion: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                    className="w-full px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                   />
                 </div>
                 <div className="space-y-2">
@@ -2508,7 +2508,7 @@ export default function WorkflowPage() {
                       placeholder="0.00"
                       value={newProject.budget}
                       onChange={(e) => setNewProject(prev => ({ ...prev, budget: e.target.value }))}
-                      className="w-full pl-7 pr-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                      className="w-full pl-7 pr-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                       step="0.01"
                       min="0"
                     />
@@ -2528,7 +2528,7 @@ export default function WorkflowPage() {
                           newTasks[index].title = e.target.value
                           setInitialTasks(newTasks)
                         }}
-                        className="flex-1 px-3 py-2 text-sm border border-[--af-border-default] rounded-lg focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
+                        className="flex-1 px-3 py-2 text-sm border border-[--af-border-default] rounded-lg bg-[--af-bg-input] focus:outline-none focus:ring-2 focus:ring-[--af-border-focus]"
                       />
                       <Button
                         type="button"
