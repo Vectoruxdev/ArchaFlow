@@ -14,40 +14,43 @@ const ENHANCEMENT_PROMPT = `You are an architectural photography enhancer. Take 
  * Fetch a Google Street View image for the given address.
  * Returns the image as a Buffer, or null if no Street View coverage exists.
  */
-async function fetchStreetViewImage(address: string, apiKey: string): Promise<Buffer | null> {
+async function fetchStreetViewImage(address: string, apiKey: string): Promise<{ buffer: Buffer | null; error?: string }> {
   // First, check metadata to see if Street View coverage exists
   const metaUrl = `https://maps.googleapis.com/maps/api/streetview/metadata?location=${encodeURIComponent(address)}&key=${apiKey}`
   const metaRes = await fetch(metaUrl)
   const meta = await metaRes.json()
 
   if (meta.status !== "OK") {
-    return null
+    console.log("[generate-site-image] Street View metadata status:", meta.status, meta.error_message || "")
+    return { buffer: null, error: `Street View: ${meta.status}${meta.error_message ? ` - ${meta.error_message}` : ""}` }
   }
 
   const imgUrl = `https://maps.googleapis.com/maps/api/streetview?size=640x480&location=${encodeURIComponent(address)}&fov=90&pitch=10&key=${apiKey}`
   const imgRes = await fetch(imgUrl)
 
   if (!imgRes.ok) {
-    return null
+    return { buffer: null, error: `Street View image fetch failed: HTTP ${imgRes.status}` }
   }
 
   const arrayBuffer = await imgRes.arrayBuffer()
-  return Buffer.from(arrayBuffer)
+  return { buffer: Buffer.from(arrayBuffer) }
 }
 
 /**
  * Fallback: fetch a Google Maps Static API satellite/aerial image of the address.
  */
-async function fetchStaticMapImage(address: string, apiKey: string): Promise<Buffer | null> {
+async function fetchStaticMapImage(address: string, apiKey: string): Promise<{ buffer: Buffer | null; error?: string }> {
   const imgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=18&size=640x480&maptype=satellite&key=${apiKey}`
   const imgRes = await fetch(imgUrl)
 
   if (!imgRes.ok) {
-    return null
+    const text = await imgRes.text().catch(() => "")
+    console.log("[generate-site-image] Static Map failed:", imgRes.status, text)
+    return { buffer: null, error: `Static Map: HTTP ${imgRes.status}${text ? ` - ${text}` : ""}` }
   }
 
   const arrayBuffer = await imgRes.arrayBuffer()
-  return Buffer.from(arrayBuffer)
+  return { buffer: Buffer.from(arrayBuffer) }
 }
 
 /**
@@ -87,6 +90,9 @@ async function enhanceImageWithGemini(imageBuffer: Buffer, geminiApiKey: string)
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("[generate-site-image] GOOGLE_MAPS_API_KEY:", process.env.GOOGLE_MAPS_API_KEY ? "present" : "missing")
+    console.log("[generate-site-image] GEMINI_API_KEY:", process.env.GEMINI_API_KEY ? "present" : "missing")
+
     // Auth check
     const supabase = createClient()
     const {
@@ -140,17 +146,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 1: Get a property image (Street View first, then satellite fallback)
-    let sourceImageBuffer = await fetchStreetViewImage(address, googleMapsApiKey)
+    const streetViewResult = await fetchStreetViewImage(address, googleMapsApiKey)
+    let sourceImageBuffer = streetViewResult.buffer
     let imageSource = "street_view"
 
+    let staticMapResult: { buffer: Buffer | null; error?: string } | null = null
     if (!sourceImageBuffer) {
-      sourceImageBuffer = await fetchStaticMapImage(address, googleMapsApiKey)
+      staticMapResult = await fetchStaticMapImage(address, googleMapsApiKey)
+      sourceImageBuffer = staticMapResult.buffer
       imageSource = "satellite"
     }
 
     if (!sourceImageBuffer) {
+      const errors = [streetViewResult.error, staticMapResult?.error].filter(Boolean).join("; ")
+      const isApiNotEnabled = errors.includes("REQUEST_DENIED") || errors.includes("403")
+      const errorMessage = isApiNotEnabled
+        ? "Google Maps API returned REQUEST_DENIED. Please enable the Street View Static API and Maps Static API in your Google Cloud Console."
+        : `No map imagery found for this address. Details: ${errors || "Unknown error"}`
+      console.error("[generate-site-image] Both image sources failed:", errors)
       return NextResponse.json(
-        { error: "No map imagery found for this address. Please verify the address and try again." },
+        { error: errorMessage },
         { status: 422 }
       )
     }

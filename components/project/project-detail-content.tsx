@@ -58,6 +58,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { ProjectContractsSection } from "./project-contracts-section"
+import { SiteImageGenerationModal, type SiteImageGenStep } from "./site-image-generation-modal"
 
 // Types
 interface TaskNote {
@@ -307,6 +308,9 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
 
   // AI Site Image generation state
   const [isGeneratingSiteImage, setIsGeneratingSiteImage] = useState(false)
+  const [siteImageGenStep, setSiteImageGenStep] = useState<SiteImageGenStep>(null)
+  const [siteImageGenError, setSiteImageGenError] = useState<string>("")
+  const [siteImageGenUrl, setSiteImageGenUrl] = useState<string>("")
   
   // Task Detail Modal State
   const [selectedTask, setSelectedTask] = useState<Todo | null>(null)
@@ -708,22 +712,39 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
   const generateSiteImage = async () => {
     if (!project.location) return
     setIsGeneratingSiteImage(true)
-    toast.info("Generating AI site image...")
+    setSiteImageGenStep("fetching")
+    setSiteImageGenError("")
+    setSiteImageGenUrl("")
+
+    // Simulate step progression while API runs
+    const enhanceTimer = setTimeout(() => setSiteImageGenStep("enhancing"), 3000)
+
     try {
       const res = await fetch("/api/projects/generate-site-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ projectId, address: project.location }),
       })
+      clearTimeout(enhanceTimer)
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? "Generation failed")
-      toast.success("AI site image generated and added to resources!")
-      // Reload project data to show the new file
+
+      setSiteImageGenStep("saving")
+      // Brief pause on "saving" then show done
+      await new Promise((resolve) => setTimeout(resolve, 800))
+      setSiteImageGenUrl(data.url || "")
+      setSiteImageGenStep("done")
+      // Auto-dismiss after 2.5s and reload data
+      setTimeout(() => {
+        setSiteImageGenStep(null)
+        setIsGeneratingSiteImage(false)
+      }, 2500)
       await loadProjectData()
     } catch (err: any) {
+      clearTimeout(enhanceTimer)
       console.error("[ProjectDetail] Site image generation failed:", err)
-      toast.error("Site image generation failed: " + err.message)
-    } finally {
+      setSiteImageGenError(err.message)
+      setSiteImageGenStep("error")
       setIsGeneratingSiteImage(false)
     }
   }
@@ -1595,6 +1616,17 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Site Image Generation Modal */}
+      <SiteImageGenerationModal
+        step={siteImageGenStep}
+        errorMessage={siteImageGenError}
+        generatedImageUrl={siteImageGenUrl}
+        onDismiss={() => {
+          setSiteImageGenStep(null)
+          setIsGeneratingSiteImage(false)
+        }}
+      />
 
       {/* Task Detail Modal */}
       {selectedTask && (

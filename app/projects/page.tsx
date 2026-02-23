@@ -18,7 +18,6 @@ import {
   ArchiveRestore,
   Trash2,
   Sparkles,
-  Loader2,
 } from "lucide-react"
 import { AppLayout } from "@/components/layout/app-layout"
 import { EmptyState } from "@/components/ui/empty-state"
@@ -61,6 +60,7 @@ import { ClientSelect } from "@/components/ui/client-select"
 import { CityCombobox } from "@/components/ui/city-combobox"
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { US_STATES } from "@/lib/us-states"
+import { SiteImageGenerationModal, type SiteImageGenStep } from "@/components/project/site-image-generation-modal"
 
 // Types
 type ProjectStatus = "lead" | "sale" | "design" | "completed"
@@ -146,7 +146,9 @@ export default function ProjectsPage() {
   const [isCreatingProject, setIsCreatingProject] = useState(false)
   const [createError, setCreateError] = useState<string | null>(null)
   const [createFormTab, setCreateFormTab] = useState<"basic" | "details">("basic")
-  const [isGeneratingSiteImage, setIsGeneratingSiteImage] = useState(false)
+  const [siteImageGenStep, setSiteImageGenStep] = useState<SiteImageGenStep>(null)
+  const [siteImageGenError, setSiteImageGenError] = useState<string>("")
+  const [siteImageGenUrl, setSiteImageGenUrl] = useState<string>("")
   
   // Tab state for Active/Archived
   const [activeTab, setActiveTab] = useState<"active" | "archived">("active")
@@ -352,25 +354,39 @@ export default function ProjectsPage() {
       setNewProject({ title: "", clientName: "", clientId: null, budget: "", dueDate: "", source: "", interest: "", painPoints: "", notes: "", budgetMin: "", temperature: "", industry: "", companyName: "", companySize: "", locationAddress: "", locationCity: "", locationState: "", locationZip: "", jobTitle: "" })
       setIsNewProjectOpen(false)
 
-      // If an address was provided, trigger AI site image generation in the background
+      // If an address was provided, trigger AI site image generation with animated modal
       if (created?.id && address) {
-        setIsGeneratingSiteImage(true)
-        toast.info("Generating AI site image in the background...")
+        setSiteImageGenStep("fetching")
+        setSiteImageGenError("")
+        setSiteImageGenUrl("")
+
+        // Simulate step progression while API runs (single call, not streaming)
+        const enhanceTimer = setTimeout(() => setSiteImageGenStep("enhancing"), 3000)
+
         fetch("/api/projects/generate-site-image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ projectId: created.id, address }),
         })
           .then(async (res) => {
+            clearTimeout(enhanceTimer)
             const data = await res.json()
             if (!res.ok) throw new Error(data.error ?? "Generation failed")
-            toast.success("AI site image generated and saved to project resources!")
+            setSiteImageGenStep("saving")
+            // Brief pause on "saving" then show done
+            setTimeout(() => {
+              setSiteImageGenUrl(data.url || "")
+              setSiteImageGenStep("done")
+              // Auto-dismiss after 2.5s
+              setTimeout(() => setSiteImageGenStep(null), 2500)
+            }, 800)
           })
           .catch((err) => {
-            console.error("❌ [Projects Page] Site image generation failed:", err)
-            toast.error("Site image generation failed: " + err.message)
+            clearTimeout(enhanceTimer)
+            console.error("[Projects Page] Site image generation failed:", err)
+            setSiteImageGenError(err.message)
+            setSiteImageGenStep("error")
           })
-          .finally(() => setIsGeneratingSiteImage(false))
       }
     } catch (error: any) {
       console.error("❌ [Projects Page] Failed to create project:", error)
@@ -521,12 +537,6 @@ export default function ProjectsPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            {isGeneratingSiteImage && (
-              <div className="flex items-center gap-1.5 text-xs text-[--af-info-text] bg-[--af-info-bg] border border-[--af-info-border] rounded-md px-2.5 py-1.5">
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                Generating site image...
-              </div>
-            )}
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
@@ -1169,6 +1179,14 @@ export default function ProjectsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+        {/* Site Image Generation Modal */}
+        <SiteImageGenerationModal
+          step={siteImageGenStep}
+          errorMessage={siteImageGenError}
+          generatedImageUrl={siteImageGenUrl}
+          onDismiss={() => setSiteImageGenStep(null)}
+        />
 
         {/* Delete Confirmation Dialog */}
         <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
