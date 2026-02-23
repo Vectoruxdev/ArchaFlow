@@ -1,27 +1,31 @@
 "use client"
 
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { MapPin, Sparkles, Check, AlertCircle, Save } from "lucide-react"
+import { MapPin, Sparkles, Check, AlertCircle, Save, Map, Wand2, Layers } from "lucide-react"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 
-export type SiteImageGenStep = "fetching" | "enhancing" | "saving" | "done" | "error" | null
+export type EnhanceMode = "original" | "enhanced" | "both"
+export type SiteImageGenStep = "options" | "fetching" | "enhancing" | "saving" | "done" | "error" | null
 
 interface SiteImageGenerationModalProps {
   step: SiteImageGenStep
   errorMessage?: string
-  generatedImageUrl?: string
+  generatedImageUrls?: string[]
   onDismiss: () => void
+  onStart?: (mode: EnhanceMode) => void
 }
 
-const steps = [
-  { key: "fetching", label: "Fetching property image...", icon: MapPin },
+const progressSteps = [
+  { key: "fetching", label: "Fetching property images...", icon: MapPin },
   { key: "enhancing", label: "Enhancing with AI...", icon: Sparkles },
   { key: "saving", label: "Saving to project...", icon: Save },
 ] as const
@@ -34,12 +38,35 @@ function getStepIndex(step: SiteImageGenStep): number {
   return -1
 }
 
+const modeOptions: { value: EnhanceMode; label: string; description: string; icon: typeof Map }[] = [
+  {
+    value: "original",
+    label: "Google Maps Only",
+    description: "Raw street view + aerial images, no AI enhancement",
+    icon: Map,
+  },
+  {
+    value: "enhanced",
+    label: "AI Enhanced Only",
+    description: "Gemini-enhanced architectural photos only",
+    icon: Wand2,
+  },
+  {
+    value: "both",
+    label: "Both",
+    description: "Save originals and AI-enhanced versions (up to 4 images)",
+    icon: Layers,
+  },
+]
+
 export function SiteImageGenerationModal({
   step,
   errorMessage,
-  generatedImageUrl,
+  generatedImageUrls,
   onDismiss,
+  onStart,
 }: SiteImageGenerationModalProps) {
+  const [selectedMode, setSelectedMode] = useState<EnhanceMode>("enhanced")
   const isOpen = step !== null
   const currentIndex = getStepIndex(step)
 
@@ -47,24 +74,73 @@ export function SiteImageGenerationModal({
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onDismiss() }}>
       <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => {
         // Prevent dismissing during active generation
-        if (step !== "done" && step !== "error") e.preventDefault()
+        if (step !== "done" && step !== "error" && step !== "options") e.preventDefault()
       }}>
         <DialogHeader>
           <DialogTitle className="text-center">
-            {step === "done" ? "Site Image Generated" : step === "error" ? "Generation Failed" : "Generating Site Image"}
+            {step === "options"
+              ? "Generate Site Images"
+              : step === "done"
+                ? "Site Images Generated"
+                : step === "error"
+                  ? "Generation Failed"
+                  : "Generating Site Images"}
           </DialogTitle>
           <DialogDescription className="text-center">
-            {step === "done"
-              ? "Your AI-enhanced site image is ready."
-              : step === "error"
-                ? "Something went wrong during image generation."
-                : "Please wait while we create your site image..."}
+            {step === "options"
+              ? "Choose how to generate images for this property."
+              : step === "done"
+                ? "Your site images are ready."
+                : step === "error"
+                  ? "Something went wrong during image generation."
+                  : "Please wait while we create your site images..."}
           </DialogDescription>
         </DialogHeader>
 
         <div className="py-6">
           <AnimatePresence mode="wait">
-            {step === "error" ? (
+            {step === "options" ? (
+              <motion.div
+                key="options"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="space-y-3"
+              >
+                {modeOptions.map((option) => {
+                  const Icon = option.icon
+                  const isSelected = selectedMode === option.value
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => setSelectedMode(option.value)}
+                      className={`w-full flex items-start gap-3 rounded-lg px-4 py-3 text-left transition-colors border ${
+                        isSelected
+                          ? "bg-[--af-brand]/5 border-[--af-brand]/30"
+                          : "bg-[--af-bg-surface-alt] border-transparent hover:border-[--af-border-default]"
+                      }`}
+                    >
+                      <div className={`mt-0.5 ${isSelected ? "text-[--af-brand]" : "text-[--af-text-muted]"}`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={`text-sm font-medium ${isSelected ? "text-[--af-brand]" : ""}`}>
+                          {option.label}
+                        </p>
+                        <p className="text-xs text-[--af-text-muted] mt-0.5">{option.description}</p>
+                      </div>
+                      {isSelected && (
+                        <div className="mt-0.5">
+                          <div className="w-5 h-5 rounded-full bg-[--af-brand] flex items-center justify-center">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        </div>
+                      )}
+                    </button>
+                  )
+                })}
+              </motion.div>
+            ) : step === "error" ? (
               <motion.div
                 key="error"
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -103,19 +179,28 @@ export function SiteImageGenerationModal({
                 >
                   <Check className="w-8 h-8 text-[--af-success-text]" />
                 </motion.div>
-                {generatedImageUrl && (
+                {generatedImageUrls && generatedImageUrls.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="w-full rounded-lg overflow-hidden border border-[--af-border-default]"
+                    className="w-full"
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={generatedImageUrl}
-                      alt="Generated site image"
-                      className="w-full h-48 object-cover"
-                    />
+                    <div className={`grid gap-2 ${generatedImageUrls.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
+                      {generatedImageUrls.map((url, i) => (
+                        <div key={i} className="rounded-lg overflow-hidden border border-[--af-border-default]">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={url}
+                            alt={`Generated site image ${i + 1}`}
+                            className="w-full h-32 object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-[--af-text-muted] text-center mt-2">
+                      {generatedImageUrls.length} image{generatedImageUrls.length !== 1 ? "s" : ""} generated
+                    </p>
                   </motion.div>
                 )}
               </motion.div>
@@ -127,7 +212,7 @@ export function SiteImageGenerationModal({
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                {steps.map((s, i) => {
+                {progressSteps.map((s, i) => {
                   const isActive = s.key === step
                   const isCompleted = currentIndex > i
                   const Icon = s.icon
@@ -193,6 +278,18 @@ export function SiteImageGenerationModal({
             )}
           </AnimatePresence>
         </div>
+
+        {step === "options" && (
+          <DialogFooter>
+            <Button variant="outline" onClick={onDismiss}>
+              Cancel
+            </Button>
+            <Button onClick={() => onStart?.(selectedMode)}>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Generate
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   )

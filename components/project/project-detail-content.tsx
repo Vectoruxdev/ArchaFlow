@@ -58,7 +58,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { ProjectContractsSection } from "./project-contracts-section"
-import { SiteImageGenerationModal, type SiteImageGenStep } from "./site-image-generation-modal"
+import { SiteImageGenerationModal, type SiteImageGenStep, type EnhanceMode } from "./site-image-generation-modal"
+import { ImageLightbox } from "@/components/ui/image-lightbox"
+import { ProjectImageGallery } from "./project-image-gallery"
+import { Expand } from "lucide-react"
 
 // Types
 interface TaskNote {
@@ -310,7 +313,11 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
   const [isGeneratingSiteImage, setIsGeneratingSiteImage] = useState(false)
   const [siteImageGenStep, setSiteImageGenStep] = useState<SiteImageGenStep>(null)
   const [siteImageGenError, setSiteImageGenError] = useState<string>("")
-  const [siteImageGenUrl, setSiteImageGenUrl] = useState<string>("")
+  const [siteImageGenUrls, setSiteImageGenUrls] = useState<string[]>([])
+
+  // Image gallery / lightbox state
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   
   // Task Detail Modal State
   const [selectedTask, setSelectedTask] = useState<Todo | null>(null)
@@ -709,30 +716,40 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     }
   }
 
-  const generateSiteImage = async () => {
+  const openSiteImageModal = () => {
+    if (!project.location) return
+    setSiteImageGenStep("options")
+    setSiteImageGenError("")
+    setSiteImageGenUrls([])
+  }
+
+  const generateSiteImage = async (enhanceMode: EnhanceMode) => {
     if (!project.location) return
     setIsGeneratingSiteImage(true)
     setSiteImageGenStep("fetching")
     setSiteImageGenError("")
-    setSiteImageGenUrl("")
+    setSiteImageGenUrls([])
 
     // Simulate step progression while API runs
-    const enhanceTimer = setTimeout(() => setSiteImageGenStep("enhancing"), 3000)
+    const enhanceTimer = enhanceMode !== "original"
+      ? setTimeout(() => setSiteImageGenStep("enhancing"), 3000)
+      : null
 
     try {
       const res = await fetch("/api/projects/generate-site-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, address: project.location }),
+        body: JSON.stringify({ projectId, address: project.location, enhanceMode }),
       })
-      clearTimeout(enhanceTimer)
+      if (enhanceTimer) clearTimeout(enhanceTimer)
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? "Generation failed")
 
       setSiteImageGenStep("saving")
       // Brief pause on "saving" then show done
       await new Promise((resolve) => setTimeout(resolve, 800))
-      setSiteImageGenUrl(data.url || "")
+      const urls = data.files?.map((f: any) => f.url).filter(Boolean) ?? (data.url ? [data.url] : [])
+      setSiteImageGenUrls(urls)
       setSiteImageGenStep("done")
       // Auto-dismiss after 2.5s and reload data
       setTimeout(() => {
@@ -741,7 +758,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
       }, 2500)
       await loadProjectData()
     } catch (err: any) {
-      clearTimeout(enhanceTimer)
+      if (enhanceTimer) clearTimeout(enhanceTimer)
       console.error("[ProjectDetail] Site image generation failed:", err)
       setSiteImageGenError(err.message)
       setSiteImageGenStep("error")
@@ -820,11 +837,37 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     )
   }
 
+  // Compute image files for gallery and lightbox
+  const imageFiles = projectFiles
+    .filter((f) => f.type === "image" && f.url)
+    .map((f) => ({ id: f.id, name: f.name, url: f.url! }))
+  const hasImages = imageFiles.length > 0
+
+  // Lightbox images include all image files
+  const lightboxImages = imageFiles.map((f) => ({ url: f.url, name: f.name }))
+
   return (
     <>
       {/* Main Content */}
       <div className="p-4 lg:p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-[1800px] mx-auto">
+        <div className={`grid gap-6 max-w-[1800px] mx-auto ${
+          hasImages
+            ? "grid-cols-1 lg:grid-cols-3 xl:grid-cols-[280px_1fr_1fr_1fr]"
+            : "grid-cols-1 lg:grid-cols-3"
+        }`}>
+          {/* Image Gallery Column (xl+ only, when images exist) */}
+          {hasImages && (
+            <div className="hidden xl:block xl:col-span-1">
+              <ProjectImageGallery
+                images={imageFiles}
+                selectedIndex={selectedImageIndex}
+                onImageSelect={(index) => setSelectedImageIndex(index)}
+                onFullscreen={() => {
+                  setLightboxOpen(true)
+                }}
+              />
+            </div>
+          )}
           {/* Main Content Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Project Summary Card */}
@@ -1327,7 +1370,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={generateSiteImage}
+                      onClick={openSiteImageModal}
                       disabled={isGeneratingSiteImage}
                     >
                       {isGeneratingSiteImage ? (
@@ -1338,7 +1381,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                       ) : (
                         <>
                           <Sparkles className="w-4 h-4 mr-2" />
-                          Generate Site Image
+                          Generate Site Images
                         </>
                       )}
                     </Button>
@@ -1358,42 +1401,64 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {projectFiles.map((file) => (
-                  <div
-                    key={file.id}
-                    className="border border-[--af-border-default] rounded-lg p-4 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 bg-[--af-bg-surface-alt] rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        {file.type === "image" && file.url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={file.url} alt={file.name} className="w-full h-full object-cover rounded" />
-                        ) : (
-                          <File className="w-5 h-5 text-[--af-text-secondary]" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{file.name}</p>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-[--af-text-muted]">
-                          <span>{file.size}</span>
-                          <span>•</span>
-                          <span>{file.uploadedAt}</span>
+                  {projectFiles.map((file) => {
+                    const imageIndex = file.type === "image" && file.url
+                      ? imageFiles.findIndex((img) => img.id === file.id)
+                      : -1
+                    return (
+                      <div
+                        key={file.id}
+                        className={`border border-[--af-border-default] rounded-lg p-4 hover:shadow-md transition-shadow ${
+                          imageIndex >= 0 ? "cursor-pointer" : ""
+                        }`}
+                        onClick={imageIndex >= 0 ? () => {
+                          setSelectedImageIndex(imageIndex)
+                          setLightboxOpen(true)
+                        } : undefined}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-16 h-16 bg-[--af-bg-surface-alt] rounded flex items-center justify-center flex-shrink-0 overflow-hidden relative group">
+                            {file.type === "image" && file.url ? (
+                              <>
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img src={file.url} alt={file.name} className="w-full h-full object-cover rounded" />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors rounded flex items-center justify-center">
+                                  <Expand className="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
+                              </>
+                            ) : (
+                              <File className="w-5 h-5 text-[--af-text-secondary]" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{file.name}</p>
+                            <div className="flex items-center gap-2 mt-1 text-xs text-[--af-text-muted]">
+                              <span>{file.size}</span>
+                              <span>•</span>
+                              <span>{file.uploadedAt}</span>
+                            </div>
+                          </div>
+                          {file.url ? (
+                            <a
+                              href={file.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              download={file.name}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Button variant="ghost" size="icon" className="h-8 w-8">
+                                <Download className="w-4 h-4" />
+                              </Button>
+                            </a>
+                          ) : (
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          )}
                         </div>
                       </div>
-                      {file.url ? (
-                        <a href={file.url} target="_blank" rel="noopener noreferrer" download={file.name}>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <Download className="w-4 h-4" />
-                          </Button>
-                        </a>
-                      ) : (
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Download className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -1621,11 +1686,20 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
       <SiteImageGenerationModal
         step={siteImageGenStep}
         errorMessage={siteImageGenError}
-        generatedImageUrl={siteImageGenUrl}
+        generatedImageUrls={siteImageGenUrls}
         onDismiss={() => {
           setSiteImageGenStep(null)
           setIsGeneratingSiteImage(false)
         }}
+        onStart={generateSiteImage}
+      />
+
+      {/* Image Lightbox */}
+      <ImageLightbox
+        images={lightboxImages}
+        initialIndex={selectedImageIndex}
+        open={lightboxOpen}
+        onOpenChange={setLightboxOpen}
       />
 
       {/* Task Detail Modal */}

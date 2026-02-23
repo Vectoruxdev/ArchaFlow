@@ -148,7 +148,7 @@ export default function ProjectsPage() {
   const [createFormTab, setCreateFormTab] = useState<"basic" | "details">("basic")
   const [siteImageGenStep, setSiteImageGenStep] = useState<SiteImageGenStep>(null)
   const [siteImageGenError, setSiteImageGenError] = useState<string>("")
-  const [siteImageGenUrl, setSiteImageGenUrl] = useState<string>("")
+  const [siteImageGenUrls, setSiteImageGenUrls] = useState<string[]>([])
   
   // Tab state for Active/Archived
   const [activeTab, setActiveTab] = useState<"active" | "archived">("active")
@@ -358,7 +358,7 @@ export default function ProjectsPage() {
       if (created?.id && address) {
         setSiteImageGenStep("fetching")
         setSiteImageGenError("")
-        setSiteImageGenUrl("")
+        setSiteImageGenUrls([])
 
         // Simulate step progression while API runs (single call, not streaming)
         const enhanceTimer = setTimeout(() => setSiteImageGenStep("enhancing"), 3000)
@@ -366,7 +366,7 @@ export default function ProjectsPage() {
         fetch("/api/projects/generate-site-image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ projectId: created.id, address }),
+          body: JSON.stringify({ projectId: created.id, address, enhanceMode: "enhanced" }),
         })
           .then(async (res) => {
             clearTimeout(enhanceTimer)
@@ -375,7 +375,8 @@ export default function ProjectsPage() {
             setSiteImageGenStep("saving")
             // Brief pause on "saving" then show done
             setTimeout(() => {
-              setSiteImageGenUrl(data.url || "")
+              const urls = data.files?.map((f: any) => f.url).filter(Boolean) ?? (data.url ? [data.url] : [])
+              setSiteImageGenUrls(urls)
               setSiteImageGenStep("done")
               // Auto-dismiss after 2.5s
               setTimeout(() => setSiteImageGenStep(null), 2500)
@@ -1184,7 +1185,7 @@ export default function ProjectsPage() {
         <SiteImageGenerationModal
           step={siteImageGenStep}
           errorMessage={siteImageGenError}
-          generatedImageUrl={siteImageGenUrl}
+          generatedImageUrls={siteImageGenUrls}
           onDismiss={() => setSiteImageGenStep(null)}
         />
 

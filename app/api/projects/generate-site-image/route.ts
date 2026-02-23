@@ -5,10 +5,12 @@ import { uploadProjectFileFromBuffer } from "@/lib/supabase/storage"
 import { GoogleGenerativeAI } from "@google/generative-ai"
 
 export const dynamic = "force-dynamic"
-// Gemini image generation can take up to 60 seconds
-export const maxDuration = 60
+// Two Gemini calls + two Google Maps fetches can take a while
+export const maxDuration = 120
 
-const ENHANCEMENT_PROMPT = `You are an architectural photography enhancer. Take this street-level or aerial photo of a property and enhance it to look like a professional architectural photograph. Increase depth and 3D realism, improve lighting and sharpness, enhance colors and contrast, and make it look like a high-end real estate or architectural photo. Keep the same perspective and property structure. Output only the enhanced image.`
+const STREET_VIEW_ENHANCEMENT_PROMPT = `You are an architectural photography enhancer. Take this street-level photo of a property and enhance it to look like a professional architectural photograph. Increase depth and 3D realism, improve lighting and sharpness, enhance colors and contrast, and make it look like a high-end real estate or architectural photo. Keep the same perspective and property structure. Output only the enhanced image.`
+
+const AERIAL_ENHANCEMENT_PROMPT = `You are an architectural photography enhancer. Take this aerial/satellite photo of a property and enhance it to look like a professional aerial architectural photograph. Improve clarity and sharpness, enhance colors and contrast, make building structures and landscaping pop with vivid detail, and maintain the bird's-eye perspective. Output only the enhanced image.`
 
 /**
  * Fetch a Google Street View image for the given address.
@@ -37,7 +39,7 @@ async function fetchStreetViewImage(address: string, apiKey: string): Promise<{ 
 }
 
 /**
- * Fallback: fetch a Google Maps Static API satellite/aerial image of the address.
+ * Fetch a Google Maps Static API satellite/aerial image of the address.
  */
 async function fetchStaticMapImage(address: string, apiKey: string): Promise<{ buffer: Buffer | null; error?: string }> {
   const imgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=18&size=640x480&maptype=satellite&key=${apiKey}`
@@ -54,10 +56,10 @@ async function fetchStaticMapImage(address: string, apiKey: string): Promise<{ b
 }
 
 /**
- * Send the source image to Gemini 2.0 Flash for enhancement.
+ * Send the source image to Gemini for enhancement.
  * Returns the enhanced image as a Buffer, or null on failure.
  */
-async function enhanceImageWithGemini(imageBuffer: Buffer, geminiApiKey: string): Promise<Buffer | null> {
+async function enhanceImageWithGemini(imageBuffer: Buffer, geminiApiKey: string, prompt: string): Promise<Buffer | null> {
   const genAI = new GoogleGenerativeAI(geminiApiKey)
 
   const model = genAI.getGenerativeModel({
@@ -75,7 +77,7 @@ async function enhanceImageWithGemini(imageBuffer: Buffer, geminiApiKey: string)
     },
   }
 
-  const result = await model.generateContent([ENHANCEMENT_PROMPT, imagePart])
+  const result = await model.generateContent([prompt, imagePart])
   const response = result.response
 
   for (const part of response.candidates?.[0]?.content?.parts ?? []) {
@@ -86,6 +88,17 @@ async function enhanceImageWithGemini(imageBuffer: Buffer, geminiApiKey: string)
   }
 
   return null
+}
+
+type EnhanceMode = "original" | "enhanced" | "both"
+
+interface GeneratedFile {
+  fileId: string
+  url: string
+  path: string
+  wasEnhanced: boolean
+  imageSource: "street_view" | "satellite"
+  name: string
 }
 
 export async function POST(request: NextRequest) {
@@ -105,7 +118,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { projectId, address } = body
+    const { projectId, address, enhanceMode = "enhanced" } = body as {
+      projectId: string
+      address: string
+      enhanceMode?: EnhanceMode
+    }
 
     if (!projectId || !address) {
       return NextResponse.json({ error: "Missing projectId or address" }, { status: 400 })
@@ -141,24 +158,19 @@ export async function POST(request: NextRequest) {
     if (!googleMapsApiKey) {
       return NextResponse.json({ error: "Google Maps API key not configured" }, { status: 500 })
     }
-    if (!geminiApiKey) {
+    if (!geminiApiKey && enhanceMode !== "original") {
       return NextResponse.json({ error: "Gemini API key not configured" }, { status: 500 })
     }
 
-    // Step 1: Get a property image (Street View first, then satellite fallback)
-    const streetViewResult = await fetchStreetViewImage(address, googleMapsApiKey)
-    let sourceImageBuffer = streetViewResult.buffer
-    let imageSource = "street_view"
+    // Step 1: Fetch both street view and satellite images in parallel
+    const [streetViewResult, satelliteResult] = await Promise.all([
+      fetchStreetViewImage(address, googleMapsApiKey),
+      fetchStaticMapImage(address, googleMapsApiKey),
+    ])
 
-    let staticMapResult: { buffer: Buffer | null; error?: string } | null = null
-    if (!sourceImageBuffer) {
-      staticMapResult = await fetchStaticMapImage(address, googleMapsApiKey)
-      sourceImageBuffer = staticMapResult.buffer
-      imageSource = "satellite"
-    }
-
-    if (!sourceImageBuffer) {
-      const errors = [streetViewResult.error, staticMapResult?.error].filter(Boolean).join("; ")
+    // We need at least one image source
+    if (!streetViewResult.buffer && !satelliteResult.buffer) {
+      const errors = [streetViewResult.error, satelliteResult.error].filter(Boolean).join("; ")
       const isApiNotEnabled = errors.includes("REQUEST_DENIED") || errors.includes("403")
       const errorMessage = isApiNotEnabled
         ? "Google Maps API returned REQUEST_DENIED. Please enable the Street View Static API and Maps Static API in your Google Cloud Console."
@@ -170,50 +182,116 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Step 2: Enhance the image with Gemini
-    const enhancedBuffer = await enhanceImageWithGemini(sourceImageBuffer, geminiApiKey)
-
-    // If Gemini image generation fails (model limitation), use the original source image
-    const finalBuffer = enhancedBuffer ?? sourceImageBuffer
-    const wasEnhanced = !!enhancedBuffer
-
-    // Step 3: Upload enhanced image to Supabase Storage
     const timestamp = Date.now()
-    const fileName = `site-image-${timestamp}.jpg`
+    const generatedFiles: GeneratedFile[] = []
 
-    const { url, path } = await uploadProjectFileFromBuffer(
-      finalBuffer,
-      projectId,
-      fileName,
-      "image/jpeg",
-      "attachments"
-    )
+    // Helper to upload and record a file
+    async function saveFile(
+      buffer: Buffer,
+      imageSource: "street_view" | "satellite",
+      wasEnhanced: boolean
+    ): Promise<GeneratedFile> {
+      const sourceLabel = imageSource === "street_view" ? "street_view" : "satellite"
+      const suffix = wasEnhanced ? "-enhanced" : ""
+      const fileName = `site-image-${sourceLabel}${suffix}-${timestamp}.jpg`
 
-    // Step 4: Insert a record into project_files
-    const { data: fileRecord, error: insertError } = await admin
-      .from("project_files")
-      .insert({
-        project_id: projectId,
-        name: wasEnhanced ? `Site Image (AI Enhanced)` : `Site Image (${imageSource === "street_view" ? "Street View" : "Satellite"})`,
-        size: finalBuffer.byteLength,
-        type: "image/jpeg",
+      const { url, path } = await uploadProjectFileFromBuffer(
+        buffer,
+        projectId,
+        fileName,
+        "image/jpeg",
+        "attachments"
+      )
+
+      const sourceDisplayName = imageSource === "street_view" ? "Street View" : "Aerial View"
+      const displayName = wasEnhanced
+        ? `Site Image - ${sourceDisplayName} (AI Enhanced)`
+        : `Site Image - ${sourceDisplayName}`
+
+      const { data: fileRecord, error: insertError } = await admin
+        .from("project_files")
+        .insert({
+          project_id: projectId,
+          name: displayName,
+          size: buffer.byteLength,
+          type: "image/jpeg",
+          url,
+          uploaded_by: user!.id,
+        })
+        .select()
+        .single()
+
+      if (insertError) {
+        throw new Error(`Failed to save file record: ${insertError.message}`)
+      }
+
+      return {
+        fileId: fileRecord.id,
         url,
-        uploaded_by: user.id,
-      })
-      .select()
-      .single()
+        path,
+        wasEnhanced,
+        imageSource,
+        name: displayName,
+      }
+    }
 
-    if (insertError) {
-      throw new Error(`Failed to save file record: ${insertError.message}`)
+    // Step 2: Process images based on enhanceMode
+    const imageSources: { buffer: Buffer; source: "street_view" | "satellite"; prompt: string }[] = []
+
+    if (streetViewResult.buffer) {
+      imageSources.push({
+        buffer: streetViewResult.buffer,
+        source: "street_view",
+        prompt: STREET_VIEW_ENHANCEMENT_PROMPT,
+      })
+    }
+    if (satelliteResult.buffer) {
+      imageSources.push({
+        buffer: satelliteResult.buffer,
+        source: "satellite",
+        prompt: AERIAL_ENHANCEMENT_PROMPT,
+      })
+    }
+
+    if (enhanceMode === "original") {
+      // Save raw Google Maps images only, no Gemini enhancement
+      for (const img of imageSources) {
+        const file = await saveFile(img.buffer, img.source, false)
+        generatedFiles.push(file)
+      }
+    } else if (enhanceMode === "enhanced") {
+      // Enhance with Gemini then save only enhanced versions
+      for (const img of imageSources) {
+        const enhancedBuffer = await enhanceImageWithGemini(img.buffer, geminiApiKey!, img.prompt)
+        const finalBuffer = enhancedBuffer ?? img.buffer
+        const file = await saveFile(finalBuffer, img.source, !!enhancedBuffer)
+        generatedFiles.push(file)
+      }
+    } else {
+      // "both" - save originals AND enhanced versions
+      for (const img of imageSources) {
+        // Save original first
+        const origFile = await saveFile(img.buffer, img.source, false)
+        generatedFiles.push(origFile)
+
+        // Then enhance and save
+        const enhancedBuffer = await enhanceImageWithGemini(img.buffer, geminiApiKey!, img.prompt)
+        if (enhancedBuffer) {
+          const enhFile = await saveFile(enhancedBuffer, img.source, true)
+          generatedFiles.push(enhFile)
+        }
+      }
     }
 
     return NextResponse.json({
       success: true,
-      fileId: fileRecord.id,
-      url,
-      path,
-      wasEnhanced,
-      imageSource,
+      files: generatedFiles,
+      // Backwards compatibility: return first file's fields at top level
+      fileId: generatedFiles[0]?.fileId,
+      url: generatedFiles[0]?.url,
+      path: generatedFiles[0]?.path,
+      wasEnhanced: generatedFiles[0]?.wasEnhanced ?? false,
+      imageSource: generatedFiles[0]?.imageSource ?? "street_view",
     })
   } catch (error: any) {
     console.error("[generate-site-image] Error:", error)
