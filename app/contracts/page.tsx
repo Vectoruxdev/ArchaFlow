@@ -7,6 +7,7 @@ import { ContractList, type ContractRow } from "@/components/contracts/contract-
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { cn } from "@/lib/utils"
+import { PageTransition } from "@/components/ui/page-transition"
 
 type Tab = "templates" | "contracts"
 
@@ -104,6 +105,7 @@ export default function ContractsPage() {
 
   return (
     <AppLayout>
+      <PageTransition>
       <div className="min-h-screen bg-[--af-bg-canvas] dark:bg-warm-950">
         {/* Header */}
         <div className="sticky top-0 z-10 bg-[--af-bg-surface] border-b border-[--af-border-default]">
@@ -151,6 +153,7 @@ export default function ContractsPage() {
           )}
         </div>
       </div>
+      </PageTransition>
     </AppLayout>
   )
 }

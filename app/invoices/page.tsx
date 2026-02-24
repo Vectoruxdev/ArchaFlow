@@ -21,6 +21,8 @@ import {
   Trash2,
 } from "lucide-react"
 import { Spinner } from "@/components/design-system"
+import { ListPageSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
 import { useAuth } from "@/lib/auth/auth-context"
 import { StatsCard } from "@/components/admin/stats-card"
 import { InvoiceDetailPanel } from "@/components/invoices/invoice-detail-panel"
@@ -217,9 +219,7 @@ export default function InvoicesPage() {
 
         {/* Table */}
         {loading ? (
-          <div className="flex justify-center py-12">
-            <Spinner size="md" />
-          </div>
+          <ListPageSkeleton />
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
             <FileText className="w-12 h-12 text-[--af-text-muted] mx-auto mb-3" />

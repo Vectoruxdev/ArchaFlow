@@ -18,8 +18,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AppLayout } from "@/components/layout/app-layout"
-import { ProjectDetailContent } from "@/components/project/project-detail-content"
-import { AssignTeamModal } from "@/components/project/assign-team-modal"
+const ProjectDetailContent = dynamic(() => import("@/components/project/project-detail-content").then(m => ({ default: m.ProjectDetailContent })), { ssr: false })
+import dynamic from "next/dynamic"
+
+const AssignTeamModal = dynamic(() => import("@/components/project/assign-team-modal").then(m => ({ default: m.AssignTeamModal })), { ssr: false })
 import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"

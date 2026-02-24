@@ -23,6 +23,8 @@ import {
   Moon,
 } from "lucide-react"
 import { Spinner } from "@/components/design-system"
+import { ProfileSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
 
 type NotificationPrefs = {
   email_notifications: boolean
@@ -273,9 +275,7 @@ export default function ProfilePage() {
   if (authLoading || !user) {
     return (
       <AppLayout>
-        <div className="flex items-center justify-center py-20">
-          <Spinner size="lg" />
-        </div>
+        <ProfileSkeleton />
       </AppLayout>
     )
   }

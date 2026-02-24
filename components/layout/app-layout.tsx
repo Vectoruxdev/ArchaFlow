@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
+import dynamic from "next/dynamic"
 import { useRouter, usePathname } from "next/navigation"
 import {
   Workflow,
@@ -31,18 +32,23 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useAuth } from "@/lib/auth/auth-context"
-import { supabase, isSupabaseConfigured } from "@/lib/supabase/client"
-import { CreateWorkspaceDialog } from "@/components/workspace/create-workspace-dialog"
-import { ChangelogDialog } from "@/components/ui/changelog-dialog"
-import { GlobalSearch, useGlobalSearchHotkeys } from "@/components/search/global-search"
+import { isSupabaseConfigured } from "@/lib/supabase/client"
+import { useAvatarUrl } from "@/lib/hooks/use-user-profile"
+import { useGlobalSearchHotkeys } from "@/components/search/global-search"
 import { navigationItems } from "@/lib/navigation"
 import { APP_VERSION } from "@/lib/app-version"
+
+const CreateWorkspaceDialog = dynamic(() => import("@/components/workspace/create-workspace-dialog").then(m => ({ default: m.CreateWorkspaceDialog })), { ssr: false })
+const ChangelogDialog = dynamic(() => import("@/components/ui/changelog-dialog").then(m => ({ default: m.ChangelogDialog })), { ssr: false })
+const GlobalSearch = dynamic(() => import("@/components/search/global-search").then(m => ({ default: m.GlobalSearch })), { ssr: false })
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
   const authContext = useAuth()
   const { user, workspaces, workspacesLoaded, currentWorkspace, switchWorkspace, signOut, loading: authLoading } = authContext || {}
+  const hasAuthed = useRef(false)
+  if (user) hasAuthed.current = true
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Redirect unauthenticated users to login, workspaceless users to onboarding
@@ -58,34 +64,17 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false)
   const [showChangelog, setShowChangelog] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [avatarUrl, setAvatarUrl] = useState<string>("")
+  const { data: avatarUrl = "", mutate: mutateAvatar } = useAvatarUrl(user?.id)
 
   const openSearch = useCallback(() => setSearchOpen(true), [])
 
   useEffect(() => {
-    if (!user?.id || !isSupabaseConfigured()) return
-    const loadAvatar = async () => {
-      try {
-        const { data } = await supabase
-          .from("user_profiles")
-          .select("avatar_url")
-          .eq("id", user.id)
-          .single()
-        if (data?.avatar_url) setAvatarUrl(data.avatar_url)
-      } catch {
-        /* ignore */
-      }
-    }
-    loadAvatar()
-  }, [user?.id])
-
-  useEffect(() => {
     const onAvatarUpdated = (e: CustomEvent<{ url: string }>) => {
-      setAvatarUrl(e.detail.url)
+      mutateAvatar(e.detail.url, false)
     }
     window.addEventListener("avatar-updated", onAvatarUpdated as EventListener)
     return () => window.removeEventListener("avatar-updated", onAvatarUpdated as EventListener)
-  }, [])
+  }, [mutateAvatar])
   useGlobalSearchHotkeys(openSearch)
 
   // Show actual workspace data or a loading placeholder
@@ -142,8 +131,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   // Get user initials for avatar
   const userInitials = user?.email?.slice(0, 2).toUpperCase() || "U"
 
-  // Show loading while checking auth or redirecting to login
-  if (authLoading || (isSupabaseConfigured() && !user)) {
+  // Show loading while checking auth — but only on true first visit, not on navigations
+  if ((authLoading && !hasAuthed.current) || (isSupabaseConfigured() && !user && !hasAuthed.current)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[--af-bg-canvas]">
         <div className="flex flex-col items-center gap-4">

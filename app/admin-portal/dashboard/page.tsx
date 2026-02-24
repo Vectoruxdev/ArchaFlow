@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react"
 import { Building2, Users, DollarSign, CreditCard } from "lucide-react"
 import { StatsCard } from "@/components/admin/stats-card"
-import { SignupChart } from "@/components/admin/signup-chart"
-import { MrrChart } from "@/components/admin/mrr-chart"
+import dynamic from "next/dynamic"
+
+const SignupChart = dynamic(() => import("@/components/admin/signup-chart").then(m => ({ default: m.SignupChart })), { ssr: false })
+const MrrChart = dynamic(() => import("@/components/admin/mrr-chart").then(m => ({ default: m.MrrChart })), { ssr: false })
 import { PlanBadge } from "@/components/billing/plan-badge"
 import type { AdminDashboardStats } from "@/lib/admin/types"
 

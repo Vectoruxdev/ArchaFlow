@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import Link from "next/link"
 import {
   Target,
@@ -18,40 +18,14 @@ import {
   FolderPlus,
   User,
 } from "lucide-react"
-import { Spinner } from "@/components/design-system"
 import { AppLayout } from "@/components/layout/app-layout"
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
 import { isSupabaseConfigured } from "@/lib/supabase/client"
-import { authFetch } from "@/lib/auth/auth-fetch"
 import { StatsCard } from "@/components/admin/stats-card"
-
-type CompanyStats = {
-  newLeads: number
-  activeProjects: number
-  overdueProjects: number
-  overdueInvoices: number
-  pendingInvoiceTotal: number
-  overdueTasks: number
-  teamWorkload: number
-}
-
-type PersonalStats = {
-  myProjects: number
-  myTasks: number
-  overdueTasks: number
-  activeTimeMinutes: number
-  upcomingDueCount: number
-}
-
-type WorkspaceActivity = {
-  id: string
-  activity_type: string
-  message: string
-  created_at: string
-  user_id: string | null
-}
+import { useDashboardStats, useDashboardActivities, type CompanyStats, type PersonalStats, type WorkspaceActivity } from "@/lib/hooks/use-dashboard"
+import { DashboardSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
 
 function formatTimeAgo(iso: string): string {
   const date = new Date(iso)
@@ -73,11 +47,8 @@ export default function DashboardPage() {
   const role = currentWorkspace?.role ?? "viewer"
   const isCompanyView = role === "owner" || role === "admin"
 
-  const [companyStats, setCompanyStats] = useState<CompanyStats | null>(null)
-  const [personalStats, setPersonalStats] = useState<PersonalStats | null>(null)
-  const [activities, setActivities] = useState<WorkspaceActivity[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
+  const { companyStats, personalStats, isLoading, error: loadError } = useDashboardStats(businessId, user?.id, isCompanyView)
+  const { data: activities = [] } = useDashboardActivities(businessId)
 
   const isAuthReady = !authLoading && workspacesLoaded
 
@@ -86,189 +57,6 @@ export default function DashboardPage() {
       switchWorkspace(workspaces[0].id)
     }
   }, [isAuthReady, currentWorkspace, workspaces, switchWorkspace])
-
-  useEffect(() => {
-    if (!businessId) return
-    const loadActivities = async () => {
-      try {
-        const res = await authFetch(`/api/activities?businessId=${encodeURIComponent(businessId)}`)
-        if (res.ok) {
-          const data = await res.json()
-          setActivities(Array.isArray(data) ? data : [])
-        }
-      } catch {
-        setActivities([])
-      }
-    }
-    loadActivities()
-  }, [businessId])
-
-  useEffect(() => {
-    if (!isAuthReady || !businessId || !user) {
-      if (isAuthReady && !businessId) setIsLoading(false)
-      return
-    }
-
-    if (!isSupabaseConfigured()) {
-      setIsLoading(false)
-      return
-    }
-
-    const loadStats = async () => {
-      setIsLoading(true)
-      setLoadError(null)
-      try {
-        const today = new Date().toISOString().split("T")[0]
-        const weekAgo = new Date()
-        weekAgo.setDate(weekAgo.getDate() - 7)
-        const weekAgoStr = weekAgo.toISOString().split("T")[0]
-
-        if (isCompanyView) {
-          const [projectsRes, overdueInvoicesRes, pendingInvoicesRes] = await Promise.all([
-            supabase
-              .from("projects")
-              .select("id, status, due_date, payment_status")
-              .eq("business_id", businessId)
-              .is("archived_at", null),
-            supabase
-              .from("invoices")
-              .select("id, total, due_date, status")
-              .eq("business_id", businessId)
-              .lt("due_date", today)
-              .in("status", ["sent", "viewed", "overdue", "partially_paid"]),
-            supabase
-              .from("invoices")
-              .select("amount_due")
-              .eq("business_id", businessId)
-              .in("status", ["draft", "sent", "viewed", "overdue", "partially_paid"]),
-          ])
-
-          const projects = (projectsRes.data || []) as { id: string; status: string; due_date: string | null; payment_status: string }[]
-          const projectIds = projects.map((p) => p.id)
-          const activeProjects = projects.filter((p) => p.status !== "completed").length
-          const overdueProjects = projects.filter((p) => p.due_date && p.due_date < today).length
-          const overdueInvoices = (overdueInvoicesRes.data || []).length
-          const pendingTotal = (pendingInvoicesRes.data || []).reduce((sum, inv) => sum + Number((inv as { amount_due: number }).amount_due || 0), 0)
-
-          let newLeads = 0
-          let overdueTasks = 0
-          let teamWorkload = 0
-          try {
-            const [{ count: leadsCount }, overdueTasksRes, allTasksRes] = await Promise.all([
-              supabase
-                .from("leads")
-                .select("*", { count: "exact", head: true })
-                .eq("business_id", businessId)
-                .is("archived_at", null)
-                .gte("created_at", weekAgoStr),
-              projectIds.length > 0
-                ? supabase
-                    .from("project_tasks")
-                    .select("id")
-                    .in("project_id", projectIds)
-                    .eq("completed", false)
-                    .lt("due_date", today)
-                : Promise.resolve({ data: [] }),
-              projectIds.length > 0
-                ? supabase
-                    .from("project_tasks")
-                    .select("id, completed")
-                    .in("project_id", projectIds)
-                : Promise.resolve({ data: [] }),
-            ])
-            newLeads = leadsCount ?? 0
-            overdueTasks = (overdueTasksRes.data || []).length
-
-            const totalProjects = projects.length
-            const completedProjects = projects.filter((p) => p.status === "completed").length
-            const allTasks = (allTasksRes.data || []) as { id: string; completed: boolean }[]
-            const totalTasks = allTasks.length
-            const completedTasks = allTasks.filter((t) => t.completed).length
-            teamWorkload = Math.round(((completedTasks + completedProjects) / Math.max(1, totalTasks + totalProjects)) * 100)
-          } catch {
-            /* leads table may not exist */
-          }
-
-          setCompanyStats({
-            newLeads,
-            activeProjects,
-            overdueProjects,
-            overdueInvoices,
-            pendingInvoiceTotal: pendingTotal,
-            overdueTasks,
-            teamWorkload,
-          })
-        } else {
-          const projectIdsRes = await supabase
-            .from("projects")
-            .select("id")
-            .eq("business_id", businessId)
-            .is("archived_at", null)
-          const projectIds = (projectIdsRes.data || []).map((p: { id: string }) => p.id)
-
-          const [
-            projectsRes,
-            tasksRes,
-            timeRes,
-            upcomingTasksRes,
-          ] = await Promise.all([
-            projectIds.length > 0
-              ? supabase
-                  .from("project_assignments")
-                  .select("project_id")
-                  .eq("user_id", user.id)
-                  .in("project_id", projectIds)
-              : Promise.resolve({ data: [] }),
-            projectIds.length > 0
-              ? supabase
-                  .from("project_tasks")
-                  .select("id, due_date, completed")
-                  .eq("assigned_to", user.id)
-                  .in("project_id", projectIds)
-              : Promise.resolve({ data: [] }),
-            supabase
-              .from("project_time_entries")
-              .select("duration, is_active")
-              .eq("user_id", user.id)
-              .or(`is_active.eq.true,date.eq.${today}`),
-            projectIds.length > 0
-              ? supabase
-                  .from("project_tasks")
-                  .select("id")
-                  .eq("assigned_to", user.id)
-                  .eq("completed", false)
-                  .gte("due_date", today)
-                  .lte("due_date", new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split("T")[0])
-                  .in("project_id", projectIds)
-              : Promise.resolve({ data: [] }),
-          ])
-
-          const myProjectIds = new Set((projectsRes.data || []).map((a: { project_id: string }) => a.project_id))
-          const tasks = (tasksRes.data || []) as { id: string; due_date: string | null; completed: boolean }[]
-          const myTasks = tasks.length
-          const overdueTasks = tasks.filter((t) => t.due_date && t.due_date < today && !t.completed).length
-          const activeEntries = (timeRes.data || []) as { duration: number; is_active: boolean }[]
-          const activeTimeMinutes = activeEntries.reduce((sum, e) => sum + (e.is_active ? (e.duration || 0) : 0), 0)
-          const upcomingDueCount = (upcomingTasksRes.data || []).length
-
-          setPersonalStats({
-            myProjects: myProjectIds.size,
-            myTasks,
-            overdueTasks,
-            activeTimeMinutes,
-            upcomingDueCount,
-          })
-        }
-      } catch (err) {
-        console.error("Dashboard load error:", err)
-        setLoadError(err instanceof Error ? err.message : "Failed to load dashboard")
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadStats()
-  }, [isAuthReady, businessId, user?.id, isCompanyView])
 
   if (!isSupabaseConfigured()) {
     return (
@@ -284,17 +72,8 @@ export default function DashboardPage() {
     return null
   }
 
-  if (!isAuthReady || isLoading) {
-    return (
-      <AppLayout>
-        <div className="flex items-center justify-center py-20">
-          <div className="text-center">
-            <Spinner size="lg" className="mx-auto mb-4" />
-            <p className="text-sm text-[--af-text-muted]">Loading dashboard...</p>
-          </div>
-        </div>
-      </AppLayout>
-    )
+  if (!isAuthReady || (isLoading && !companyStats && !personalStats)) {
+    return <AppLayout><DashboardSkeleton /></AppLayout>
   }
 
   if (!businessId) {
@@ -316,7 +95,7 @@ export default function DashboardPage() {
       <AppLayout>
         <div className="p-6">
           <div className="rounded-card border border-[--af-danger-border] bg-[--af-danger-bg] p-4">
-            <p className="text-sm text-[--af-danger-text]">{loadError}</p>
+            <p className="text-sm text-[--af-danger-text]">{loadError.message}</p>
           </div>
         </div>
       </AppLayout>
@@ -325,6 +104,7 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
+      <PageTransition>
       <div style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         <div className="flex items-center justify-between">
           <div>
@@ -412,6 +192,7 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      </PageTransition>
     </AppLayout>
   )
 }

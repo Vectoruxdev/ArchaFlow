@@ -4,7 +4,9 @@ import { useState, useEffect } from "react"
 import { useParams, useSearchParams } from "next/navigation"
 import { XCircle, CheckCircle2, Clock, AlertTriangle, CreditCard } from "lucide-react"
 import { Spinner } from "@/components/design-system"
-import { StripePaymentForm } from "@/components/invoices/stripe-payment-form"
+import dynamic from "next/dynamic"
+
+const StripePaymentForm = dynamic(() => import("@/components/invoices/stripe-payment-form").then(m => ({ default: m.StripePaymentForm })), { ssr: false })
 
 interface InvoiceData {
   id: string

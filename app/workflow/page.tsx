@@ -37,6 +37,8 @@ import {
   Minimize2,
 } from "lucide-react"
 import { Spinner } from "@/components/design-system"
+import { KanbanSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
 import { AppLayout } from "@/components/layout/app-layout"
 import { ProjectDetailContent } from "@/components/project/project-detail-content"
 import { AssignTeamModal } from "@/components/project/assign-team-modal"
@@ -1485,35 +1487,8 @@ export default function WorkflowPage() {
         )}
 
         {/* Auth Loading State */}
-        {(authLoading || workspacesLoading) && (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <Spinner size="lg" className="mx-auto mb-4" />
-              <p className="text-sm text-[--af-text-secondary]">
-                {authLoading ? "Authenticating..." : "Loading your workspaces..."}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Projects Loading State */}
-        {!authLoading && !workspacesLoading && isLoading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <Spinner size="lg" className="mx-auto mb-4" />
-              <p className="text-sm text-[--af-text-secondary]">Loading projects...</p>
-            </div>
-          </div>
-        )}
-
-        {/* Selecting workspace - workspaces exist but none selected yet */}
-        {isAuthReady && !authLoading && !workspacesLoading && workspaces.length > 0 && !businessId && (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <Spinner size="lg" className="mx-auto mb-4" />
-              <p className="text-sm text-[--af-text-secondary]">Selecting workspace...</p>
-            </div>
-          </div>
+        {(authLoading || workspacesLoading || isLoading || (isAuthReady && !authLoading && !workspacesLoading && workspaces.length > 0 && !businessId)) && (
+          <KanbanSkeleton />
         )}
 
         {/* No Workspaces State - Only show after auth is fully ready */}

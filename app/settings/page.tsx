@@ -39,6 +39,7 @@ import {
 import { PlanBadge } from "@/components/billing/plan-badge"
 import Link from "next/link"
 import { toast } from "@/lib/toast"
+import { PageTransition } from "@/components/ui/page-transition"
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -720,6 +721,7 @@ export default function SettingsPage() {
 
   return (
     <AppLayout>
+      <PageTransition>
       <div className="max-w-4xl mx-auto" style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -1534,6 +1536,7 @@ export default function SettingsPage() {
         )}
 
       </div>
+      </PageTransition>
 
       {/* New Role Modal */}
       <Dialog open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen}>

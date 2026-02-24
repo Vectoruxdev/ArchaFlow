@@ -7,7 +7,9 @@ import { Spinner } from "@/components/design-system"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AppLayout } from "@/components/layout/app-layout"
-import { ContractTemplateEditor } from "@/components/contracts/contract-template-editor"
+import dynamic from "next/dynamic"
+
+const ContractTemplateEditor = dynamic(() => import("@/components/contracts/contract-template-editor").then(m => ({ default: m.ContractTemplateEditor })), { ssr: false })
 import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
 

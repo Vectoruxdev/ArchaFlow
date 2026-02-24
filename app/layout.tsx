@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Inter, Cormorant_Garamond, IBM_Plex_Mono } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/lib/auth/auth-context"
+import { SWRProvider } from "@/lib/swr-provider"
 import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({
@@ -58,7 +59,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className={`${inter.variable} ${cormorant.variable} ${ibmPlexMono.variable}`}>
-        <AuthProvider>{children}</AuthProvider>
+        <SWRProvider><AuthProvider>{children}</AuthProvider></SWRProvider>
         <Toaster />
       </body>
     </html>

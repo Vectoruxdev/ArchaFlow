@@ -3,6 +3,9 @@
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { AppLayout } from "@/components/layout/app-layout"
+import { useClients, type Client } from "@/lib/hooks/use-clients"
+import { ListPageSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,7 +34,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ClientFormModal, type ClientFormData } from "@/components/clients/client-form-modal"
+import dynamic from "next/dynamic"
+import type { ClientFormData } from "@/components/clients/client-form-modal"
+
+const ClientFormModal = dynamic(() => import("@/components/clients/client-form-modal").then(m => ({ default: m.ClientFormModal })), { ssr: false })
 import { supabase } from "@/lib/supabase/client"
 import { recordActivity } from "@/lib/activity"
 import { toast } from "@/lib/toast"
@@ -48,126 +54,20 @@ import {
   ArchiveRestore,
 } from "lucide-react"
 
-// Types
-interface ClientContact {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  role: string
-  description: string
-}
-
-interface Client {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  address: string
-  description: string
-  archivedAt: string | null
-  createdAt: string
-  totalProjects: number
-  activeProjects: number
-  contacts: ClientContact[]
-}
-
 export default function ClientsPage() {
   const router = useRouter()
-  const { currentWorkspace, workspacesLoaded, user } = useAuth()
-  const [clients, setClients] = useState<Client[]>([])
+  const { currentWorkspace, user } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingClient, setEditingClient] = useState<ClientFormData | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [isDeletingClient, setIsDeletingClient] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<"active" | "archived">("active")
   const itemsPerPage = 10
 
   const businessId = currentWorkspace?.id
-
-  // Load clients from Supabase
-  useEffect(() => {
-    if (businessId) {
-      loadClients()
-    } else if (workspacesLoaded) {
-      setIsLoading(false)
-    }
-  }, [businessId, workspacesLoaded])
-
-  const loadClients = async () => {
-    if (!businessId) return
-    setIsLoading(true)
-    setLoadError(null)
-
-    try {
-      // Fetch clients with sub-contacts
-      const { data: clientsData, error: clientsError } = await supabase
-        .from("clients")
-        .select("*, client_contacts(*)")
-        .eq("business_id", businessId)
-        .order("created_at", { ascending: false })
-
-      if (clientsError) throw clientsError
-
-      // Fetch project counts per client
-      const { data: projectCounts, error: projectsError } = await supabase
-        .from("projects")
-        .select("client_id, archived_at")
-        .eq("business_id", businessId)
-        .not("client_id", "is", null)
-
-      if (projectsError) throw projectsError
-
-      // Build project count map
-      const countMap: Record<string, { total: number; active: number }> = {}
-      for (const proj of projectCounts || []) {
-        if (!proj.client_id) continue
-        if (!countMap[proj.client_id]) {
-          countMap[proj.client_id] = { total: 0, active: 0 }
-        }
-        countMap[proj.client_id].total++
-        if (!proj.archived_at) {
-          countMap[proj.client_id].active++
-        }
-      }
-
-      const transformed: Client[] = (clientsData || []).map((c: any) => ({
-        id: c.id,
-        firstName: c.first_name,
-        lastName: c.last_name,
-        email: c.email || "",
-        phone: c.phone || "",
-        address: c.address || "",
-        description: c.description || "",
-        archivedAt: c.archived_at,
-        createdAt: c.created_at,
-        totalProjects: countMap[c.id]?.total || 0,
-        activeProjects: countMap[c.id]?.active || 0,
-        contacts: (c.client_contacts || []).map((cc: any) => ({
-          id: cc.id,
-          firstName: cc.first_name,
-          lastName: cc.last_name,
-          email: cc.email || "",
-          phone: cc.phone || "",
-          role: cc.role || "",
-          description: cc.description || "",
-        })),
-      }))
-
-      setClients(transformed)
-    } catch (error: any) {
-      console.error("Error loading clients:", error)
-      setLoadError(error.message)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const { data: clients = [], isLoading, mutate } = useClients(businessId)
 
   // CRUD: Create or Update client
   const handleSave = async (formData: ClientFormData) => {
@@ -271,7 +171,7 @@ export default function ClientsPage() {
     }
 
     // Reload clients list
-    await loadClients()
+    await mutate()
     setEditingClient(null)
   }
 
@@ -284,7 +184,7 @@ export default function ClientsPage() {
         .eq("id", clientId)
 
       if (error) throw error
-      await loadClients()
+      await mutate()
     } catch (error: any) {
       console.error("Error archiving client:", error)
       toast.error("Failed to archive client: " + error.message)
@@ -300,7 +200,7 @@ export default function ClientsPage() {
         .eq("id", clientId)
 
       if (error) throw error
-      await loadClients()
+      await mutate()
     } catch (error: any) {
       console.error("Error unarchiving client:", error)
       toast.error("Failed to unarchive client: " + error.message)
@@ -320,7 +220,7 @@ export default function ClientsPage() {
 
       if (error) throw error
 
-      await loadClients()
+      await mutate()
       setDeleteConfirm(null)
     } catch (error: any) {
       console.error("Error deleting client:", error)
@@ -390,17 +290,9 @@ export default function ClientsPage() {
     setCurrentPage(1)
   }, [activeTab, searchQuery])
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <AppLayout>
-        <div className="p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-[--af-text-muted]">Loading clients...</div>
-          </div>
-        </div>
-      </AppLayout>
-    )
+  // Loading state — only show skeleton on true first load (no cached data)
+  if (isLoading && clients.length === 0) {
+    return <AppLayout><ListPageSkeleton /></AppLayout>
   }
 
   // Empty State (no clients at all)
@@ -433,6 +325,7 @@ export default function ClientsPage() {
 
   return (
     <AppLayout>
+      <PageTransition>
       <div style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -556,6 +449,7 @@ export default function ClientsPage() {
           </DialogContent>
         </Dialog>
       </div>
+      </PageTransition>
     </AppLayout>
   )
 

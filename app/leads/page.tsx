@@ -3,6 +3,9 @@
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { AppLayout } from "@/components/layout/app-layout"
+import { useLeads, type Lead } from "@/lib/hooks/use-leads"
+import { ListPageSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -49,7 +52,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { LeadFormModal, type LeadFormData } from "@/components/leads/lead-form-modal"
+import dynamic from "next/dynamic"
+import type { LeadFormData } from "@/components/leads/lead-form-modal"
+
+const LeadFormModal = dynamic(() => import("@/components/leads/lead-form-modal").then(m => ({ default: m.LeadFormModal })), { ssr: false })
 import { authFetch } from "@/lib/auth/auth-fetch"
 import { toast } from "@/lib/toast"
 import { supabase } from "@/lib/supabase/client"
@@ -72,44 +78,6 @@ import {
   SlidersHorizontal,
 } from "lucide-react"
 import { StatsCard } from "@/components/admin/stats-card"
-
-// Types
-interface Lead {
-  id: string
-  uniqueCustomerIdentifier: string
-  leadTypeId: string | null
-  leadTypeName: string | null
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  companyName: string
-  address: string
-  city: string
-  state: string
-  source: string
-  interest: string
-  painPoints: string
-  budget: number | null
-  squareFootage: number | null
-  costPerSqft: number | null
-  discountType: string | null
-  discountValue: number | null
-  temperature: string
-  status: string
-  leadScore: number
-  nextAction: string
-  nextActionDate: string | null
-  notes: string
-  assignedTo: string | null
-  assignedName: string | null
-  clientId: string | null
-  projectId: string | null
-  convertedAt: string | null
-  archivedAt: string | null
-  createdAt: string
-  updatedAt: string
-}
 
 type DatePreset = "today" | "7d" | "14d" | "30d" | "365d" | "custom"
 
@@ -219,7 +187,8 @@ function StatusBadge({ status }: { status: string }) {
 export default function LeadsPage() {
   const router = useRouter()
   const { currentWorkspace, user, workspacesLoaded } = useAuth()
-  const [leads, setLeads] = useState<Lead[]>([])
+  const businessId = currentWorkspace?.id
+  const { data: leads = [], isLoading, mutate } = useLeads(businessId)
   const [searchQuery, setSearchQuery] = useState("")
   const [temperatureFilter, setTemperatureFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -230,8 +199,6 @@ export default function LeadsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [isDeletingLead, setIsDeletingLead] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
   const [workspaceUsers, setWorkspaceUsers] = useState<{ id: string; email: string; name?: string }[]>([])
   const [leadTypes, setLeadTypes] = useState<{ id: string; label: string }[]>([])
   const [salesAgentsForFilter, setSalesAgentsForFilter] = useState<{ id: string; email: string; name?: string }[]>([])
@@ -242,79 +209,12 @@ export default function LeadsPage() {
   const [statsLoading, setStatsLoading] = useState(false)
   const itemsPerPage = 10
 
-  const businessId = currentWorkspace?.id
-
-  // Load leads from Supabase
   useEffect(() => {
     if (businessId) {
-      loadLeads()
       loadWorkspaceUsers()
       loadLeadTypes()
-    } else if (workspacesLoaded) {
-      setIsLoading(false)
     }
   }, [businessId, workspacesLoaded])
-
-  const loadLeads = async () => {
-    if (!businessId) return
-    setIsLoading(true)
-    setLoadError(null)
-
-    try {
-      const [{ data: leadsData, error: leadsError }, { data: typesData }] = await Promise.all([
-        supabase.from("leads").select("*").eq("business_id", businessId).order("created_at", { ascending: false }),
-        supabase.from("lead_types").select("id, label").eq("business_id", businessId).order("order_index", { ascending: true }),
-      ])
-
-      if (leadsError) throw leadsError
-
-      const leadTypeMap = Object.fromEntries((typesData || []).map((lt: any) => [lt.id, lt.label]))
-
-      const transformed: Lead[] = (leadsData || []).map((l: any) => ({
-        id: l.id,
-        uniqueCustomerIdentifier: l.unique_customer_identifier || "",
-        leadTypeId: l.lead_type_id || null,
-        leadTypeName: l.lead_type_id ? leadTypeMap[l.lead_type_id] || null : null,
-        firstName: l.first_name,
-        lastName: l.last_name,
-        email: l.email || "",
-        phone: l.phone || "",
-        companyName: l.company_name || "",
-        address: l.address || "",
-        city: l.city || "",
-        state: l.state || "",
-        source: l.source || "other",
-        interest: l.interest || "",
-        painPoints: l.pain_points || "",
-        budget: l.budget ?? null,
-        squareFootage: l.square_footage ?? null,
-        costPerSqft: l.cost_per_sqft ?? null,
-        discountType: l.discount_type ?? null,
-        discountValue: l.discount_value ?? null,
-        temperature: l.temperature || "cold",
-        status: l.status || "new",
-        leadScore: l.lead_score || 0,
-        nextAction: l.next_action || "",
-        nextActionDate: l.next_action_date,
-        notes: l.notes || "",
-        assignedTo: l.assigned_to,
-        assignedName: null, // will be populated below
-        clientId: l.client_id,
-        projectId: l.project_id,
-        convertedAt: l.converted_at,
-        archivedAt: l.archived_at,
-        createdAt: l.created_at,
-        updatedAt: l.updated_at,
-      }))
-
-      setLeads(transformed)
-    } catch (error: any) {
-      console.error("Error loading leads:", error)
-      setLoadError(error.message)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const loadWorkspaceUsers = async () => {
     if (!businessId) return
@@ -469,7 +369,7 @@ export default function LeadsPage() {
       if (error) throw error
     }
 
-    await loadLeads()
+    await mutate()
     loadLeadsStats()
     setEditingLead(null)
   }
@@ -482,7 +382,7 @@ export default function LeadsPage() {
         .update({ archived_at: new Date().toISOString() })
         .eq("id", leadId)
       if (error) throw error
-      await loadLeads()
+      await mutate()
     } catch (error: any) {
       console.error("Error archiving lead:", error)
       toast.error("Failed to archive lead: " + error.message)
@@ -497,7 +397,7 @@ export default function LeadsPage() {
         .update({ archived_at: null })
         .eq("id", leadId)
       if (error) throw error
-      await loadLeads()
+      await mutate()
     } catch (error: any) {
       console.error("Error unarchiving lead:", error)
       toast.error("Failed to unarchive lead: " + error.message)
@@ -514,7 +414,7 @@ export default function LeadsPage() {
         .delete()
         .eq("id", deleteConfirm)
       if (error) throw error
-      await loadLeads()
+      await mutate()
       setDeleteConfirm(null)
     } catch (error: any) {
       console.error("Error deleting lead:", error)
@@ -613,17 +513,8 @@ export default function LeadsPage() {
     setCurrentPage(1)
   }, [lifecycleFilter, searchQuery, temperatureFilter, statusFilter, assignedToFilter])
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <AppLayout>
-        <div className="p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-[--af-text-muted]">Loading leads...</div>
-          </div>
-        </div>
-      </AppLayout>
-    )
+  if (isLoading && leads.length === 0) {
+    return <AppLayout><ListPageSkeleton /></AppLayout>
   }
 
   // Empty State
@@ -658,6 +549,7 @@ export default function LeadsPage() {
 
   return (
     <AppLayout>
+      <PageTransition>
       <div style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -1011,6 +903,7 @@ export default function LeadsPage() {
           </DialogContent>
         </Dialog>
       </div>
+      </PageTransition>
     </AppLayout>
   )
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import {
   ArrowLeft,
@@ -34,48 +34,16 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { AppLayout } from "@/components/layout/app-layout"
-import { ClientFormModal, type ClientFormData } from "@/components/clients/client-form-modal"
+import dynamic from "next/dynamic"
+import type { ClientFormData } from "@/components/clients/client-form-modal"
+
+const ClientFormModal = dynamic(() => import("@/components/clients/client-form-modal").then(m => ({ default: m.ClientFormModal })), { ssr: false })
 import { ContractStatusBadge } from "@/components/contracts/contract-status-badge"
 import { supabase } from "@/lib/supabase/client"
 import { useAuth } from "@/lib/auth/auth-context"
-
-interface ClientDetail {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  address: string
-  description: string
-  archivedAt: string | null
-  createdAt: string
-  contacts: {
-    id: string
-    firstName: string
-    lastName: string
-    email: string
-    phone: string
-    role: string
-    description: string
-  }[]
-}
-
-interface LinkedProject {
-  id: string
-  title: string
-  status: string
-  budget: number | null
-  dueDate: string | null
-  archivedAt: string | null
-}
-
-interface LinkedContract {
-  id: string
-  name: string
-  status: string
-  sentAt: string | null
-  signedAt: string | null
-}
+import { useClientDetail, type ClientDetail, type LinkedProject, type LinkedContract } from "@/lib/hooks/use-client-detail"
+import { DetailSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
 
 const statusColors: Record<string, string> = {
   lead: "bg-[--af-info-bg]0/10 text-[--af-info-text] border-[--af-info-border]/20",
@@ -87,110 +55,11 @@ const statusColors: Record<string, string> = {
 export default function ClientDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const { currentWorkspace } = useAuth()
-  const [client, setClient] = useState<ClientDetail | null>(null)
-  const [projects, setProjects] = useState<LinkedProject[]>([])
-  const [contracts, setContracts] = useState<LinkedContract[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
+  const { data, isLoading, error: loadError, mutate } = useClientDetail(params.id)
+  const client = data?.client ?? null
+  const projects = data?.projects ?? []
+  const contracts = data?.contracts ?? []
   const [isEditOpen, setIsEditOpen] = useState(false)
-
-  useEffect(() => {
-    loadClient()
-    loadLinkedProjects()
-    loadLinkedContracts()
-  }, [params.id])
-
-  const loadClient = async () => {
-    setIsLoading(true)
-    setLoadError(null)
-
-    try {
-      const { data, error } = await supabase
-        .from("clients")
-        .select("*, client_contacts(*)")
-        .eq("id", params.id)
-        .single()
-
-      if (error) throw error
-
-      if (data) {
-        setClient({
-          id: data.id,
-          firstName: data.first_name,
-          lastName: data.last_name,
-          email: data.email || "",
-          phone: data.phone || "",
-          address: data.address || "",
-          description: data.description || "",
-          archivedAt: data.archived_at,
-          createdAt: data.created_at,
-          contacts: (data.client_contacts || []).map((cc: any) => ({
-            id: cc.id,
-            firstName: cc.first_name,
-            lastName: cc.last_name,
-            email: cc.email || "",
-            phone: cc.phone || "",
-            role: cc.role || "",
-            description: cc.description || "",
-          })),
-        })
-      }
-    } catch (error: any) {
-      console.error("Error loading client:", error)
-      setLoadError(error.message)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const loadLinkedProjects = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("projects")
-        .select("id, title, status, budget, due_date, archived_at")
-        .eq("client_id", params.id)
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-
-      setProjects(
-        (data || []).map((p: any) => ({
-          id: p.id,
-          title: p.title,
-          status: p.status,
-          budget: p.budget,
-          dueDate: p.due_date,
-          archivedAt: p.archived_at,
-        }))
-      )
-    } catch (error: any) {
-      console.error("Error loading linked projects:", error)
-    }
-  }
-
-  const loadLinkedContracts = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("contracts")
-        .select("id, name, status, sent_at, signed_at")
-        .eq("client_id", params.id)
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-
-      setContracts(
-        (data || []).map((c: any) => ({
-          id: c.id,
-          name: c.name,
-          status: c.status,
-          sentAt: c.sent_at,
-          signedAt: c.signed_at,
-        }))
-      )
-    } catch (error: any) {
-      console.error("Error loading linked contracts:", error)
-    }
-  }
 
   const archiveClient = async () => {
     if (!currentWorkspace?.id) return
@@ -253,7 +122,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
     }
 
     // Reload client data
-    await loadClient()
+    await mutate()
   }
 
   const handleBack = () => {
@@ -304,7 +173,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
                 ) : loadError ? (
                   <div>
                     <div className="text-[--af-danger-text]">Error loading client</div>
-                    <p className="text-sm text-[--af-text-muted] mt-1">{loadError}</p>
+                    <p className="text-sm text-[--af-text-muted] mt-1">{loadError?.message}</p>
                   </div>
                 ) : client ? (
                   <div className="min-w-0 flex-1">
@@ -365,6 +234,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
 
         {/* Content */}
         {client && (
+          <PageTransition>
           <div className="p-6 space-y-6">
             {/* Client Information Card */}
             <div className="bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-6">
@@ -588,6 +458,7 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
               )}
             </div>
           </div>
+          </PageTransition>
         )}
 
         {/* Edit Client Modal */}

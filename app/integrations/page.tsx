@@ -14,12 +14,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ChannelSelectDialog } from "@/components/integrations/channel-select-dialog"
-import { MessageScanDialog } from "@/components/integrations/message-scan-dialog"
+import dynamic from "next/dynamic"
+
+const ChannelSelectDialog = dynamic(() => import("@/components/integrations/channel-select-dialog").then(m => ({ default: m.ChannelSelectDialog })), { ssr: false })
+const MessageScanDialog = dynamic(() => import("@/components/integrations/message-scan-dialog").then(m => ({ default: m.MessageScanDialog })), { ssr: false })
 import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
 import { Check, Search, Settings, ExternalLink } from "lucide-react"
 import { Spinner } from "@/components/design-system"
+import { IntegrationsSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
 import type { Provider } from "@/lib/integrations/types"
 
 interface Integration {
@@ -214,6 +218,7 @@ export default function IntegrationsPage() {
 
   return (
     <AppLayout>
+      <PageTransition>
       <div className="p-6 lg:p-8 space-y-8">
         {/* Header */}
         <div className="max-w-3xl">
@@ -431,6 +436,7 @@ export default function IntegrationsPage() {
           providerName={scanDialog.providerName}
         />
       </div>
+      </PageTransition>
     </AppLayout>
   )
 }

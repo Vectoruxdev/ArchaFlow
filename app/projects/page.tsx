@@ -20,6 +20,9 @@ import {
   Sparkles,
 } from "lucide-react"
 import { AppLayout } from "@/components/layout/app-layout"
+import { ListPageSkeleton } from "@/components/ui/skeletons"
+import { PageTransition } from "@/components/ui/page-transition"
+import { useProjects, type Project } from "@/lib/hooks/use-projects"
 import { EmptyState } from "@/components/ui/empty-state"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -30,7 +33,6 @@ import { recordActivity } from "@/lib/activity"
 import { toast } from "@/lib/toast"
 import { useAuth } from "@/lib/auth/auth-context"
 import { StatsCard } from "@/components/admin/stats-card"
-import { authFetch } from "@/lib/auth/auth-fetch"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,30 +62,14 @@ import { ClientSelect } from "@/components/ui/client-select"
 import { CityCombobox } from "@/components/ui/city-combobox"
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { US_STATES } from "@/lib/us-states"
-import { SiteImageGenerationModal, type SiteImageGenStep } from "@/components/project/site-image-generation-modal"
+import dynamic from "next/dynamic"
+import type { SiteImageGenStep } from "@/components/project/site-image-generation-modal"
+
+const SiteImageGenerationModal = dynamic(() => import("@/components/project/site-image-generation-modal").then(m => ({ default: m.SiteImageGenerationModal })), { ssr: false })
 
 // Types
 type ProjectStatus = "lead" | "sale" | "design" | "completed"
 type PaymentStatus = "pending" | "partial" | "paid"
-
-interface Project {
-  id: string
-  title: string
-  client: string
-  status: ProjectStatus
-  paymentStatus: PaymentStatus
-  budget: number
-  spent: number
-  startDate: string
-  dueDate: string
-  progress: number
-  assignees: { name: string; avatar: string }[]
-  priority: "low" | "medium" | "high"
-  archivedAt?: string | null
-}
-
-// No mock data - application starts clean
-const allProjects: Project[] = []
 
 function fmtCurrency(v: number) {
   if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`
@@ -112,13 +98,12 @@ const priorityColors = {
 
 export default function ProjectsPage() {
   const router = useRouter()
-  const { currentWorkspace, workspacesLoaded, user } = useAuth()
-  const [projects, setProjects] = useState(allProjects)
+  const { currentWorkspace, user } = useAuth()
+  const businessId = currentWorkspace?.id
+  const { data: projects = [], isLoading, error: loadError, mutate } = useProjects(businessId)
   const [searchQuery, setSearchQuery] = useState("")
   const [filterStatus, setFilterStatus] = useState<ProjectStatus | "all">("all")
   const [isNewProjectOpen, setIsNewProjectOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
   
   // New project form state
   const [newProject, setNewProject] = useState({
@@ -158,114 +143,28 @@ export default function ProjectsPage() {
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null)
   const [isDeletingProject, setIsDeletingProject] = useState(false)
 
-  const businessId = currentWorkspace?.id
-
-  // Load projects from Supabase
-  useEffect(() => {
-    if (businessId) {
-      loadProjects()
-    } else if (workspacesLoaded) {
-      setIsLoading(false)
-    }
-  }, [businessId, workspacesLoaded])
-
   // Listen for project updates from other pages (e.g., Workflow)
   useEffect(() => {
     const handleProjectsUpdated = () => {
       console.log("📢 Projects page received projectsUpdated event, reloading...")
-      if (businessId) {
-        loadProjects()
-      }
+      mutate()
     }
 
     window.addEventListener('projectsUpdated', handleProjectsUpdated)
-    
+
     return () => {
       window.removeEventListener('projectsUpdated', handleProjectsUpdated)
     }
-  }, [businessId])
+  }, [mutate])
 
   // Reload data when session is refreshed (e.g. after returning from idle tab)
   useEffect(() => {
     const onSessionRefreshed = () => {
-      if (businessId) loadProjects()
+      mutate()
     }
     window.addEventListener("session-refreshed", onSessionRefreshed)
     return () => window.removeEventListener("session-refreshed", onSessionRefreshed)
-  }, [businessId])
-
-  const loadProjects = async () => {
-    if (!businessId) return
-    setIsLoading(true)
-    setLoadError(null)
-
-    try {
-      console.log("🔄 [Projects Page] Loading projects for workspace:", businessId)
-
-      let membersMap: Record<string, { name: string; avatar: string }> = {}
-      try {
-        const membersRes = await authFetch(`/api/teams/members?businessId=${encodeURIComponent(businessId)}`)
-        if (membersRes.ok) {
-          const membersList: Array<{ userId: string; firstName: string; lastName: string; email?: string; avatarUrl?: string }> = await membersRes.json()
-          const displayName = (m: { firstName: string; lastName: string; email?: string }) =>
-            [m.firstName, m.lastName].filter(Boolean).join(" ").trim() || (m.email || "").trim() || "?"
-          for (const m of membersList || []) {
-            membersMap[m.userId] = { name: displayName(m), avatar: m.avatarUrl || "" }
-          }
-        }
-      } catch {
-        /* ignore */
-      }
-
-      const { data, error } = await supabase
-        .from("projects")
-        .select(`
-          *,
-          project_assignments(user_id)
-        `)
-        .eq("business_id", businessId)
-        .order("created_at", { ascending: false })
-
-      if (error) throw error
-
-      console.log("📦 [Projects Page] Loaded", data?.length || 0, "projects from database")
-
-      const transformedProjects: Project[] = (data || []).map((proj: any) => ({
-        id: proj.id,
-        title: proj.title,
-        client: proj.client_name || "Unknown Client",
-        status: proj.status,
-        paymentStatus: proj.payment_status,
-        budget: proj.budget || 0,
-        spent: proj.spent || 0,
-        startDate: proj.start_date || new Date().toISOString().split("T")[0],
-        dueDate: proj.due_date || new Date().toISOString().split("T")[0],
-        progress: Math.round(((proj.spent || 0) / (proj.budget || 1)) * 100),
-        assignees: (proj.project_assignments || []).map((assignment: any) => {
-          const member = membersMap[assignment.user_id]
-          return {
-            name: member?.name || assignment.user_id || "?",
-            avatar: member?.avatar || "",
-          }
-        }),
-        priority: proj.priority,
-        archivedAt: proj.archived_at,
-      }))
-
-      console.log("✅ [Projects Page] Transformed projects:", transformedProjects.map(p => ({
-        id: p.id,
-        title: p.title,
-        status: p.status
-      })))
-
-      setProjects(transformedProjects)
-    } catch (error: any) {
-      console.error("❌ [Projects Page] Error loading projects:", error)
-      setLoadError(error.message)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  }, [mutate])
 
   const createProject = async () => {
     if (!currentWorkspace?.id) {
@@ -338,10 +237,10 @@ export default function ProjectsPage() {
 
     try {
       const created = await createProject()
-      
+
       // Reload projects list
-      await loadProjects()
-      
+      await mutate()
+
       // Notify workflow to refresh
       window.dispatchEvent(new Event('projectsUpdated'))
       console.log("📢 [Projects Page] Dispatched projectsUpdated event")
@@ -410,10 +309,10 @@ export default function ProjectsPage() {
       if (error) throw error
       
       console.log("✅ [Projects Page] Project archived successfully")
-      
+
       // Reload projects
-      await loadProjects()
-      
+      await mutate()
+
       // Notify workflow
       window.dispatchEvent(new Event('projectsUpdated'))
     } catch (error: any) {
@@ -435,10 +334,10 @@ export default function ProjectsPage() {
       if (error) throw error
       
       console.log("✅ [Projects Page] Project unarchived successfully")
-      
+
       // Reload projects
-      await loadProjects()
-      
+      await mutate()
+
       // Notify workflow
       window.dispatchEvent(new Event('projectsUpdated'))
     } catch (error: any) {
@@ -469,10 +368,10 @@ export default function ProjectsPage() {
       if (error) throw error
       
       console.log("✅ [Projects Page] Project deleted successfully")
-      
+
       // Reload projects
-      await loadProjects()
-      
+      await mutate()
+
       // Notify workflow
       window.dispatchEvent(new Event('projectsUpdated'))
       
@@ -503,17 +402,9 @@ export default function ProjectsPage() {
   // Use the appropriate list based on active tab
   const displayProjects = activeTab === "active" ? activeProjects : archivedProjects
 
-  // Loading state
-  if (isLoading) {
-    return (
-      <AppLayout>
-        <div className="p-6">
-          <div className="flex items-center justify-center py-20">
-            <div className="text-[--af-text-muted]">Loading projects...</div>
-          </div>
-        </div>
-      </AppLayout>
-    )
+  // Loading state — only show skeleton on true first load (no cached data)
+  if (isLoading && projects.length === 0) {
+    return <AppLayout><ListPageSkeleton /></AppLayout>
   }
 
   // Calculate stats (only for active projects)
@@ -526,6 +417,7 @@ export default function ProjectsPage() {
 
   return (
     <AppLayout>
+      <PageTransition>
       <div style={{ padding: "var(--af-density-page-padding)", display: "flex", flexDirection: "column", gap: "var(--af-density-section-gap)" }}>
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -1217,6 +1109,7 @@ export default function ProjectsPage() {
           </DialogContent>
         </Dialog>
       </div>
+      </PageTransition>
     </AppLayout>
   )
 }
