@@ -334,6 +334,8 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
   // Inline Subtask Creation State
   const [addingSubtaskForTodo, setAddingSubtaskForTodo] = useState<string | null>(null)
   const [newInlineSubtaskTitle, setNewInlineSubtaskTitle] = useState("")
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null)
+  const [suppressDeleteWarning, setSuppressDeleteWarning] = useState(false)
   
   // Current logged-in user (mock)
   const currentUser = "James Wilson"
@@ -723,8 +725,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     }
   }
 
-  const deleteProjectFile = async (fileId: string, fileName: string) => {
-    if (!confirm(`Delete "${fileName}"? This cannot be undone.`)) return
+  const performDelete = async (fileId: string) => {
     try {
       const res = await fetch(`/api/projects/files?fileId=${encodeURIComponent(fileId)}`, {
         method: "DELETE",
@@ -738,6 +739,25 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     } catch (err: any) {
       toast.error(err.message || "Failed to delete file")
     }
+  }
+
+  const handleDeleteClick = (fileId: string, fileName: string) => {
+    const suppressUntil = localStorage.getItem("af-suppress-delete-confirm")
+    if (suppressUntil && Number(suppressUntil) > Date.now()) {
+      performDelete(fileId)
+      return
+    }
+    setDeleteConfirm({ id: fileId, name: fileName })
+  }
+
+  const confirmDelete = () => {
+    if (!deleteConfirm) return
+    if (suppressDeleteWarning) {
+      localStorage.setItem("af-suppress-delete-confirm", String(Date.now() + 3600000))
+    }
+    performDelete(deleteConfirm.id)
+    setDeleteConfirm(null)
+    setSuppressDeleteWarning(false)
   }
 
   const openSiteImageModal = () => {
@@ -1488,7 +1508,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                               className="h-8 w-8 text-[--af-text-muted] hover:text-[--af-danger-text]"
                               onClick={(e) => {
                                 e.stopPropagation()
-                                deleteProjectFile(file.id, file.name)
+                                handleDeleteClick(file.id, file.name)
                               }}
                             >
                               <Trash2 className="w-4 h-4" />
@@ -1834,6 +1854,27 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
           </DialogContent>
         </Dialog>
       )}
+
+      <Dialog open={!!deleteConfirm} onOpenChange={(open) => { if (!open) { setDeleteConfirm(null); setSuppressDeleteWarning(false) } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete File</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &quot;{deleteConfirm?.name}&quot;? This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2">
+            <Checkbox id="suppress-delete" checked={suppressDeleteWarning} onCheckedChange={(checked) => setSuppressDeleteWarning(!!checked)} />
+            <label htmlFor="suppress-delete" className="text-sm text-[--af-text-muted] cursor-pointer">
+              Don&apos;t warn me about deleting files for the next hour
+            </label>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setDeleteConfirm(null); setSuppressDeleteWarning(false) }}>Cancel</Button>
+            <Button variant="destructive" onClick={confirmDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
