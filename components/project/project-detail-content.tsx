@@ -723,6 +723,23 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     }
   }
 
+  const deleteProjectFile = async (fileId: string, fileName: string) => {
+    if (!confirm(`Delete "${fileName}"? This cannot be undone.`)) return
+    try {
+      const res = await fetch(`/api/projects/files?fileId=${encodeURIComponent(fileId)}`, {
+        method: "DELETE",
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || "Failed to delete file")
+      }
+      toast.success("File deleted")
+      setProjectFiles((prev) => prev.filter((f) => f.id !== fileId))
+    } catch (err: any) {
+      toast.error(err.message || "Failed to delete file")
+    }
+  }
+
   const openSiteImageModal = () => {
     if (!project.location) return
     setSiteImageGenStep("options")
@@ -1447,23 +1464,36 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                               <span>{file.uploadedAt}</span>
                             </div>
                           </div>
-                          {file.url ? (
-                            <a
-                              href={file.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              download={file.name}
-                              onClick={(e) => e.stopPropagation()}
-                            >
+                          <div className="flex items-center gap-0.5 flex-shrink-0">
+                            {file.url ? (
+                              <a
+                                href={file.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download={file.name}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <Download className="w-4 h-4" />
+                                </Button>
+                              </a>
+                            ) : (
                               <Button variant="ghost" size="icon" className="h-8 w-8">
                                 <Download className="w-4 h-4" />
                               </Button>
-                            </a>
-                          ) : (
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <Download className="w-4 h-4" />
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-[--af-text-muted] hover:text-[--af-danger-text]"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                deleteProjectFile(file.id, file.name)
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" />
                             </Button>
-                          )}
+                          </div>
                         </div>
                       </div>
                     )

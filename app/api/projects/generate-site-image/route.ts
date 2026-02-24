@@ -9,9 +9,9 @@ export const dynamic = "force-dynamic"
 // Two Gemini calls + two Google Maps fetches can take a while
 export const maxDuration = 120
 
-const STREET_VIEW_ENHANCEMENT_PROMPT = `You are an architectural photography enhancer. Take this street-level photo of a property and enhance it to look like a professional architectural photograph. Increase depth and 3D realism, improve lighting and sharpness, enhance colors and contrast, and make it look like a high-end real estate or architectural photo. Keep the same perspective and property structure. Output only the enhanced image.`
+const STREET_VIEW_ENHANCEMENT_PROMPT = `Transform this Google Street View photo into a stunning, professional architectural photograph. Make dramatic, clearly visible improvements: significantly brighten and warm the lighting as if shot during golden hour, sharpen all architectural details and edges, boost color saturation and vibrancy, add depth with enhanced shadows and highlights, remove visual noise and compression artifacts, make the sky look vivid and dramatic, and ensure the building looks crisp and magazine-worthy. The result should look noticeably different and superior to the original — like a professional real estate photographer shot it. Output only the enhanced image.`
 
-const AERIAL_ENHANCEMENT_PROMPT = `You are an architectural photography enhancer. Take this aerial/satellite photo of a property and enhance it to look like a professional aerial architectural photograph. Improve clarity and sharpness, enhance colors and contrast, make building structures and landscaping pop with vivid detail, and maintain the bird's-eye perspective. Output only the enhanced image.`
+const AERIAL_ENHANCEMENT_PROMPT = `Transform this Google Maps satellite image into a professional aerial architectural photograph. Make dramatic, clearly visible improvements: significantly enhance color vibrancy and contrast, sharpen building outlines and rooflines so they look crisp, make landscaping and greenery pop with rich vivid greens, improve the clarity of driveways, walkways and property boundaries, add depth and dimension to structures, and remove the flat satellite look. The result should look noticeably different and superior — like a professional drone photograph. Output only the enhanced image.`
 
 /**
  * Fetch a Google Street View image for the given address.
@@ -28,7 +28,7 @@ async function fetchStreetViewImage(address: string, apiKey: string): Promise<{ 
     return { buffer: null, error: `Street View: ${meta.status}${meta.error_message ? ` - ${meta.error_message}` : ""}` }
   }
 
-  const imgUrl = `https://maps.googleapis.com/maps/api/streetview?size=640x480&location=${encodeURIComponent(address)}&fov=90&pitch=10&key=${apiKey}`
+  const imgUrl = `https://maps.googleapis.com/maps/api/streetview?size=640x640&location=${encodeURIComponent(address)}&fov=60&pitch=15&key=${apiKey}`
   const imgRes = await fetch(imgUrl)
 
   if (!imgRes.ok) {
@@ -43,7 +43,7 @@ async function fetchStreetViewImage(address: string, apiKey: string): Promise<{ 
  * Fetch a Google Maps Static API satellite/aerial image of the address.
  */
 async function fetchStaticMapImage(address: string, apiKey: string): Promise<{ buffer: Buffer | null; error?: string }> {
-  const imgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=18&size=640x480&maptype=satellite&key=${apiKey}`
+  const imgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${encodeURIComponent(address)}&zoom=20&size=640x640&maptype=satellite&key=${apiKey}`
   const imgRes = await fetch(imgUrl)
 
   if (!imgRes.ok) {
@@ -78,16 +78,28 @@ async function enhanceImageWithGemini(imageBuffer: Buffer, geminiApiKey: string,
     },
   }
 
+  console.log("[generate-site-image] Sending to Gemini:", {
+    model: "gemini-2.5-flash-image",
+    promptLength: prompt.length,
+    imageSize: imageBuffer.byteLength,
+    promptPreview: prompt.slice(0, 80) + "...",
+  })
+
   const result = await model.generateContent([prompt, imagePart])
   const response = result.response
 
-  for (const part of response.candidates?.[0]?.content?.parts ?? []) {
+  const parts = response.candidates?.[0]?.content?.parts ?? []
+  console.log("[generate-site-image] Gemini response parts:", parts.length, parts.map(p => p.inlineData ? `image(${p.inlineData.data?.length ?? 0} chars)` : `text(${(p.text ?? "").slice(0, 50)})`))
+
+  for (const part of parts) {
     if (part.inlineData?.data) {
       const enhancedBuffer = Buffer.from(part.inlineData.data, "base64")
+      console.log("[generate-site-image] Enhanced image size:", enhancedBuffer.byteLength, "bytes")
       return enhancedBuffer
     }
   }
 
+  console.warn("[generate-site-image] Gemini returned no image data")
   return null
 }
 
@@ -189,6 +201,14 @@ export async function POST(request: NextRequest) {
       fetchStreetViewImage(address, googleMapsApiKey),
       fetchStaticMapImage(address, googleMapsApiKey),
     ])
+
+    // Log partial failures so they're visible
+    if (!streetViewResult.buffer) {
+      console.warn("[generate-site-image] Street View failed:", streetViewResult.error)
+    }
+    if (!satelliteResult.buffer) {
+      console.warn("[generate-site-image] Satellite/Aerial failed:", satelliteResult.error)
+    }
 
     // We need at least one image source
     if (!streetViewResult.buffer && !satelliteResult.buffer) {
@@ -317,9 +337,15 @@ export async function POST(request: NextRequest) {
       }).catch((err) => console.error("[generate-site-image] Failed to deduct credits:", err))
     }
 
+    // Collect warnings for partial failures
+    const warnings: string[] = []
+    if (!streetViewResult.buffer) warnings.push(`Street View unavailable: ${streetViewResult.error}`)
+    if (!satelliteResult.buffer) warnings.push(`Aerial View unavailable: ${satelliteResult.error}`)
+
     return NextResponse.json({
       success: true,
       files: generatedFiles,
+      warnings: warnings.length > 0 ? warnings : undefined,
       // Backwards compatibility: return first file's fields at top level
       fileId: generatedFiles[0]?.fileId,
       url: generatedFiles[0]?.url,
