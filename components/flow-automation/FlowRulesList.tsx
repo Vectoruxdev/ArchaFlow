@@ -11,6 +11,8 @@ import {
   AlertCircle,
   XCircle,
   History,
+  LayoutList,
+  Network,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
@@ -29,18 +31,26 @@ import { useFlowRules } from '@/lib/hooks/use-flow-rules'
 import { RecipePicker } from './RecipePicker'
 import { FlowRuleEditor } from './FlowRuleEditor'
 import { RunHistoryDrawer } from './RunHistoryDrawer'
+import { VisualFlowBuilder } from './visual-builder/VisualFlowBuilder'
 import type { FlowRule, FlowRecipeTemplate } from '@/types/flow-automation'
 
 interface FlowRulesListProps {
   boardId: string
+  onViewModeChange?: (mode: 'list' | 'visual') => void
 }
 
-export function FlowRulesList({ boardId }: FlowRulesListProps) {
+export function FlowRulesList({ boardId, onViewModeChange }: FlowRulesListProps) {
   const { currentWorkspace } = useAuth()
   const workspaceId = currentWorkspace?.id ?? boardId
   const { rules, isLoading, createRule, updateRule, deleteRule, toggleActive } = useFlowRules(boardId)
 
+  const [viewMode, setViewMode] = useState<'list' | 'visual'>('list')
   const [showRecipePicker, setShowRecipePicker] = useState(false)
+
+  function handleViewModeChange(mode: 'list' | 'visual') {
+    setViewMode(mode)
+    onViewModeChange?.(mode)
+  }
   const [editorState, setEditorState] = useState<{
     open: boolean
     initialRule?: Partial<FlowRule>
@@ -170,6 +180,40 @@ export function FlowRulesList({ boardId }: FlowRulesListProps) {
 
   const activeRulesCount = rules.filter(r => r.isActive).length
 
+  if (viewMode === 'visual') {
+    return (
+      <div className="h-full flex flex-col">
+        <div className="flex items-center justify-between px-4 py-3 border-b">
+          <div className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-amber-500" />
+            <h2 className="text-lg font-semibold">Flow Automation</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center border rounded-lg p-0.5">
+              <button
+                onClick={() => handleViewModeChange('list')}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-colors text-muted-foreground hover:text-foreground"
+              >
+                <LayoutList className="h-3.5 w-3.5" />
+                List
+              </button>
+              <button
+                onClick={() => handleViewModeChange('visual')}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-colors bg-primary text-primary-foreground"
+              >
+                <Network className="h-3.5 w-3.5" />
+                Visual
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="flex-1 min-h-0">
+          <VisualFlowBuilder boardId={boardId} />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       {/* Header */}
@@ -183,10 +227,28 @@ export function FlowRulesList({ boardId }: FlowRulesListProps) {
             Automate actions when things happen on your board
           </p>
         </div>
-        <Button onClick={() => setShowRecipePicker(true)}>
-          <Plus className="h-4 w-4 mr-1" />
-          New Flow
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center border rounded-lg p-0.5">
+            <button
+              onClick={() => handleViewModeChange('list')}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-colors bg-primary text-primary-foreground"
+            >
+              <LayoutList className="h-3.5 w-3.5" />
+              List
+            </button>
+            <button
+              onClick={() => handleViewModeChange('visual')}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded text-xs transition-colors text-muted-foreground hover:text-foreground"
+            >
+              <Network className="h-3.5 w-3.5" />
+              Visual
+            </button>
+          </div>
+          <Button onClick={() => setShowRecipePicker(true)}>
+            <Plus className="h-4 w-4 mr-1" />
+            New Flow
+          </Button>
+        </div>
       </div>
 
       {/* Rules list */}

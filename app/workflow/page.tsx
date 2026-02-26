@@ -282,6 +282,7 @@ export default function WorkflowPage() {
   const [viewMode, setViewMode] = useState<"board" | "list">("board")
   const [isFullScreen, setIsFullScreen] = useState(false)
   const [showFlowManager, setShowFlowManager] = useState(false)
+  const [flowManagerViewMode, setFlowManagerViewMode] = useState<'list' | 'visual'>('list')
   const fullscreenRef = useRef<HTMLDivElement>(null)
 
   // Loading state
@@ -3034,9 +3035,19 @@ export default function WorkflowPage() {
 
       {/* Flow Automation Manager */}
       {businessId && (
-        <Dialog open={showFlowManager} onOpenChange={setShowFlowManager}>
-          <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
-            <FlowRulesList boardId={businessId} />
+        <Dialog open={showFlowManager} onOpenChange={(v) => {
+          setShowFlowManager(v)
+          if (!v) setFlowManagerViewMode('list')
+        }}>
+          <DialogContent className={
+            flowManagerViewMode === 'visual'
+              ? 'max-w-[100vw] w-screen h-screen p-0 [&>button]:z-50'
+              : 'max-w-3xl max-h-[85vh] overflow-y-auto'
+          }>
+            <FlowRulesList
+              boardId={businessId}
+              onViewModeChange={setFlowManagerViewMode}
+            />
           </DialogContent>
         </Dialog>
       )}
