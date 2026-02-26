@@ -77,10 +77,29 @@ export function useFlowBoardContext(boardId: string | undefined): FlowBoardConte
             seen.add(m.user_id)
             return true
           })
+
+          // Look up display names from user_profiles
+          const userIds = unique.map((m: { user_id: string }) => m.user_id)
+          const { data: profiles } = await supabase
+            .from('user_profiles')
+            .select('id, full_name, first_name, last_name')
+            .in('id', userIds)
+
+          const profileMap = new Map<string, string>()
+          if (profiles) {
+            for (const p of profiles) {
+              const name =
+                [p.first_name, p.last_name].filter(Boolean).join(' ') ||
+                p.full_name ||
+                ''
+              profileMap.set(p.id, name)
+            }
+          }
+
           setTeamMembers(
             unique.map((m: { user_id: string }) => ({
               id: m.user_id,
-              name: m.user_id.substring(0, 8),
+              name: profileMap.get(m.user_id) || m.user_id.substring(0, 8),
               email: '',
             }))
           )

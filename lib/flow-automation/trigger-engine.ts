@@ -54,9 +54,22 @@ export async function evaluateRulesForEvent(event: KanbanEvent): Promise<void> {
 
         if (!trigger.matches(event, rule.trigger.config)) return
 
-        // Fetch card data
+        // Grace period: wait 10 seconds before executing so accidental
+        // moves can be undone without triggering the flow.
+        await new Promise(resolve => setTimeout(resolve, 10_000))
+
+        // Re-fetch card data after the delay to verify the card is still
+        // in the expected state (e.g. still in the target column).
         const card = await fetchCardData(event.cardId, event.boardId)
         if (!card) return
+
+        // For move triggers, verify the card is still in the destination column
+        if (event.type === 'card_moved' && event.payload?.toColumnId) {
+          if (card.status !== event.payload.toColumnId) {
+            console.log(`[FlowEngine] Card was moved away during grace period, skipping rule "${rule.name}"`)
+            return
+          }
+        }
 
         // Check conditions
         if (!checkConditions(rule.conditions, card)) return
@@ -348,15 +361,14 @@ async function fetchCardData(cardId: string, boardId: string): Promise<CardData 
   let assignees: Array<{ id: string; name: string; email: string }> = []
   if (assigneeIds.length > 0) {
     const { data: profiles } = await admin
-      .from('user_roles')
-      .select('user_id, first_name, last_name, email')
-      .eq('business_id', boardId)
-      .in('user_id', assigneeIds)
+      .from('user_profiles')
+      .select('id, full_name, first_name, last_name')
+      .in('id', assigneeIds)
 
-    assignees = (profiles ?? []).map((p: { user_id: string; first_name: string; last_name: string; email: string }) => ({
-      id: p.user_id,
-      name: `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim() || p.email,
-      email: p.email,
+    assignees = (profiles ?? []).map((p: { id: string; full_name: string | null; first_name: string | null; last_name: string | null }) => ({
+      id: p.id,
+      name: [p.first_name, p.last_name].filter(Boolean).join(' ') || p.full_name || p.id.substring(0, 8),
+      email: '',
     }))
   }
 
