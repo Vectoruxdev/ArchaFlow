@@ -85,6 +85,9 @@ import { StatsCard } from "@/components/admin/stats-card"
 import { CityCombobox } from "@/components/ui/city-combobox"
 import { SearchableSelect } from "@/components/ui/searchable-select"
 import { US_STATES } from "@/lib/us-states"
+import { fireFlowEvent } from "@/lib/flow-automation/client"
+import { FlowsIndicator } from "@/components/flow-automation/FlowsIndicator"
+import { FlowRulesList } from "@/components/flow-automation/FlowRulesList"
 
 // Types
 type ProjectStatus = string
@@ -278,6 +281,7 @@ export default function WorkflowPage() {
   // View mode state
   const [viewMode, setViewMode] = useState<"board" | "list">("board")
   const [isFullScreen, setIsFullScreen] = useState(false)
+  const [showFlowManager, setShowFlowManager] = useState(false)
   const fullscreenRef = useRef<HTMLDivElement>(null)
 
   // Loading state
@@ -678,6 +682,13 @@ export default function WorkflowPage() {
           entityId: data.id,
           message: `Project "${data.title}" created`,
         }).catch(() => {})
+        // Fire flow automation event
+        fireFlowEvent({
+          type: "card_created",
+          boardId: businessId,
+          cardId: data.id,
+          payload: { columnId: data.status },
+        })
       }
       
       return data
@@ -791,6 +802,13 @@ export default function WorkflowPage() {
         .eq("business_id", bid)
 
       if (error) throw error
+
+      // Fire flow automation event
+      fireFlowEvent({
+        type: "card_archived",
+        boardId: bid,
+        cardId: projectId,
+      })
 
       window.dispatchEvent(new Event("projectsUpdated"))
       setIsProjectDetailModalOpen(false)
@@ -1384,6 +1402,13 @@ export default function WorkflowPage() {
             message: `"${project.title}" moved from ${fromLabel} to ${toLabel}`,
             metadata: { fromStatus: source.droppableId, toStatus: newStatus },
           }).catch(() => {})
+          // Fire flow automation event
+          fireFlowEvent({
+            type: "card_moved",
+            boardId: businessId,
+            cardId: draggableId,
+            payload: { fromColumnId: source.droppableId, toColumnId: newStatus },
+          })
         }
       } catch (error) {
         console.error("❌ Error updating project status:", error)
@@ -1758,6 +1783,12 @@ export default function WorkflowPage() {
                 <Plus className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Add column</span>
               </Button>
+            )}
+            {businessId && (
+              <FlowsIndicator
+                boardId={businessId}
+                onManageFlows={() => setShowFlowManager(true)}
+              />
             )}
             <div className="flex items-center gap-2 bg-[--af-bg-surface] border border-[--af-border-default] rounded-lg p-1">
               <button
@@ -2999,6 +3030,15 @@ export default function WorkflowPage() {
             loadProjectsAndColumns()
           }}
         />
+      )}
+
+      {/* Flow Automation Manager */}
+      {businessId && (
+        <Dialog open={showFlowManager} onOpenChange={setShowFlowManager}>
+          <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+            <FlowRulesList boardId={businessId} />
+          </DialogContent>
+        </Dialog>
       )}
       </>
         )}
