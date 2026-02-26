@@ -334,6 +334,8 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
   // Inline Subtask Creation State
   const [addingSubtaskForTodo, setAddingSubtaskForTodo] = useState<string | null>(null)
   const [newInlineSubtaskTitle, setNewInlineSubtaskTitle] = useState("")
+  // Task Delete State
+  const [taskDeleteConfirm, setTaskDeleteConfirm] = useState<{ id: string; title: string; type: 'task' | 'subtask'; parentId?: string } | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string } | null>(null)
   const [suppressDeleteWarning, setSuppressDeleteWarning] = useState(false)
   
@@ -656,6 +658,40 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
     addSubtask(todoId, newInlineSubtaskTitle)
     setNewInlineSubtaskTitle("")
     setAddingSubtaskForTodo(null)
+  }
+
+  const handleDeleteTask = async () => {
+    if (!taskDeleteConfirm) return
+
+    const { id, type, parentId } = taskDeleteConfirm
+
+    // Optimistic UI update
+    if (type === 'subtask' && parentId) {
+      setTodos((prev) =>
+        prev.map((todo) =>
+          todo.id === parentId
+            ? { ...todo, subtasks: todo.subtasks.filter((s) => s.id !== id) }
+            : todo
+        )
+      )
+    } else {
+      setTodos((prev) => prev.filter((todo) => todo.id !== id))
+    }
+
+    setTaskDeleteConfirm(null)
+
+    // Persist to database
+    try {
+      const { error } = await supabase
+        .from('project_tasks')
+        .delete()
+        .eq('id', id)
+
+      if (error) throw error
+      toast.success('Task deleted')
+    } catch {
+      toast.error('Failed to delete task')
+    }
   }
 
   const getRelativeTime = (dateStr: string) => {
@@ -1167,7 +1203,7 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                   {todos.map((todo) => (
                   <div
                     key={todo.id}
-                    className="border border-[--af-border-default] rounded-lg p-4"
+                    className="border border-[--af-border-default] rounded-lg p-4 group/task"
                   >
                     <div className="flex items-start gap-3">
                       <Checkbox
@@ -1216,20 +1252,30 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                               )}
                             </div>
                           </div>
-                          {todo.subtasks.length > 0 && (
+                          <div className="flex items-center gap-1 flex-shrink-0">
+                            {todo.subtasks.length > 0 && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6"
+                                onClick={() => toggleExpandTodo(todo.id)}
+                              >
+                                {expandedTodos.has(todo.id) ? (
+                                  <ChevronDown className="w-4 h-4" />
+                                ) : (
+                                  <ChevronRight className="w-4 h-4" />
+                                )}
+                              </Button>
+                            )}
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-6 w-6 flex-shrink-0"
-                              onClick={() => toggleExpandTodo(todo.id)}
+                              className="h-6 w-6 opacity-0 group-hover/task:opacity-100 transition-opacity text-[--af-text-muted] hover:text-[--af-danger-text]"
+                              onClick={() => setTaskDeleteConfirm({ id: todo.id, title: todo.title, type: 'task' })}
                             >
-                              {expandedTodos.has(todo.id) ? (
-                                <ChevronDown className="w-4 h-4" />
-                              ) : (
-                                <ChevronRight className="w-4 h-4" />
-                              )}
+                              <Trash2 className="w-3.5 h-3.5" />
                             </Button>
-                          )}
+                          </div>
                         </div>
 
                         {/* Subtasks - Always show add subtask option */}
@@ -1288,6 +1334,14 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
                                                 </p>
                                               )}
                                             </div>
+                                            <Button
+                                              variant="ghost"
+                                              size="icon"
+                                              className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-[--af-text-muted] hover:text-[--af-danger-text] flex-shrink-0"
+                                              onClick={() => setTaskDeleteConfirm({ id: subtask.id, title: subtask.title, type: 'subtask', parentId: todo.id })}
+                                            >
+                                              <Trash2 className="w-3 h-3" />
+                                            </Button>
                                           </div>
                                         )}
                                       </Draggable>
@@ -1872,6 +1926,24 @@ export function ProjectDetailContent({ projectId }: ProjectDetailContentProps) {
           <DialogFooter>
             <Button variant="outline" onClick={() => { setDeleteConfirm(null); setSuppressDeleteWarning(false) }}>Cancel</Button>
             <Button variant="destructive" onClick={confirmDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Task Delete Confirmation */}
+      <Dialog open={!!taskDeleteConfirm} onOpenChange={(open) => { if (!open) setTaskDeleteConfirm(null) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete {taskDeleteConfirm?.type === 'subtask' ? 'Subtask' : 'Task'}</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete &quot;{taskDeleteConfirm?.title}&quot;?{' '}
+              {taskDeleteConfirm?.type === 'task' && 'All subtasks will also be deleted. '}
+              This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setTaskDeleteConfirm(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDeleteTask}>Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
