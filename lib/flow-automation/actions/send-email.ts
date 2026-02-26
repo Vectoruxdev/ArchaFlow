@@ -68,28 +68,40 @@ const handler: ActionHandler = {
       }
     }
 
-    // Use Resend via dynamic import (server-only)
+    // Use Resend HTTP API directly to avoid @react-email/render dependency at bundle time
     try {
-      const { Resend } = await import('resend')
-      const resend = new Resend(process.env.RESEND_API_KEY)
+      const apiKey = process.env.RESEND_API_KEY
+      if (!apiKey) {
+        return { success: false, error: 'RESEND_API_KEY not configured' }
+      }
 
-      const { error } = await resend.emails.send({
-        from: 'ArchaFlow <noreply@archaflow.com>',
-        to: toEmail,
-        subject,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 40px 20px;">
-            ${body.replace(/\n/g, '<br />')}
-            <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;" />
-            <p style="color: #999; font-size: 12px;">
-              Sent automatically by ArchaFlow Flow Automation
-            </p>
-          </div>
-        `,
+      const html = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 40px 20px;">
+          ${body.replace(/\n/g, '<br />')}
+          <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;" />
+          <p style="color: #999; font-size: 12px;">
+            Sent automatically by ArchaFlow Flow Automation
+          </p>
+        </div>
+      `
+
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'ArchaFlow <noreply@archaflow.com>',
+          to: toEmail,
+          subject,
+          html,
+        }),
       })
 
-      if (error) {
-        return { success: false, error: `Email send failed: ${error.message}` }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        return { success: false, error: `Email send failed: ${(err as Record<string, string>).message ?? res.statusText}` }
       }
 
       return { success: true, output: { sentTo: toEmail } }
