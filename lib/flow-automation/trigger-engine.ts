@@ -26,6 +26,37 @@ import './actions/index'
  * Main entry point: evaluate all active rules for a given board event.
  * Call this after card mutations (move, create, archive, etc.).
  */
+/**
+ * Quick check: find which active rules match an event (no execution).
+ * Returns matched rule names so the client can show a toast immediately.
+ */
+export async function findMatchingRules(event: KanbanEvent): Promise<string[]> {
+  try {
+    const admin = getSupabaseAdmin()
+    const { data: rows, error } = await admin
+      .from('flow_rules')
+      .select('*')
+      .eq('board_id', event.boardId)
+      .eq('is_active', true)
+
+    if (error || !rows || rows.length === 0) return []
+
+    const rules = (rows as FlowRuleRow[]).map(flowRuleFromRow)
+    const matched: string[] = []
+
+    for (const rule of rules) {
+      const trigger = triggerRegistry.get(rule.trigger.type)
+      if (trigger && trigger.matches(event, rule.trigger.config)) {
+        matched.push(rule.name)
+      }
+    }
+
+    return matched
+  } catch {
+    return []
+  }
+}
+
 export async function evaluateRulesForEvent(event: KanbanEvent): Promise<void> {
   try {
     const admin = getSupabaseAdmin()

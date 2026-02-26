@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { evaluateRulesForEvent } from '@/lib/flow-automation/trigger-engine'
+import { evaluateRulesForEvent, findMatchingRules } from '@/lib/flow-automation/trigger-engine'
 import type { KanbanEvent } from '@/types/flow-automation'
 
 export async function POST(request: NextRequest) {
@@ -29,12 +29,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Fire and forget — don't block the response
-    evaluateRulesForEvent(event).catch(err => {
-      console.error('[FlowAPI] Error evaluating rules:', err)
-    })
+    // Quick match check — returns immediately with matched rule names
+    const matchedRules = await findMatchingRules(event)
 
-    return NextResponse.json({ ok: true })
+    // Fire and forget — execute rules in background with grace period
+    if (matchedRules.length > 0) {
+      evaluateRulesForEvent(event).catch(err => {
+        console.error('[FlowAPI] Error evaluating rules:', err)
+      })
+    }
+
+    return NextResponse.json({ ok: true, matchedRules })
   } catch (err) {
     console.error('[FlowAPI] Unexpected error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
