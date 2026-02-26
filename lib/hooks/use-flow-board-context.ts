@@ -43,6 +43,8 @@ export function useFlowBoardContext(boardId: string | undefined): FlowBoardConte
 
       try {
         // Fetch columns and members in parallel
+        // Fetch columns and members in parallel
+        // user_roles only has user_id — no name/email columns
         const [columnsRes, membersRes] = await Promise.all([
           supabase
             .from('project_statuses')
@@ -51,14 +53,13 @@ export function useFlowBoardContext(boardId: string | undefined): FlowBoardConte
             .order('order_index'),
           supabase
             .from('user_roles')
-            .select('user_id, first_name, last_name, email')
+            .select('user_id')
             .eq('business_id', boardId),
         ])
 
         if (cancelled) return
 
         if (columnsRes.error) throw columnsRes.error
-        if (membersRes.error) throw membersRes.error
 
         setColumns(
           (columnsRes.data ?? []).map((s: { id: string; label: string; color_key: string }) => ({
@@ -68,13 +69,22 @@ export function useFlowBoardContext(boardId: string | undefined): FlowBoardConte
           }))
         )
 
-        setTeamMembers(
-          (membersRes.data ?? []).map((m: { user_id: string; first_name: string | null; last_name: string | null; email: string }) => ({
-            id: m.user_id,
-            name: `${m.first_name ?? ''} ${m.last_name ?? ''}`.trim() || m.email,
-            email: m.email,
-          }))
-        )
+        if (!membersRes.error && membersRes.data) {
+          // Dedupe by user_id since a user may have multiple roles
+          const seen = new Set<string>()
+          const unique = membersRes.data.filter((m: { user_id: string }) => {
+            if (seen.has(m.user_id)) return false
+            seen.add(m.user_id)
+            return true
+          })
+          setTeamMembers(
+            unique.map((m: { user_id: string }) => ({
+              id: m.user_id,
+              name: m.user_id.substring(0, 8),
+              email: '',
+            }))
+          )
+        }
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : 'Failed to load board context')
